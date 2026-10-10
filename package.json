@@ -34,7 +34,7 @@
         },
         "files": [
             "**/*",
-            "!store-plugins/**",
+            "!verified-plugins/**",
             "!tools/**",
             "!dist/**",
             "!_*.js",
