@@ -17,7 +17,9 @@ Press **Ctrl+Alt+D** and it pops up in the bottom-right corner of your screen. P
 Everything else is a plugin: a small web page (HTML, CSS, JavaScript) that gets its own tab, a bar at the bottom, or both. Plugins run sandboxed. They can't see your vault, your files or other plugins, and they only get the abilities you approve when installing them.
 
 - Install from the **Plugins** tab: from the plugin store, or **From folder** while you're building one.
-- `verified-plugins/claude` (a verified plugin) tracks what Claude Code did since you last checked, shows working/done/needs-input dots, and lets you reply in the background.
+- `verified-plugins/` holds the verified plugins:
+    - `claude` tracks what Claude Code did since you last checked, shows working/done/needs-input dots, and lets you reply in the background.
+    - `schedule-one` is a Schedule I game reference: mixer, effects, ingredients and customer notes.
 - Package a plugin for the store with `node tools/pack-plugin.js <plugin-folder> --url <download-base-url>`.
 
 ## Install
