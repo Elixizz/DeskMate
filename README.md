@@ -1,6 +1,6 @@
 # DeskMate
 
-DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest, like trackers, tools and games.
+DeskMate is an open-source desk widget built by [Lapis Studios](https://lapistudios.com) that you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest, like trackers, tools and games.
 
 Press **Ctrl+Alt+D** and it pops up in the bottom-right corner of your screen. Press it again (or Esc) and it's gone.
 
