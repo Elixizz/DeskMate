@@ -144,12 +144,13 @@ Ask only for what your plugin needs. The install screen lists every permission i
 | `net:*` | Any website. Needed for things like radio streams from random servers | High |
 | `notifications` | `deskmate.notify(title, body)`: Windows notifications | Low |
 | `status` | `deskmate.status.set(...)`: your dots in the header and the corner pill | Low |
-| `clipboard-write` | `navigator.clipboard.writeText(...)` | Low |
+| `clipboard-write` | `deskmate.copyText(text)` (works even when DeskMate isn't focused) and `navigator.clipboard.writeText(...)` | Low |
 | `open-links` | `deskmate.openUrl(url)` and `target="_blank"` links open in the user's browser (https only) | Low |
 | `hotkeys` | The global shortcuts listed in the manifest's `hotkeys` | Medium |
 | `music-files` | `deskmate.music.*`: pick a music folder and play files from it. Only that folder, only audio | Medium |
 | `media-control` | `deskmate.media.*`: see and control what other apps are playing, and their volume | High |
 | `claude` | `deskmate.claude.*`: read Claude Code conversations and send replies as the user | High |
+| `gmail` | `deskmate.gmail.*`: sign in with Google and read Gmail (senders, subjects, previews, sign-in codes). Read-only | High |
 
 When an update adds a permission, DeskMate asks again before installing and marks the new ones with **NEW**. A plugin never gets a permission it didn't list, even if it was approved for an earlier version.
 
@@ -178,6 +179,7 @@ Every plugin page gets a global `deskmate` object. Calls that do something retur
 | `deskmate.status.set({ dots, tooltip })` | `status` | Publishes up to 6 dots, each `{ color: '#rrggbb' or null, pulse: true/false }`. `null` = gray. `tooltip` shows on hover (120 characters) |
 | `deskmate.notify(title, body)` | `notifications` | Windows notification, titled with your plugin's name |
 | `deskmate.openUrl(url)` | `open-links` | Opens an `https://` link in the user's browser |
+| `deskmate.copyText(text)` | `clipboard-write` | Copies text to the clipboard |
 | `deskmate.onHotkey(fn)` | `hotkeys` | `fn(accelerator)` runs when one of your manifest hotkeys is pressed, even with DeskMate hidden |
 | `deskmate.music.pickFolder()` | `music-files` | Asks the user to choose a music folder. Resolves to its path, or `null` if they cancel |
 | `deskmate.music.folder()` | `music-files` | The current music folder, or `null` |
@@ -189,6 +191,10 @@ Every plugin page gets a global `deskmate` object. Calls that do something retur
 | `deskmate.claude.state(sessionId)` | `claude` | `{ state, title, id }`, where `state` is `working`, `done`, `input` or `none` |
 | `deskmate.claude.reply(sessionId, text)` | `claude` | Sends a reply in the background. Resolves to `{ result }` or `{ error }` |
 | `deskmate.claude.revealFile(path)` | `claude` | Shows a file in Explorer |
+| `deskmate.gmail.status()` | `gmail` | `{ configured, connected, email }` |
+| `deskmate.gmail.connect()` | `gmail` | Opens Google's sign-in page in the browser. Resolves once the user finishes signing in |
+| `deskmate.gmail.disconnect()` | `gmail` | Signs out and revokes DeskMate's access |
+| `deskmate.gmail.inbox(max)` | `gmail` | `{ email, unreadCount, messages: [{ id, from, subject, snippet, time, unread }], codes: [{ code, id, from, subject, time }] }` for inbox mail from the last 7 days. `codes` holds sign-in codes found in the last 30 minutes. Rejects with `signed-out` if Google ended the session |
 
 Everything a normal web page can do also works: `fetch` (to your `net:` hosts), `localStorage`, `IndexedDB`, `<audio>`, `<canvas>`, timers and so on. Pages stay loaded in the background, so timers keep running when the panel is hidden.
 

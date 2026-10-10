@@ -3,3 +3,4 @@ dist/
 _*.js
 .claude/
 site/download/
+host/google-oauth.json

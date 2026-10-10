@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('deskmate', {
   onHidden: on('hidden'),
   notify: (title, body) => call('notify', title, body),
   openUrl: (url) => call('openUrl', url),
+  copyText: (text) => call('copyText', text),
   status: { set: (s) => call('status.set', s) },
   // Plain-http media (most radio streams) can't load in a secure page; route it through the host.
   mediaUrl: (url) => (/^http:\/\//i.test(url) ? 'dmnet://p/' + encodeURIComponent(url) : url),
@@ -40,6 +41,12 @@ contextBridge.exposeInMainWorld('deskmate', {
     state: (sessionId) => call('claude.state', sessionId),
     reply: (sessionId, text) => call('claude.reply', sessionId, text),
     revealFile: (p) => call('claude.revealFile', p),
+  },
+  gmail: {
+    status: () => call('gmail.status'),
+    connect: () => call('gmail.connect'),
+    disconnect: () => call('gmail.disconnect'),
+    inbox: (max) => call('gmail.inbox', max),
   },
   legacy: () => call('legacy'),
 });

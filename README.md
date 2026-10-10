@@ -20,6 +20,7 @@ Everything else is a plugin: a small web page (HTML, CSS, JavaScript) that gets 
 - `verified-plugins/` holds the verified plugins:
     - `claude` tracks what Claude Code did since you last checked, shows working/done/needs-input dots, and lets you reply in the background.
     - `schedule-one` is a Schedule I game reference: mixer, effects, ingredients and customer notes.
+    - `gmail` signs in with Google to show new emails, notify you, and pull out sign-in codes. Read-only. Building it yourself needs your own Google OAuth client in `host/google-oauth.json`.
 - Package a plugin for the store with `node tools/pack-plugin.js <plugin-folder> --url <download-base-url>`.
 
 ## Install

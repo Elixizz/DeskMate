@@ -20,6 +20,7 @@ protocol.registerSchemesAsPrivileged(['plugin', 'dmmedia', 'dmnet'].map((scheme)
   scheme, privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true },
 })));
 const plugins = require('./host/plugins');
+const gmail = require('./host/gmail');
 
 let win, tray, pinned = false;
 
@@ -118,7 +119,7 @@ app.whenReady().then(() => {
   plugins.init({
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
-    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings },
+    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail },
   });
   win.webContents.once('did-finish-load', () => { plugins.loadAll(); win.webContents.send('host:plugins-changed'); });
   tray.displayBalloon({ title: 'Deskmate is running', content: hotkey ? `Press ${prettyKey()} to open it.` : 'Hotkeys are taken. Click the tray icon to open it.' });

@@ -3,7 +3,7 @@
 // Each plugin gets its own session (storage, cookies and cache are separate from every other plugin and from the
 // vault), runs with no Node access, and can only reach the network hosts it declared. Everything else goes through
 // one IPC channel, 'plugin:call', which checks the calling view's granted permissions before doing anything.
-const { app, ipcMain, session, WebContentsView, net, Notification, globalShortcut, shell, dialog } = require('electron');
+const { app, ipcMain, session, WebContentsView, net, Notification, globalShortcut, shell, dialog, clipboard } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -19,6 +19,7 @@ const PERMISSIONS = {
   'music-files': { label: 'Play audio files from a folder you choose', risk: 'medium' },
   'media-control': { label: 'See and control what other apps are playing (browser, Spotify), and their volume', risk: 'high' },
   claude: { label: 'Read your Claude Code conversations and send replies as you', risk: 'high' },
+  gmail: { label: 'Read your Gmail (senders, subjects, previews and sign-in codes). It cannot send or delete', risk: 'high' },
 };
 const ID_RE = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const HOST_RE = /^(\*|(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+)$/;
@@ -285,6 +286,7 @@ const API = {
   notify: [['notifications'], (id, title, body) => {
     new Notification({ title: `${loaded.get(id).manifest.name}: ${String(title).slice(0, 60)}`, body: String(body || '').slice(0, 200), silent: false }).show();
   }],
+  copyText: [['clipboard-write'], async (id, text) => { await clipboard.writeText(String(text).slice(0, 10000)); return true; }],
   openUrl: [['open-links'], (id, url) => { if (/^https:\/\//i.test(url)) shell.openExternal(url); }],
   'media.sessions': [['media-control'], () => ctx.caps.mediaStatus()],
   'media.art': [['media-control'], (id, appId) => ctx.caps.mediaArt(String(appId))],
@@ -295,6 +297,11 @@ const API = {
   'claude.activity': [['claude'], (id, since) => throttled(`${id}:activity:${since}`, 1500, () => ctx.caps.claudeActivity(Number(since) || 0))],
   'claude.state': [['claude'], (id, sid) => ctx.caps.sessionState(String(sid))],
   'claude.reply': [['claude'], (id, sid, text) => ctx.caps.claudeReply(String(sid), String(text))],
+  // Sign-in happens on Google's page in the browser; the plugin never sees a password or token.
+  'gmail.status': [['gmail'], () => ctx.caps.gmail.status()],
+  'gmail.connect': [['gmail'], () => ctx.caps.gmail.connect()],
+  'gmail.disconnect': [['gmail'], () => ctx.caps.gmail.disconnect()],
+  'gmail.inbox': [['gmail'], (id, max) => throttled(`${id}:gmail`, 10e3, () => ctx.caps.gmail.inbox(Number(max) || 20))],
   'claude.revealFile': [['claude'], (id, p) => { p = String(p); if (/^[a-z]:[\\/]/i.test(p) && fs.existsSync(p)) shell.showItemInFolder(p); }],
 };
 

@@ -1,0 +1,9 @@
+{
+  "id": "gmail",
+  "name": "Gmail",
+  "version": "1.0.0",
+  "author": "Lapis Studios",
+  "description": "Sign in with Google to see new emails, get notified when mail arrives, and copy sign-in codes the moment they land. Read-only. Needs DeskMate 1.1 or newer.",
+  "tab": "tab.html",
+  "permissions": ["gmail", "notifications", "status", "clipboard-write"]
+}
