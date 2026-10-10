@@ -1,0 +1,30 @@
+.sec { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.sec::-webkit-scrollbar { width: 6px; }
+.sec::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.pick { max-height: 118px; overflow-y: auto; flex: none; }
+.pick button.chip { padding: 3px 8px; }
+.steps { margin: 4px 0 0; padding-left: 20px; }
+.steps li { padding: 1px 0; }
+.steps li button { margin-left: 6px; }
+.nums { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.nums b { color: var(--text); font-size: 13px; }
+b.ok { color: var(--ok); }
+b.bad { color: var(--bad); }
+.groups { flex: none; }
+.groups .segbtn { padding: 5px 2px; font-size: 11.5px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field > label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; display: flex; justify-content: space-between; align-items: center; }
+.field input, .field textarea { width: 100%; }
+.mix { display: flex; flex-direction: column; gap: 6px; }
+.mix .head { display: flex; gap: 6px; }
+.mix ol { margin: 0; padding-left: 20px; }
+.mix li { padding: 1px 0; }
+.mix li button, .steps li button { padding: 0 5px; }
+.mix .add { display: flex; gap: 6px; }
+.mix .add select { flex: 1; min-width: 0; }
+.row.eff { justify-content: space-between; padding: 3px 4px; border-bottom: 1px solid var(--line); }
+.ing { cursor: pointer; }
+.ing .top { display: flex; justify-content: space-between; gap: 6px; }
+.ing .rules { display: none; margin-top: 6px; font-size: 12px; color: #c9cdd8; }
+.ing.open .rules { display: block; }
+.ing .rules div { padding: 1px 0; }

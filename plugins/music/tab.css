@@ -1,0 +1,9 @@
+.col { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.star { background: none; color: var(--muted); padding: 0 4px; font-size: 14px; }
+.star:hover { background: none; color: var(--accent-2); }
+.star.on { color: var(--accent); }
+.ext { display: flex; gap: 10px; align-items: center; padding: 8px; }
+.ext img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; background: var(--panel); flex: none; }
+.ext img[src=""] { visibility: hidden; }
+.ext .name { font-weight: 600; }
+.ext .controls { margin-top: 2px; margin-left: -6px; }

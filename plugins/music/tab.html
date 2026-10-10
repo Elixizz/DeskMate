@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div id="ext" class="card ext hidden">
+    <img id="extArt" alt="">
+    <div class="grow" style="min-width:0">
+      <div id="extTitle" class="ellipsis name"></div>
+      <div id="extSub" class="muted small ellipsis"></div>
+      <div class="controls">
+        <button id="extPrev" class="icon">&#x23EE;</button>
+        <button id="extPlay" class="icon play">&#x25B6;</button>
+        <button id="extNext" class="icon">&#x23ED;</button>
+        <span id="extTime" class="muted small grow"></span>
+        <button id="extSwitch" class="chip hidden" title="Control a different app"></button>
+      </div>
+    </div>
+  </div>
+  <div class="seg">
+    <button class="segbtn active" data-src="local">My files</button>
+    <button class="segbtn" data-src="radio">Free radio</button>
+  </div>
+  <div id="musicLocal" class="col">
+    <div class="row">
+      <button id="pickFolderBtn" class="ghost">Choose folder</button>
+      <span id="folderName" class="muted small ellipsis grow"></span>
+    </div>
+    <input id="trackSearch" placeholder="Filter tracks...">
+    <div id="trackList" class="list"></div>
+  </div>
+  <div id="musicRadio" class="col hidden">
+    <div class="chips" id="genreChips"></div>
+    <div class="row">
+      <input id="radioSearch" placeholder="Search stations..." class="grow">
+      <button id="radioGo">Go</button>
+    </div>
+    <div id="radioList" class="list"></div>
+  </div>
+  <audio id="audio" preload="none"></audio>
+  <script src="tab.js"></script>
+</body>
+</html>

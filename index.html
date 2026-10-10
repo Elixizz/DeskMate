@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+<title>Deskmate</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <header>
+    <span class="brand">Deskmate</span>
+    <span class="hint" id="hotkeyHint"></span>
+    <button id="shrinkBtn" class="shrink" title="Shrink to just the dots">
+      <span id="hdrDots" class="dots"><i></i><i></i><i></i></span>
+      <span>Shrink</span><svg class="arrow" width="10" height="10" viewBox="0 0 10 10"><path d="M2 2 L8 8 M8 3.5 V8 H3.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button id="pinBtn" class="icon" title="Keep open">&#x1F4CC;</button>
+    <button id="hideBtn" class="icon" title="Hide">&#x2715;</button>
+  </header>
+
+  <nav id="tabs">
+    <button class="tab" data-tab="vault">Vault</button>
+    <button class="tab" data-tab="plugins" title="Plugins">Plugins</button>
+  </nav>
+
+  <main>
+    <!-- Plugin tabs render here (a sandboxed view is placed over this box) -->
+    <section id="tab-plugin" class="pane"><div id="pluginArea"></div></section>
+
+    <!-- Vault -->
+    <section id="tab-vault" class="pane">
+      <div id="vaultGate" class="gate">
+        <div class="gate-title" id="gateTitle">Unlock vault</div>
+        <input id="masterPw" type="password" placeholder="Master password" autocomplete="off">
+        <input id="masterPw2" type="password" placeholder="Confirm master password" class="hidden" autocomplete="off">
+        <input id="gateCode" class="hidden code-input" placeholder="123 456" autocomplete="one-time-code" maxlength="12">
+        <button id="gateBtn">Unlock</button>
+        <div id="gateErr" class="err"></div>
+        <div class="muted small" id="gateNote"></div>
+        <a href="#" id="restoreLink" class="small link">Restore from backup</a>
+      </div>
+      <div id="restoreBox" class="gate hidden">
+        <div class="gate-title">Restore from backup</div>
+        <div class="muted small">Use this after reinstalling Windows or on a new PC. You need the backup file, your master password and your recovery key.</div>
+        <div class="row"><button id="restorePick" class="ghost">Choose backup file</button><span id="restoreFile" class="muted small ellipsis grow">No file chosen</span></div>
+        <input id="restorePw" type="password" placeholder="Master password" autocomplete="off">
+        <input id="restoreKey" class="code-input" placeholder="xxxx-xxxx-xxxx-..." autocomplete="off">
+        <div class="err" id="restoreErr"></div>
+        <div class="row"><button id="restoreCancel" class="ghost grow">Cancel</button><button id="restoreGo" class="grow">Restore</button></div>
+      </div>
+      <div id="vaultMain" class="hidden">
+        <div class="row">
+          <input id="vaultSearch" placeholder="Search..." class="grow">
+          <button id="addItemBtn">+ Add</button>
+          <button id="secBtn" class="ghost" title="Require an authenticator code to unlock">Security</button>
+          <button id="lockBtn" class="ghost" title="Lock">Lock</button>
+        </div>
+        <div id="vaultList" class="list"></div>
+      </div>
+      <div id="secPanel" class="hidden card form"></div>
+      <form id="itemForm" class="hidden card form">
+        <input id="fName" placeholder="Name (e.g. GitHub)" required>
+        <input id="fUser" placeholder="Username / email">
+        <div class="row">
+          <input id="fPass" type="password" placeholder="Password" class="grow" autocomplete="off">
+          <button type="button" id="genBtn" class="ghost" title="Generate">Gen</button>
+          <button type="button" id="showPassBtn" class="ghost">Show</button>
+        </div>
+        <div class="row">
+          <input id="fTotp" type="password" class="grow" placeholder="2FA setup key (optional)" autocomplete="off">
+          <button type="button" id="qrBtn" class="ghost" title="Screenshot the QR code with Win+Shift+S, then click this">Paste QR</button>
+        </div>
+        <div id="totpNote" class="muted small hidden"></div>
+        <input id="fUrl" placeholder="URL">
+        <textarea id="fNotes" placeholder="Notes" rows="2"></textarea>
+        <div class="row">
+          <button type="submit" class="grow">Save</button>
+          <button type="button" id="cancelItemBtn" class="ghost">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Plugins manager -->
+    <section id="tab-plugins" class="pane">
+      <div class="row">
+        <div class="seg grow">
+          <button class="segbtn active" data-pseg="installed">Installed</button>
+          <button class="segbtn" data-pseg="store">Store</button>
+        </div>
+        <button id="installFolderBtn" class="ghost" title="Install a plugin you're writing, straight from its folder">From folder</button>
+      </div>
+      <div id="pInstalled" class="list"></div>
+      <div id="pStore" class="hidden" style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0">
+        <div class="row">
+          <input id="storeUrl" class="grow" placeholder="Store address (https://.../index.json)" autocomplete="off">
+          <button id="storeUrlSave" class="ghost">Save</button>
+        </div>
+        <div id="storeList" class="list"></div>
+      </div>
+      <div id="consent" class="hidden card form"></div>
+    </section>
+  </main>
+
+  <div id="bars"></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="renderer.js"></script>
+</body>
+</html>

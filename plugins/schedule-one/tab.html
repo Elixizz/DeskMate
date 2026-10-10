@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="seg" id="sections">
+    <button class="segbtn active" data-sec="mixer">Mixer</button>
+    <button class="segbtn" data-sec="customers">Customers</button>
+    <button class="segbtn" data-sec="effects">Effects</button>
+    <button class="segbtn" data-sec="ingredients">Items</button>
+  </div>
+
+  <section id="mixer" class="sec">
+    <div class="row">
+      <select id="drug" class="grow"></select>
+      <button id="removeLast" class="ghost">Undo</button>
+      <button id="clearMix" class="ghost">Clear</button>
+    </div>
+    <div class="muted small">Tap an ingredient to add it</div>
+    <div id="pick" class="chips pick"></div>
+    <div class="card">
+      <div class="muted small">Steps</div>
+      <div id="stepsEmpty" class="muted">Nothing yet</div>
+      <ol id="steps" class="steps"></ol>
+    </div>
+    <div class="card">
+      <div id="effects" class="chips"></div>
+      <div class="nums">
+        <span>Cost <b id="cost">$0</b></span>
+        <span>Sells <b id="sell">$0</b></span>
+        <span>Profit <b id="profit" class="ok">$0</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="customers" class="sec hidden">
+    <div id="groups" class="seg groups"></div>
+    <div id="group" class="list"></div>
+  </section>
+
+  <section id="effectsRef" class="sec hidden"><div id="effectsList" class="list"></div></section>
+  <section id="ingredientsRef" class="sec hidden"><div id="ingredientsList" class="list"></div></section>
+
+  <script src="data.js"></script>
+  <script src="tab.js"></script>
+</body>
+</html>
