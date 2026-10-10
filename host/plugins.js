@@ -24,6 +24,7 @@ const ID_RE = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const HOST_RE = /^(\*|(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+)$/;
 const RESERVED_KEYS = ['Control+Alt+D', 'Control+Shift+D', 'Control+Shift+Space', 'Control+Alt+Space', 'Alt+F4', 'Control+Alt+Delete'];
 const MAX_ZIP_BYTES = 20 * 1024 * 1024;
+const DEFAULT_STORE = 'https://deskmate.lapistudios.com/plugins/index.json'; // verified plugins, reviewed by Lapis Studios
 
 let ctx = null;                 // { win, settings, saveSettings, caps, onStatus, onLayoutChange, isHostSender, rawHandle }
 const loaded = new Map();       // id -> { manifest, dir, builtin, ses, tab, bar }
@@ -300,8 +301,7 @@ const API = {
 // ---------- store / install / update / remove ----------
 const secureUrl = (u) => { try { const x = new URL(u); return x.protocol === 'https:' || (x.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(x.hostname)); } catch { return false; } };
 async function fetchStore() {
-  const url = ctx.settings.storeUrl;
-  if (!url) return { plugins: [], error: 'No store address set yet' };
+  const url = ctx.settings.storeUrl || DEFAULT_STORE;
   if (!secureUrl(url)) throw new Error('The store address must start with https://');
   const res = await net.fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Store returned ${res.status}`);

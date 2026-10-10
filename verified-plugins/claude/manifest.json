@@ -2,7 +2,7 @@
   "id": "claude",
   "name": "Claude",
   "version": "1.0.0",
-  "author": "Deskmate",
+  "author": "Lapis Studios",
   "description": "See what Claude Code did since you last checked, watch a conversation with the status dots, and reply in the background.",
   "tab": "tab.html",
   "permissions": ["claude", "status"]

@@ -2,7 +2,7 @@
   "id": "music",
   "name": "Music",
   "version": "1.0.0",
-  "author": "Deskmate",
+  "author": "Lapis Studios",
   "description": "Play your music files and free internet radio, and control YouTube Music, Spotify or anything else playing on your PC.",
   "tab": "tab.html",
   "bar": { "file": "bar.html", "height": 84 },

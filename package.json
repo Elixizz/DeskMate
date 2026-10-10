@@ -1,7 +1,7 @@
 {
     "name": "deskmate",
     "productName": "DeskMate",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.",
     "main": "main.js",
     "scripts": {
@@ -38,7 +38,9 @@
             "!tools/**",
             "!dist/**",
             "!_*.js",
-            "!**/*.md"
+            "!**/*.md",
+            "!site/**",
+            "!docs/**"
         ],
         "win": {
             "target": "nsis",
@@ -54,7 +56,7 @@
             "runAfterFinish": true,
             "deleteAppDataOnUninstall": false
         },
-        "copyright": "Copyright \u00a9 2026 Lapis Studios"
+        "copyright": "Copyright © 2026 Lapis Studios"
     },
     "homepage": "https://lapistudios.com"
 }

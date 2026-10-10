@@ -1,0 +1,28 @@
+{
+  "name": "DeskMate verified plugins",
+  "plugins": [
+    {
+      "id": "claude",
+      "name": "Claude",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "See what Claude Code did since you last checked, watch a conversation with the status dots, and reply in the background.",
+      "permissions": [
+        "claude",
+        "status"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.0.zip",
+      "sha256": "ae1b1555a7bb2073214b4b2c88d19be6e4cdcfa1368adde17779fb694e749991"
+    },
+    {
+      "id": "schedule-one",
+      "name": "Schedule I",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
+      "permissions": [],
+      "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.0.zip",
+      "sha256": "14f93354b9317af646664f4b9891a1ccce9d76346355eaf4651af33fddec8f3f"
+    }
+  ]
+}

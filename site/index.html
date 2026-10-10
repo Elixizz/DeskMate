@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeskMate · Lapis Studios</title>
+<meta name="description" content="DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.">
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><img src="icon.png" alt="" width="28" height="28">DeskMate</a>
+  <nav>
+    <a href="#plugins">Plugins</a>
+    <a href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Build a plugin</a>
+    <a href="https://github.com/Elixizz/DeskMate">GitHub</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Your corner of the screen,<br><span>upgraded.</span></h1>
+      <p class="lead">DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest, like trackers, tools and games.</p>
+      <div class="cta">
+        <a class="btn" href="download/DeskMate-Setup.exe" download>Download for Windows</a>
+        <span class="muted small">Version <span id="ver">1.0.2</span> · Windows 10 and 11 · free</span>
+      </div>
+      <p class="muted small note">Windows may say "Windows protected your PC" because the installer isn't code-signed yet. Click <b>More info</b>, then <b>Run anyway</b>.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="widget">
+        <div class="w-head"><b>DeskMate</b><span class="kbd">Ctrl+Alt+D</span><span class="dots"><i class="g"></i><i></i><i></i></span></div>
+        <div class="w-tabs"><span class="on">Music</span><span>Claude</span><span>Vault</span><span>Plugins</span></div>
+        <div class="w-card"><div class="art"></div><div><b>Late Night Lofi</b><div class="muted small">Free radio · live</div></div></div>
+        <div class="w-row"></div><div class="w-row short"></div><div class="w-row"></div>
+        <div class="w-bar"><span class="play"></span><div class="seek"><i></i></div></div>
+      </div>
+      <div class="pill"><i class="g"></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <h3>Password vault</h3>
+      <p>AES-256 encrypted and stored only on your PC. Built-in 2FA codes with QR import, an optional phone code to unlock, and an optional lock to your Windows account with automatic encrypted backups.</p>
+    </div>
+    <div class="feature">
+      <h3>Music</h3>
+      <p>Play your own files and free internet radio, and control YouTube Music, Spotify or anything else playing on your PC, from a player bar and global hotkeys.</p>
+    </div>
+    <div class="feature">
+      <h3>Plugins for everything else</h3>
+      <p>Plugins are small web pages that get their own tab. They run sandboxed: they can't see your vault, your files or other plugins, and only get what you approve.</p>
+    </div>
+  </section>
+
+  <section id="plugins" class="plugins">
+    <h2>Verified plugins</h2>
+    <p class="muted">Reviewed by Lapis Studios. Install them from DeskMate's <b>Plugins → Store</b> tab; DeskMate checks every download against the checksum below.</p>
+    <div id="pluginList" class="plist"><div class="muted">Loading plugins…</div></div>
+    <p class="muted small">DeskMate 1.0.2 and newer use this store automatically. On an older version, paste <code>https://deskmate.lapistudios.com/plugins/index.json</code> into Plugins → Store.</p>
+  </section>
+
+  <section class="build">
+    <h2>Build your own</h2>
+    <p>If you can make a web page, you can make a DeskMate plugin: a <code>manifest.json</code>, an HTML page, done. You can share plugins for free or sell them.</p>
+    <a class="btn ghost" href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Read the plugin guide</a>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 <a href="https://lapistudios.com">Lapis Studios</a></span>
+  <span><a href="https://github.com/Elixizz/DeskMate/blob/main/LICENSE">License</a> · <a href="https://github.com/Elixizz/DeskMate">Source on GitHub</a></span>
+</footer>
+
+<script>
+const PERMS = {
+  notifications: 'Windows notifications', status: 'Status dots', 'clipboard-write': 'Copy to clipboard', 'open-links': 'Open links',
+  hotkeys: 'Global shortcuts', 'music-files': 'Your music folder', 'media-control': 'Control other apps’ media', claude: 'Your Claude Code conversations',
+};
+const HIGH = new Set(['media-control', 'claude', 'net:*']);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const label = (p) => (p.startsWith('net:') ? (p === 'net:*' ? 'Any website' : p.slice(4)) : PERMS[p] || p);
+fetch('plugins/index.json', { cache: 'no-store' })
+  .then((r) => r.json())
+  .then((idx) => {
+    document.getElementById('pluginList').innerHTML = idx.plugins.map((p) => `
+      <article class="plug">
+        <div class="plug-head"><h3>${esc(p.name)}</h3><span class="muted small">v${esc(p.version)} · ${esc(p.author)}</span></div>
+        <p>${esc(p.description)}</p>
+        <div class="perms">${p.permissions.length ? p.permissions.map((x) => `<span class="perm${HIGH.has(x) ? ' high' : ''}">${esc(label(x))}</span>`).join('') : '<span class="perm">No special permissions</span>'}</div>
+        <div class="muted tiny" title="sha256">sha256 ${esc(p.sha256.slice(0, 16))}…</div>
+      </article>`).join('');
+  })
+  .catch(() => { document.getElementById('pluginList').innerHTML = '<div class="muted">Couldn’t load the plugin list.</div>'; });
+</script>
+</body>
+</html>
