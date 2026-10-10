@@ -12,6 +12,8 @@ Press **Ctrl+Alt+D** and it pops up in the bottom-right corner of your screen. P
 
 ## Plugins
 
+**Want to build one? Read the [plugin guide](docs/PLUGINS.md).**
+
 Everything else is a plugin: a small web page (HTML, CSS, JavaScript) that gets its own tab, a bar at the bottom, or both. Plugins run sandboxed. They can't see your vault, your files or other plugins, and they only get the abilities you approve when installing them.
 
 - Install from the **Plugins** tab: from the plugin store, or **From folder** while you're building one.
