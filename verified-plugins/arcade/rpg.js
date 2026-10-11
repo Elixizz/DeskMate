@@ -54,7 +54,7 @@
   }
   // Dark fantasy palette: muted, cold and dim. The lighting pass (see drawLight) darkens it further.
   function drawTile(g, t, px, py, r, m) {
-    const base = { [T.G]: '#26331f', [T.FLOWER]: '#26331f', [T.TREE]: '#26331f', [T.WATER]: '#142838', [T.PATH]: '#4a3e30', [T.SAND]: '#3d3530', [T.ROCK]: '#3d3530', [T.WALL]: '#33281f', [T.ROOF]: '#3b2322', [T.DOOR]: '#140d08', [T.FLOOR]: '#24262c', [T.DWALL]: '#101114', [T.LAVA]: '#8f2a0b', [T.SNOW]: '#7d8893', [T.PINE]: '#7d8893', [T.ICE]: '#465f70', [T.BRIDGE]: '#33271a', [T.STONE]: '#3f3d37', [T.CAVE]: '#050505', [T.FENCE]: '#26331f', [T.DARK]: '#050608' }[t];
+    const base = { [T.G]: '#26331f', [T.FLOWER]: '#26331f', [T.TREE]: '#26331f', [T.WATER]: '#142838', [T.PATH]: '#4a3e30', [T.SAND]: '#3d3530', [T.ROCK]: '#3d3530', [T.WALL]: '#33281f', [T.ROOF]: '#3b2322', [T.DOOR]: '#140d08', [T.FLOOR]: '#24262c', [T.DWALL]: '#101114', [T.LAVA]: '#4a1606', [T.SNOW]: '#7d8893', [T.PINE]: '#7d8893', [T.ICE]: '#465f70', [T.BRIDGE]: '#33271a', [T.STONE]: '#3f3d37', [T.CAVE]: '#050505', [T.FENCE]: '#26331f', [T.DARK]: '#050608' }[t];
     const ground = m.id === 'hills' ? '#3d3530' : m.id === 'peak' ? '#7d8893' : base;
     g.fillStyle = [T.TREE, T.ROCK, T.PINE].includes(t) ? ground : base; g.fillRect(px, py, TS, TS);
     if (t === T.G || t === T.FLOWER || t === T.FENCE) { g.fillStyle = '#1e2918'; for (let i = 0; i < 4; i++) g.fillRect(px + r() * 14, py + r() * 14, 2, 2); g.fillStyle = '#2f3d26'; g.fillRect(px + r() * 14, py + r() * 14, 1, 3); }
@@ -69,7 +69,7 @@
     if (t === T.DOOR) { g.fillStyle = '#2a1c10'; g.fillRect(px + 3, py + 2, 10, 14); g.fillStyle = '#d9a441'; g.fillRect(px + 10, py + 9, 2, 2); }
     if (t === T.FLOOR || t === T.STONE) { g.strokeStyle = t === T.FLOOR ? '#1c1d22' : '#35332e'; g.lineWidth = 1; g.strokeRect(px + 0.5, py + 0.5, TS - 1, TS - 1); if (r() < 0.15) { g.fillStyle = '#1a1b20'; g.fillRect(px + r() * 10, py + r() * 10, 4, 3); } }
     if (t === T.DWALL) { g.fillStyle = '#181a1f'; g.fillRect(px + 1, py + 1, 6, 6); g.fillRect(px + 9, py + 9, 6, 6); }
-    if (t === T.LAVA) { g.fillStyle = '#e0561a'; g.fillRect(px + r() * 10, py + r() * 12, 4, 2); }
+    if (t === T.LAVA) { g.fillStyle = '#9a3a12'; g.fillRect(px + r() * 10, py + r() * 12, 4, 2); }
     if (t === T.SNOW) { g.fillStyle = '#6c7783'; g.fillRect(px + r() * 14, py + r() * 14, 2, 2); }
     if (t === T.ICE) { g.fillStyle = '#5f7d90'; g.fillRect(px + r() * 9, py + r() * 12, 6, 1); }
     if (t === T.BRIDGE) { g.fillStyle = '#271d13'; for (let i = 0; i < TS; i += 4) g.fillRect(px, py + i, TS, 1); }
@@ -316,6 +316,8 @@
       g.fillStyle = '#3d6fb0'; g.fillRect(w / 2 - 5, h / 2 - 12, 10, 12); g.fillStyle = '#f1d3b3'; g.beginPath(); g.arc(w / 2, h / 2 - 16, 5, 0, 7); g.fill();
       g.strokeStyle = '#e6e6e6'; g.lineWidth = 2; g.beginPath(); g.moveTo(w / 2 + 6, h / 2 - 6); g.lineTo(w / 2 + 18, h / 2 - 18); g.stroke();
       g.fillStyle = '#2f6b3a'; g.beginPath(); g.ellipse(w / 2 + 40, h / 2 + 2, 8, 6, 0, 0, 7); g.fill(); g.fillStyle = '#ffcf4a'; g.fillRect(w / 2 + 36, h / 2, 2, 2); g.fillRect(w / 2 + 41, h / 2, 2, 2);
+      g.save(); g.filter = 'grayscale(1) contrast(1.25)'; g.drawImage(g.canvas, 0, 0); g.restore();
+      g.fillStyle = '#ff2a2a'; g.fillRect(w / 2 + 36, h / 2, 2, 2); g.fillRect(w / 2 + 41, h / 2, 2, 2);
     },
     start(a) {
       A = a; ui = null; saveT = 0;
@@ -455,6 +457,9 @@
       g.globalAlpha = 1;
       g.restore();
       drawLight(g, cx, cy, now);
+      // Almost black and white: grey out everything drawn so far, then add the few red accents on top.
+      g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.filter = 'grayscale(1) contrast(1.25) brightness(1.05)'; g.drawImage(g.canvas, 0, 0); g.restore();
+      drawEyes(g, cx, cy, now);
       drawHud(g);
       if (ui) drawUi(g);
     },
@@ -530,7 +535,7 @@
     hole(P.x - cx, P.y - cy - 4, (dungeon ? 74 : 104) + Math.sin(now * 9) * 1.5 + Math.sin(now * 3.1) * 1.5);
     for (let ty = Math.floor(cy / TS) - 1; ty <= Math.floor((cy + H) / TS) + 1; ty++) for (let tx = Math.floor(cx / TS) - 1; tx <= Math.floor((cx + W) / TS) + 1; tx++) {
       const t = RPG.get(world, tx, ty), x = tx * TS + 8 - cx, y = ty * TS + 8 - cy;
-      if (t === T.LAVA) { hole(x, y, 26 + Math.sin(now * 4 + tx) * 3, 0.75); warm.push([x, y, 22, '255,110,30', 0.16]); }
+      if (t === T.LAVA) { hole(x, y, 22 + Math.sin(now * 4 + tx) * 3, 0.4); warm.push([x, y, 18, '255,110,30', 0.05]); }
       if (t === T.DOOR) { hole(x, y + 6, 30, 0.7); warm.push([x, y + 6, 26, '255,170,70', 0.14]); }
       if (t === T.CAVE) hole(x, y, 14, 0.3);
     }
@@ -542,25 +547,35 @@
     g.globalCompositeOperation = 'lighter';
     for (const [x, y, r, rgb, a] of warm) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(${rgb},${a})`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
     g.globalCompositeOperation = 'source-over';
-    // eyes glow through the dark
-    for (const e of ents) { const ex = e.x - cx, ey = e.y - cy - e.r * 0.3 + (e.ai === 'fly' || e.flies || e.ai === 'boss3' ? Math.sin(now * 8 + e.t) * 2 - 4 : 0); g.fillStyle = e.boss ? '#ff3b3b' : '#ffcf4a'; g.globalAlpha = 0.9; g.fillRect(ex - 3, ey, 2, 2); g.fillRect(ex + 1, ey, 2, 2); g.globalAlpha = 1; }
     const vg = g.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.85); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.6)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+  }
+
+  // Red eyes in a grey world: the only colour on the map.
+  function drawEyes(g, cx, cy, now) {
+    for (const e of ents) {
+      const ex = e.x - cx, ey = e.y - cy - e.r * 0.3 + (e.ai === 'fly' || e.flies || e.ai === 'boss3' ? Math.sin(now * 8 + e.t) * 2 - 4 : 0);
+      const s = e.boss ? 3 : 2;
+      g.fillStyle = '#ff2a2a'; g.shadowColor = '#ff2a2a'; g.shadowBlur = e.boss ? 8 : 4;
+      g.fillRect(ex - 1 - s, ey, s, s); g.fillRect(ex + 1, ey, s, s);
+    }
+    g.shadowBlur = 0;
+    for (const f of floats) if (f.col === '#ff5d6c') { g.globalAlpha = 1 - f.t / 1.1; g.fillStyle = '#ff3b3b'; g.font = '700 10px Segoe UI'; g.textAlign = 'center'; g.fillText(f.text, f.x - cx, f.y - cy - f.t * 20); g.globalAlpha = 1; }
   }
 
   // ---------- HUD and menus ----------
   function drawHud(g) {
     g.fillStyle = '#000000aa'; g.beginPath(); g.roundRect(4, 4, 118, 30, 6); g.fill();
-    g.fillStyle = '#3a1d22'; g.fillRect(9, 9, 108, 8);
+    g.fillStyle = '#2a1414'; g.fillRect(9, 9, 108, 8);
     g.fillStyle = P.hp / P.maxHp < 0.3 ? '#ff3b3b' : '#e0484f'; g.fillRect(9, 9, 108 * Math.max(0, P.hp / P.maxHp), 8);
     g.fillStyle = '#fff'; g.font = '700 8px Segoe UI'; g.textAlign = 'center'; g.fillText(`${Math.ceil(P.hp)} / ${P.maxHp}`, 63, 16);
-    g.fillStyle = '#1d2a3a'; g.fillRect(9, 20, 108, 3); g.fillStyle = '#5ab0ff'; g.fillRect(9, 20, 108 * (P.xp / xpNeed(P.lvl)), 3);
+    g.fillStyle = '#222'; g.fillRect(9, 20, 108, 3); g.fillStyle = '#d8d8d8'; g.fillRect(9, 20, 108 * (P.xp / xpNeed(P.lvl)), 3);
     g.textAlign = 'left'; g.fillStyle = '#ddd'; g.font = '9px Segoe UI'; g.fillText(`Lv ${P.lvl}   ${P.gold}g   🧪${P.potions}`, 9, 31);
     if (boss && !boss.dead && Math.hypot(boss.x - P.x, boss.y - P.y) < 230) {
       g.fillStyle = '#000000aa'; g.fillRect(40, H - 22, W - 80, 16);
       g.fillStyle = '#5a1d22'; g.fillRect(44, H - 13, W - 88, 5); g.fillStyle = '#ff3b3b'; g.fillRect(44, H - 13, (W - 88) * Math.max(0, boss.hp / boss.max), 5);
       g.fillStyle = '#fff'; g.font = '700 8px Segoe UI'; g.textAlign = 'center'; g.fillText(boss.name, W / 2, H - 15);
     }
-    if (banner) { g.globalAlpha = Math.min(1, banner.t); g.fillStyle = '#000000b0'; g.font = '700 12px Segoe UI'; const w = Math.min(W - 20, g.measureText(banner.text).width + 24); g.beginPath(); g.roundRect(W / 2 - w / 2, 42, w, 22, 8); g.fill(); g.fillStyle = '#ffe9a8'; g.textAlign = 'center'; g.fillText(banner.text, W / 2, 57, W - 30); g.globalAlpha = 1; }
+    if (banner) { g.globalAlpha = Math.min(1, banner.t); g.fillStyle = '#000000b0'; g.font = '700 12px Segoe UI'; const w = Math.min(W - 20, g.measureText(banner.text).width + 24); g.beginPath(); g.roundRect(W / 2 - w / 2, 42, w, 22, 8); g.fill(); g.fillStyle = '#f0f0f0'; g.textAlign = 'center'; g.fillText(banner.text, W / 2, 57, W - 30); g.globalAlpha = 1; }
   }
   function wrap(g, text, x, y, maxW, lh) {
     const words = text.split(' '); let line = '';
@@ -573,7 +588,7 @@
     g.textAlign = 'left';
     if (ui.mode === 'talk') {
       panel(g, 8, H - 86, W - 16, 78);
-      g.fillStyle = '#ffd23d'; g.font = '700 11px Segoe UI'; g.fillText(ui.name, 18, H - 68);
+      g.fillStyle = '#ffffff'; g.font = '700 11px Segoe UI'; g.fillText(ui.name, 18, H - 68);
       g.fillStyle = '#eee'; g.font = '11px Segoe UI'; wrap(g, ui.lines[ui.i] || '', 18, H - 52, W - 40, 14);
       g.fillStyle = '#999'; g.font = '9px Segoe UI'; g.textAlign = 'right'; g.fillText('E / click ▸', W - 16, H - 14);
       return;
@@ -581,14 +596,14 @@
     if (ui.mode === 'shop') {
       const items = shopItems(ui.npc);
       panel(g, 20, 30, W - 40, 50 + items.length * 30);
-      g.fillStyle = '#ffd23d'; g.font = '700 12px Segoe UI'; g.fillText(ui.npc.name, 32, 50);
+      g.fillStyle = '#ffffff'; g.font = '700 12px Segoe UI'; g.fillText(ui.npc.name, 32, 50);
       g.fillStyle = '#ccc'; g.font = '10px Segoe UI'; g.textAlign = 'right'; g.fillText(`You have ${P.gold}g`, W - 32, 50); g.textAlign = 'left';
       items.forEach((it, i) => {
         const y = 70 + i * 30, owned = P.owned.includes(it.id), worn = P.weapon === it.id || P.armor === it.id;
         g.fillStyle = i === ui.sel ? '#ffffff22' : '#ffffff08'; g.fillRect(30, y, W - 60, 26);
         g.fillStyle = '#fff'; g.font = '600 11px Segoe UI'; g.fillText(`${i + 1}. ${it.name}`, 38, y + 12);
         g.fillStyle = '#aaa'; g.font = '9.5px Segoe UI'; g.fillText(it.kind === 'weapon' ? `Attack ${it.atk}` : it.kind === 'armor' ? `Defense ${it.def}` : `Heals ${it.heal} (you have ${P.potions}/9)`, 38, y + 22);
-        g.textAlign = 'right'; g.fillStyle = worn ? '#3ccf8e' : owned ? '#9ad' : P.gold >= it.price ? '#ffd23d' : '#776'; g.font = '700 11px Segoe UI';
+        g.textAlign = 'right'; g.fillStyle = worn ? '#ffffff' : owned ? '#bbbbbb' : P.gold >= it.price ? '#e6e6e6' : '#666666'; g.font = '700 11px Segoe UI';
         g.fillText(worn ? 'Equipped' : owned ? 'Equip' : it.price + 'g', W - 38, y + 17); g.textAlign = 'left';
       });
       g.fillStyle = '#888'; g.font = '9px Segoe UI'; g.fillText('Click or press 1-4 to buy · Esc to leave', 32, 64 + items.length * 30 + 12);
@@ -596,13 +611,13 @@
     }
     if (ui.mode === 'quests') {
       panel(g, 12, 12, W - 24, H - 24);
-      g.fillStyle = '#ffd23d'; g.font = '700 13px Segoe UI'; g.fillText('Quests', 24, 34);
+      g.fillStyle = '#ffffff'; g.font = '700 13px Segoe UI'; g.fillText('Quests', 24, 34);
       let y = 52;
       const list = Object.entries(P.quests).sort((a, b) => (a[1].state === 'done') - (b[1].state === 'done'));
       if (!list.length) { g.fillStyle = '#ccc'; g.font = '11px Segoe UI'; g.fillText('No quests yet. Look for people with a "!" over them.', 24, y); }
       for (const [id, s] of list) {
         const q = QUESTS[id]; if (y > H - 30) break;
-        g.fillStyle = s.state === 'done' ? '#7b8' : q.main ? '#ffd23d' : '#fff'; g.font = '700 11px Segoe UI';
+        g.fillStyle = s.state === 'done' ? '#777' : '#fff'; g.font = '700 11px Segoe UI';
         g.fillText(`${s.state === 'done' ? '✓ ' : ''}${q.title}${s.state === 'active' ? ` (${q.type === 'kill' ? s.n : P.inv[q.item] || 0}/${q.count})` : ''}`, 24, y); y += 13;
         if (s.state === 'active') { g.fillStyle = '#bbb'; g.font = '10px Segoe UI'; y = wrap(g, q.desc, 24, y, W - 60, 12); }
         y += 5;
@@ -611,14 +626,14 @@
     }
     if (ui.mode === 'gear') {
       panel(g, 12, 12, W - 24, H - 24);
-      g.fillStyle = '#ffd23d'; g.font = '700 13px Segoe UI'; g.fillText(`Hero · Level ${P.lvl}`, 24, 34);
+      g.fillStyle = '#ffffff'; g.font = '700 13px Segoe UI'; g.fillText(`Hero · Level ${P.lvl}`, 24, 34);
       g.fillStyle = '#ddd'; g.font = '10.5px Segoe UI';
       g.fillText(`HP ${Math.ceil(P.hp)}/${P.maxHp} · Attack ${atk()} · Defense ${def()} · XP ${P.xp}/${xpNeed(P.lvl)}`, 24, 52);
       g.fillText(`Skills: ${['dash', 'spin', 'shield'].filter(has).join(', ') || 'none yet (level 2)'}`, 24, 66);
-      g.fillStyle = '#9ad'; g.fillText('Gear (click to equip):', 24, 84);
-      P.owned.forEach((id, i) => { const it = ITEMS[id], worn = P.weapon === id || P.armor === id; g.fillStyle = worn ? '#3ccf8e' : '#fff'; g.fillText(`${worn ? '▶ ' : '   '}${it.name}  (${it.kind === 'weapon' ? 'atk ' + it.atk : 'def ' + it.def})`, 30, 104 + i * 18); });
+      g.fillStyle = '#999'; g.fillText('Gear (click to equip):', 24, 84);
+      P.owned.forEach((id, i) => { const it = ITEMS[id], worn = P.weapon === id || P.armor === id; g.fillStyle = worn ? '#fff' : '#999'; g.fillText(`${worn ? '▶ ' : '   '}${it.name}  (${it.kind === 'weapon' ? 'atk ' + it.atk : 'def ' + it.def})`, 30, 104 + i * 18); });
       const bag = Object.entries(P.inv).filter(([, n]) => n > 0);
-      g.fillStyle = '#9ad'; g.fillText('Bag:', 190, 84);
+      g.fillStyle = '#999'; g.fillText('Bag:', 190, 84);
       g.fillStyle = '#fff'; g.fillText(`Potions × ${P.potions}`, 190, 104);
       bag.forEach(([id, n], i) => g.fillText(`${ITEMS[id].name} × ${n}`, 190, 122 + i * 18));
       return;
@@ -626,12 +641,12 @@
     if (ui.mode === 'map') {
       panel(g, 8, 8, W - 16, H - 16);
       const s = Math.min((W - 40) / (world.w * TS), (H - 60) / (world.h * TS)), mw = world.w * TS * s, mh = world.h * TS * s, ox = (W - mw) / 2, oy = 34;
-      g.drawImage(mapCanvas, 0, 0, world.w * TS, world.h * TS, ox, oy, mw, mh);
-      g.fillStyle = '#ffd23d'; g.font = '700 12px Segoe UI'; g.fillText(world.name, 20, 26);
-      for (const n of world.npcs) { g.fillStyle = '#ffd23d'; g.fillRect(ox + n.x * TS * s - 1.5, oy + n.y * TS * s - 1.5, 3, 3); }
-      for (const w of world.warps) { g.fillStyle = w.need && !P.flags[w.need] ? '#ff5d6c' : '#5ab0ff'; g.fillRect(ox + w.x * TS * s - 2, oy + w.y * TS * s - 2, 4, 4); }
+      g.save(); g.filter = 'grayscale(1) contrast(1.25)'; g.drawImage(mapCanvas, 0, 0, world.w * TS, world.h * TS, ox, oy, mw, mh); g.restore();
+      g.fillStyle = '#ffffff'; g.font = '700 12px Segoe UI'; g.fillText(world.name, 20, 26);
+      for (const n of world.npcs) { g.fillStyle = '#bbbbbb'; g.fillRect(ox + n.x * TS * s - 1.5, oy + n.y * TS * s - 1.5, 3, 3); }
+      for (const w of world.warps) { g.fillStyle = w.need && !P.flags[w.need] ? '#ff3b3b' : '#ffffff'; g.fillRect(ox + w.x * TS * s - 2, oy + w.y * TS * s - 2, 4, 4); }
       g.fillStyle = '#fff'; g.beginPath(); g.arc(ox + P.x * s, oy + P.y * s, 3, 0, 7); g.fill();
-      g.fillStyle = '#aaa'; g.font = '9px Segoe UI'; g.fillText('You (white) · People (yellow) · Exits (blue, red = closed)', 20, H - 16);
+      g.fillStyle = '#aaa'; g.font = '9px Segoe UI'; g.fillText('You (dot) · People (grey) · Exits (white, red = closed)', 20, H - 16);
     }
   }
 })();

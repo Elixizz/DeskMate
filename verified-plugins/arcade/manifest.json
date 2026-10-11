@@ -1,7 +1,7 @@
 {
   "id": "arcade",
   "name": "Arcade",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Lapis Studios",
   "description": "Four games for the corner of your screen: Mate Factory (build a Mate-making business), Rooftop Run (parkour), Desk Defense (24 towers, 6 desks) and Sword Quest (an open-world adventure). Games pause when you hide DeskMate. Needs DeskMate 1.8 or newer.",
   "tab": "tab.html",

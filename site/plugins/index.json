@@ -4,14 +4,14 @@
     {
       "id": "arcade",
       "name": "Arcade",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Four games for the corner of your screen: Mate Factory (build a Mate-making business), Rooftop Run (parkour), Desk Defense (24 towers, 6 desks) and Sword Quest (an open-world adventure). Games pause when you hide DeskMate. Needs DeskMate 1.8 or newer.",
       "permissions": [
         "screen-effects"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/arcade-1.0.0.zip",
-      "sha256": "666334b4ac4ccf13f0e0f7554d23a7b06ceaeabc36d15c608b7dced63ab03913"
+      "download": "https://deskmate.lapistudios.com/plugins/arcade-1.0.1.zip",
+      "sha256": "966768c30e8dafb23ddd4d8996b2eff71b6dbe429e90933035e48515e51f3fdb"
     },
     {
       "id": "calc",
@@ -24,7 +24,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.0.zip",
-      "sha256": "cd1c3d6f603fc2aa7efe01d4ba59757dbea4d57a37e09dfdbc6ba57829e7d94e"
+      "sha256": "43a19acf613bebb4ad844d6491382b63c1d21290eab54a3747275feaaa83b5ec"
     },
     {
       "id": "claude",
@@ -37,7 +37,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "a5de89169215d942a706028316b95d2bec0c7175a3127170beff48ae133326ce"
+      "sha256": "71e1a852b7d629acfed64de187f3cbbd09ec2bb126e16f94e1fddfd928453ada"
     },
     {
       "id": "clipboard",
@@ -50,7 +50,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.0.zip",
-      "sha256": "37113cf371cd0018a482e7066d382568dc5f103902930aef8461d7ff25030d39"
+      "sha256": "4d928f6ab88b737d20610935ad703194c9d0858ef76c49435555a73974570be6"
     },
     {
       "id": "gmail",
@@ -65,7 +65,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "2ab31e1356cd575562fd18af50eaae4f53736e7504ca2b626887fe889088c1aa"
+      "sha256": "bffc4ca3268d5d1783789588ca98be86167f1c22e02dd0b41fa612238dd09142"
     },
     {
       "id": "notes",
@@ -75,7 +75,7 @@
       "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.0.zip",
-      "sha256": "8642285a9fe68da9a2aae32b7fb58e9e62edbd9f785494a55c75d3481a274ef2"
+      "sha256": "ac22c19bf28347a15c2c635dd240cae3d864ee9eb33450398a32729491169972"
     },
     {
       "id": "pcmon",
@@ -87,7 +87,7 @@
         "system-info"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.0.zip",
-      "sha256": "244484084f1eba23addc8b341acbeaa2392b2232a0c41cd238054dcfe86ab11b"
+      "sha256": "3c436a8570cfd23d92befb334db147549d29276f24adb3072d5417db8bf61682"
     },
     {
       "id": "schedule-one",
@@ -97,7 +97,7 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "14898a51a3e18fd7a23336b8e40020f46a616c55d0931a54a17bb3687bcca128"
+      "sha256": "c86498ca26d7cae2b9012db33f89318a0d5f2d98e94098c2cb92d7551f9ad24c"
     },
     {
       "id": "timers",
@@ -110,7 +110,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "b5342937e88bee54a98187c02a39e465c20d58c4bdc5a150a666f4e68dac56fb"
+      "sha256": "da6303162db4534b970d225ba7f556025cb3a07aec4835261ddd1bf4e5cd225e"
     },
     {
       "id": "wallet",
@@ -123,7 +123,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/wallet-1.0.0.zip",
-      "sha256": "82f66ad81dec686f8864d5aebf3bf1c49ebcb794b5109f730670d97b2b0ef5d1"
+      "sha256": "8f17a8c807bedbd0679475d9235a76df2915b07a74ddffaed1d288e4d3e37722"
     },
     {
       "id": "weather",
@@ -136,7 +136,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "d787eec57b66479f49169156daf66fd5a904fa03545bb7edbecc3a418211e001"
+      "sha256": "e35f8da088fe00ceec06246e6aa31d2ca1004e4795f848d221f9614932241964"
     }
   ]
 }
