@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "c170cae7b0c9cb94d95cd3dadd3f01cfd726ab981b94f754ee9b94849902e1e0",
-  "notes": "Cleaner with lots of add-ons: tabs that do not fit go into a More menu, drag tabs to reorder them, and Add-ons moved to a button in the header."
+  "sha256": "d82486e5826f4cb2ca3c9e5136627990efb4f45ed93abb2342630ad4ab416c93",
+  "notes": "Settings > Updates: when Check now finds a new DeskMate, a Download now button installs it right there."
 }

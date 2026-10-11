@@ -80,6 +80,7 @@ async function renderSettings() {
     <div class="card sect"><div class="stitle">Updates</div>
       <div class="srow"><span class="grow">DeskMate ${esc(p.version)}</span><button class="ghost" id="checkUpd">Check now</button></div>
       <div class="muted small" id="updMsg"></div>
+      <button id="dlNow" class="hidden">Download now</button>
       ${toggle('autoUpdatePlugins', p.autoUpdatePlugins, 'Update add-ons automatically', "Updates that ask for new permissions always wait for you")}
     </div>
     <div class="muted small" style="text-align:center">DeskMate by Lapis Studios</div>`;
@@ -105,13 +106,23 @@ body().addEventListener('click', async (e) => {
   if (e.target.id === 'checkUpd') {
     e.target.disabled = true; $('#updMsg').textContent = 'Checking...';
     const r = await api.prefs.checkUpdates();
-    const a = r.app.error ? `Couldn't reach the update server` : r.app.available ? `DeskMate ${r.app.latest} is ready: see the Plugins tab` : 'DeskMate is up to date';
+    const a = r.app.error ? `Couldn't reach the update server` : r.app.available ? `DeskMate ${r.app.latest} is available` : 'DeskMate is up to date';
     const pl = r.plugins.error ? '' : r.plugins.updated.length ? ` Updated ${r.plugins.updated.join(', ')}.` : r.plugins.waiting.length ? ' Some add-on updates need your OK in Plugins.' : ' Add-ons are up to date.';
     $('#updMsg').textContent = a + '.' + pl;
+    const dl = $('#dlNow');
+    dl.classList.toggle('hidden', !(r.app.available && r.app.canInstall));
+    dl.textContent = `Download ${r.app.latest || ''} now`;
     e.target.disabled = false;
     refreshPlugins();
   }
   if (e.target.id === 'hotkeyBtn') recordHotkey(e.target);
+  if (e.target.id === 'dlNow') {
+    const b = e.target;
+    b.disabled = true; b.textContent = 'Downloading...';
+    $('#updMsg').textContent = 'DeskMate will close, install the update and reopen by itself.';
+    try { await api.update.install(); b.textContent = 'Restarting...'; }
+    catch (err) { $('#updMsg').textContent = errText(err); b.disabled = false; b.textContent = 'Download now'; }
+  }
 });
 
 body().addEventListener('change', (e) => {
