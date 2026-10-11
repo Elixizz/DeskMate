@@ -28,9 +28,12 @@ Everything else is a plugin: a small web page (HTML, CSS, JavaScript) that gets 
 
 ## Install
 
-Download `DeskMate Setup <version>.exe` from Releases and run it. No admin rights needed. The installer isn't code-signed yet, so Windows may show "Windows protected your PC": click **More info**, then **Run anyway**.
+Get `DeskMate-Installer.exe` (about 50 KB) from [deskmate.lapistudios.com](https://deskmate.lapistudios.com) or Releases and run it: it downloads the newest DeskMate, checks its checksum and installs it. Or download the full `DeskMate-Setup-<version>.exe` from Releases to install offline. No admin rights needed. The installer isn't code-signed yet, so Windows may show "Windows protected your PC": click **More info**, then **Run anyway**.
 
 ## Build from source
+
+The web installer's source is `tools/web-installer/DeskMateInstaller.cs`; build it with the C# compiler that comes with Windows (command at the top of the file).
+
 
 Requires Windows 10/11 and Node.js 18+.
 
