@@ -155,6 +155,7 @@ Ask only for what your Mate needs. The install screen lists every permission in 
 | `claude` | `deskmate.claude.*`: read Claude Code conversations and send replies as the user | High |
 | `gmail` | `deskmate.gmail.*`: sign in with Google and read Gmail (senders, subjects, previews, sign-in codes). Read-only | High |
 | `wallet` | `deskmate.wallet.*`: the user's crypto balances and addresses, and asking DeskMate to send (the user approves every send in DeskMate's own window with their wallet password). Never gives access to the recovery phrase, keys or password. DeskMate 1.7+ | High |
+| `screen-effects` | `deskmate.fx.*`: small built-in animations just outside the DeskMate panel (click-through, they vanish by themselves). DeskMate 1.8+ | Low |
 | `system-info` | `deskmate.system.stats()`: CPU, GPU, memory, disk and network usage. DeskMate 1.6+ | Low |
 | `clipboard-history` | `deskmate.clipboard.*`: text the user copies while DeskMate runs. Kept in memory only, and passwords copied from the Vault are never included. DeskMate 1.6+ | High |
 
@@ -208,6 +209,7 @@ Every Mate page gets a global `deskmate` object. Calls that do something return 
 | `deskmate.wallet.setup()` / `.manage()` | `wallet` | Opens DeskMate's own setup or wallet-settings screen |
 | `deskmate.wallet.qr(text)` | `wallet` | A QR code image (data URL) for an address |
 | `deskmate.wallet.onChange(fn)` | `wallet` | Called after a send, setup, removal or network switch |
+| `deskmate.fx.escape({ y, color, size })` | `screen-effects` | A little bug crawls out of the left side of DeskMate at height `y` (pixels from the top of your page), walks about 100 px across the screen and pops. Up to 12 a second |
 | `deskmate.system.stats()` | `system-info` | `{ cpu: { percent, name, cores }, memory: { usedGB, totalGB, percent }, gpu: { percent, temp, name, vramUsedGB, vramTotalGB }, disk: { percent }, network: { downBps, upBps }, uptimeHours }`. Values the PC can't report are `null` (GPU temperature and VRAM need an NVIDIA card). Sampling starts on the first call and stops 20 seconds after the last, so only poll while your tab is visible |
 | `deskmate.clipboard.history()` | `clipboard-history` | Recent copies, newest first: `[{ id, text, time }]` (up to 50) |
 | `deskmate.clipboard.onCopy(fn)` | `clipboard-history` | Calls `fn({ id, text, time })` for each new copy |

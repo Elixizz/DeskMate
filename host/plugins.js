@@ -21,6 +21,7 @@ const PERMISSIONS = {
   claude: { label: 'Read your Claude Code conversations and send replies as you', risk: 'high' },
   gmail: { label: 'Read your Gmail (senders, subjects, previews and sign-in codes). It cannot send or delete', risk: 'high' },
   wallet: { label: 'See your crypto wallet\'s balances and addresses, and ask you to approve sends in DeskMate\'s own window. It never sees your recovery phrase or password', risk: 'high' },
+  'screen-effects': { label: 'Show small animations just outside the DeskMate panel (they can\'t be clicked and vanish by themselves)', risk: 'low' },
   'system-info': { label: 'See your PC\'s CPU, GPU, memory, disk and network usage', risk: 'low' },
   'clipboard-history': { label: 'See text you copy, while DeskMate runs (never passwords copied from the Vault)', risk: 'high' },
 };
@@ -37,6 +38,7 @@ const byWebContents = new Map(); // webContents.id -> id
 const statusByPlugin = new Map();
 const badgeByPlugin = new Map();
 const soundAt = new Map();
+const fxCount = new Map();
 let stagedInstall = null;       // { dir, manifest, source } waiting for the user's consent
 
 // ---------- manifests & permissions ----------
@@ -350,6 +352,15 @@ const API = {
     return ctx.caps.walletUi('send', q, loaded.get(id).manifest.name);
   }],
   'wallet.qr': [['wallet'], (id, text) => require('qrcode').toDataURL(String(text).slice(0, 200), { margin: 1, width: 240 })],
+  // A fixed set of host-drawn effects beside the panel, rate-limited; a Mate can't draw arbitrary things on screen.
+  'fx.escape': [['screen-effects'], (id, effect) => {
+    const n = fxCount.get(id) || { t: 0, c: 0 }, now = Date.now();
+    if (now - n.t > 1000) { n.t = now; n.c = 0; }
+    if (++n.c > 12) return false;
+    fxCount.set(id, n);
+    const view = loaded.get(id)?.tab;
+    return ctx.caps.fx.play(ctx.win(), view ? view.getBounds() : null, effect || {});
+  }],
   'system.stats': [['system-info'], () => throttled('sysinfo', 900, () => ctx.caps.sysinfo.stats())],
   // History lives in the host's memory only; the Mate gets a copy and new entries as they happen.
   'clipboard.history': [['clipboard-history'], () => { syncClipboard(); return ctx.caps.clip.list(); }],

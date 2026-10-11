@@ -1,6 +1,6 @@
 {
-  "version": "1.7.0",
+  "version": "1.8.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "068eeb2657cee3d4eb928dc13c71ad305c8290a3d9e73f7f4fadb5b905a95760",
-  "notes": "New Wallet Mate: a crypto wallet for Bitcoin, Ethereum and Solana (plus USDC and other tokens), with every send approved in DeskMate's own window."
+  "sha256": "27d06bd9efddf3968cdee7281651b7f7ec7e054516de3b033b15aea2e4eb7894",
+  "notes": "New Arcade Mate: Mate Factory, Rooftop Run, Desk Defense and Sword Quest. Bugs that escape Desk Defense crawl out onto your screen."
 }

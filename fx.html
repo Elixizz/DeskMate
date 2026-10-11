@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; } canvas { display: block; }</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+// Escaping bugs: walk ~100 px left from the panel's edge, then pop into particles.
+const cv = document.getElementById('c'), g = cv.getContext('2d');
+let items = [], parts = [], running = false;
+function size() { const d = devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px'; g.setTransform(d, 0, 0, d, 0, 0); }
+addEventListener('resize', size); size();
+fx.onPlay((m) => {
+  items.push({ x: innerWidth + 4, y: m.y, color: m.color, r: m.size, walked: 0, t: 0, wob: Math.random() * 6 });
+  if (!running) { running = true; requestAnimationFrame(tick); }
+});
+let last = performance.now();
+function tick(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  g.clearRect(0, 0, innerWidth, innerHeight);
+  for (const b of items) {
+    b.t += dt;
+    const step = 70 * dt; b.x -= step; b.walked += step;
+    const leg = Math.sin(b.t * 22) * 2;
+    g.strokeStyle = '#222'; g.lineWidth = 1.2;
+    for (const dx of [-b.r * 0.6, 0, b.r * 0.6]) { g.beginPath(); g.moveTo(b.x + dx, b.y); g.lineTo(b.x + dx + leg, b.y - b.r - 2); g.moveTo(b.x + dx, b.y); g.lineTo(b.x + dx - leg, b.y + b.r + 2); g.stroke(); }
+    g.fillStyle = b.color; g.beginPath(); g.ellipse(b.x, b.y, b.r * 1.2, b.r * 0.85, 0, 0, 7); g.fill();
+    g.fillStyle = '#000a'; g.beginPath(); g.arc(b.x - b.r, b.y, b.r * 0.5, 0, 7); g.fill();
+    if (b.walked >= 100) {
+      b.done = true;
+      for (let i = 0; i < 26; i++) { const a = Math.random() * 7, s = 40 + Math.random() * 140; parts.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, t: 0, life: 0.4 + Math.random() * 0.4, c: i % 3 ? b.color : (i % 2 ? '#ffd23d' : '#ff8a3d') }); }
+    }
+  }
+  items = items.filter((b) => !b.done);
+  for (const p of parts) {
+    p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt;
+    g.globalAlpha = Math.max(0, 1 - p.t / p.life); g.fillStyle = p.c; g.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+  }
+  g.globalAlpha = 1;
+  parts = parts.filter((p) => p.t < p.life);
+  if (items.length || parts.length) requestAnimationFrame(tick);
+  else { running = false; g.clearRect(0, 0, innerWidth, innerHeight); }
+}
+</script>
+</body>
+</html>

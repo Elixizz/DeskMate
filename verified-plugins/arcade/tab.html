@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <section id="menu">
+    <div class="title">Arcade</div>
+    <div id="cards" class="cards"></div>
+    <div class="row muted small foot"><span class="grow">Games pause when you hide DeskMate.</span><button id="mute" class="icon" title="Sound on/off">&#x266A;</button></div>
+  </section>
+  <section id="play" class="hidden">
+    <div class="bar">
+      <button id="back" class="ghost">&#x2039; Games</button>
+      <span id="gname" class="grow"></span>
+      <span id="hud" class="muted small"></span>
+      <button id="pauseBtn" class="icon" title="Pause (P)">&#x2016;</button>
+    </div>
+    <div id="stage"><canvas id="cv"></canvas><div id="dom" class="dom hidden"></div><div id="overlay" class="overlay hidden"></div></div>
+    <div id="help" class="muted small help"></div>
+  </section>
+  <script src="common.js"></script>
+  <script src="factory.js"></script>
+  <script src="runner.js"></script>
+  <script src="td.js"></script>
+  <script src="rpg-data.js"></script>
+  <script src="rpg.js"></script>
+  <script src="tab.js"></script>
+</body>
+</html>

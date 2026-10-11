@@ -1,0 +1,74 @@
+body.page { height: 100%; padding: 8px; gap: 6px; }
+#menu, #play { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.title { font-size: 18px; font-weight: 800; letter-spacing: .02em; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; min-height: 0; overflow-y: auto; align-content: start; }
+.gcard { background: var(--card); border-radius: 12px; padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left; color: var(--text); font-weight: 500; border: 1px solid transparent; }
+.gcard:hover { background: var(--card); border-color: var(--accent); }
+.gcard canvas { width: 100%; height: 86px; display: block; }
+.gcard .info { padding: 7px 9px 9px; display: flex; flex-direction: column; gap: 2px; }
+.gcard b { font-size: 13.5px; }
+.gcard span { font-size: 11px; color: var(--muted); }
+.gcard .best { color: var(--accent); font-weight: 600; }
+.foot { margin-top: auto; }
+#mute.off { opacity: .4; text-decoration: line-through; }
+.bar { display: flex; align-items: center; gap: 8px; }
+#gname { font-weight: 700; }
+#hud { font-variant-numeric: tabular-nums; }
+#stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+#cv { display: block; border-radius: 10px; touch-action: none; outline: none; }
+.overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: color-mix(in srgb, var(--bg) 78%, transparent); border-radius: 10px; text-align: center; padding: 16px; }
+.overlay .big { font-size: 22px; font-weight: 800; }
+.overlay .sub { color: var(--muted); font-size: 12.5px; max-width: 260px; }
+.help { text-align: center; min-height: 15px; }
+.overlay.screen { justify-content: flex-start; align-items: stretch; overflow-y: auto; text-align: left; background: var(--bg); padding: 10px; gap: 8px; }
+.overlay.screen h3 { margin: 0; font-size: 15px; }
+.mapgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mapcard { background: var(--card); border-radius: 10px; padding: 6px; display: flex; flex-direction: column; gap: 4px; color: var(--text); font-weight: 500; text-align: left; border: 1px solid transparent; }
+.mapcard:hover:not(:disabled) { border-color: var(--accent); background: var(--card); }
+.mapcard canvas { width: 100%; border-radius: 6px; display: block; }
+.mapcard b { font-size: 12.5px; } .mapcard span { font-size: 10.5px; color: var(--muted); }
+.mapcard:disabled { opacity: .45; }
+.tgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.tcard { background: var(--card); border-radius: 8px; padding: 5px 3px; display: flex; flex-direction: column; align-items: center; gap: 1px; color: var(--text); font-weight: 500; border: 2px solid transparent; position: relative; }
+.tcard:hover { background: var(--line); }
+.tcard .em { font-size: 20px; line-height: 1.1; font-family: "Segoe UI Emoji", sans-serif; }
+.tcard b { font-size: 10px; text-align: center; line-height: 1.15; }
+.tcard span { font-size: 9.5px; color: var(--muted); }
+.tcard.locked { opacity: .55; } .tcard.locked .em { filter: grayscale(1); }
+.tcard.inload { border-color: var(--accent); }
+.tcard .slot { position: absolute; top: 2px; right: 4px; font-size: 9px; color: var(--accent); font-weight: 800; }
+.tdinfo { background: var(--card); border-radius: 8px; padding: 8px; font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+.xpline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.xpline b { color: var(--accent); }
+.dom { position: absolute; inset: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+/* Mate Factory */
+.mf-head { display: flex; align-items: flex-end; gap: 8px; }
+.mf-cash { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.mf-rate { font-size: 11.5px; }
+.mf-rate.neg { color: var(--bad); }
+.mf-tabs { display: flex; gap: 4px; }
+.mf-tabs button { flex: 1; padding: 5px 2px; font-size: 12px; }
+.mf-card { background: var(--card); border-radius: 10px; padding: 9px 10px; display: flex; flex-direction: column; gap: 6px; }
+.mf-card h4 { margin: 0; font-size: 13.5px; display: flex; gap: 6px; align-items: center; }
+.mf-bar { height: 7px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.mf-bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .2s; }
+.mf-bar.design i { background: #a77bff; } .mf-bar.test i { background: #3ccf8e; } .mf-bar.pop i { background: #3d9bff; }
+.mf-kv { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
+.mf-kv b { color: var(--text); font-variant-numeric: tabular-nums; }
+.mf-clicks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.mf-clicks button { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px; font-size: 12px; }
+.mf-clicks button span { font-size: 18px; line-height: 1; font-family: "Segoe UI Emoji", sans-serif; }
+.mf-clicks button small { font-weight: 500; font-size: 10px; opacity: .8; }
+.mf-row { display: flex; align-items: center; gap: 8px; }
+.mf-row .em { font-size: 20px; width: 26px; text-align: center; font-family: "Segoe UI Emoji", sans-serif; }
+.mf-row .grow { display: flex; flex-direction: column; min-width: 0; }
+.mf-row .grow b { font-size: 12.5px; }
+.mf-row .grow span { font-size: 10.5px; color: var(--muted); }
+.mf-row button { font-size: 11.5px; padding: 5px 8px; min-width: 74px; }
+.mf-stars { color: #ffc93d; letter-spacing: 1px; }
+.mf-float { position: fixed; pointer-events: none; font-weight: 800; color: var(--accent); animation: mffloat .8s ease-out forwards; }
+@keyframes mffloat { to { transform: translateY(-36px); opacity: 0; } }
+.mf-idea { text-align: left; display: flex; flex-direction: column; gap: 2px; background: var(--panel); color: var(--text); font-weight: 500; border: 1px solid var(--line); }
+.mf-idea:hover:not(:disabled) { border-color: var(--accent); background: var(--panel); }
+.mf-idea b { font-size: 12.5px; } .mf-idea span { font-size: 10.5px; color: var(--muted); }
+.mf-strike { color: var(--bad); font-size: 11.5px; font-weight: 600; }

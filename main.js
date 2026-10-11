@@ -28,6 +28,7 @@ const theme = require('./host/theme');
 const sysinfo = require('./host/sysinfo');
 const clip = require('./host/cliphist');
 const wallet = require('./host/wallet');
+const fx = require('./host/fx');
 
 let win, tray, pinned = false;
 
@@ -73,7 +74,7 @@ function createWindow() {
   win.loadFile('index.html');
   win.on('blur', () => { if (!pinned && !win.webContents.isDevToolsOpened()) win.hide(); });
   win.on('show', () => syncMini());
-  win.on('hide', () => { syncMini(); plugins.broadcast('hidden'); });
+  win.on('hide', () => { syncMini(); plugins.broadcast('hidden'); fx.hide(); });
 }
 
 function trayIcon() {
@@ -130,7 +131,7 @@ app.whenReady().then(() => {
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
     theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
-    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip, wallet, walletUi },
+    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip, wallet, walletUi, fx },
   });
   win.webContents.once('did-finish-load', () => {
     plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate();

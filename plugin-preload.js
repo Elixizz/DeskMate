@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('deskmate', {
   copyText: (text) => call('copyText', text),
   status: { set: (s) => call('status.set', s) },
   system: { stats: () => call('system.stats') },
+  fx: { escape: (effect) => call('fx.escape', effect) },
   wallet: {
     status: () => call('wallet.status'),
     balances: () => call('wallet.balances'),
