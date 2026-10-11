@@ -24,34 +24,105 @@ $('#pinBtn').onclick = async () => $('#pinBtn').classList.toggle('on', await api
 $('#shrinkBtn').onclick = () => api.mini.shrink();
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') api.hide(); });
 
+// Tab row: add-on tabs plus Vault, in the order the user dragged them into. Whatever doesn't fit the width goes
+// into a "More" menu; picking a tab from there swaps it into the last visible spot.
+const tabNav = $('#tabs');
+let menuOpen = false;
+function tabOrder() { return Array.isArray(settings?.tabOrder) ? settings.tabOrder : []; }
 function renderTabs() {
-  const nav = $('#tabs');
-  nav.querySelectorAll('.ptab').forEach((b) => b.remove());
-  const first = nav.firstElementChild;
+  tabNav.querySelectorAll('.ptab').forEach((b) => b.remove());
+  const vault = tabNav.querySelector('[data-tab="vault"]');
   for (const p of pluginList.filter((x) => x.enabled && x.hasTab)) {
     const b = document.createElement('button');
     b.className = 'tab ptab'; b.dataset.tab = 'p:' + p.id;
     b.innerHTML = esc(p.name) + (p.badge ? ` <span class="badge">${p.badge}</span>` : '');
-    nav.insertBefore(b, first);
+    tabNav.insertBefore(b, vault);
   }
+  // saved order first, then anything new in its natural place
+  const order = tabOrder();
+  const tabs = $$('nav#tabs .tab').sort((a, b) => {
+    const ia = order.indexOf(a.dataset.tab), ib = order.indexOf(b.dataset.tab);
+    return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+  });
+  tabs.forEach((b) => tabNav.insertBefore(b, $('#moreBtn')));
   $$('.tab').forEach((b) => { b.onclick = () => selectTab(b.dataset.tab); b.classList.toggle('active', b.dataset.tab === activeTab); });
-  tabEdges();
+  tabs.forEach((b) => (b.draggable = true));
+  fitTabs();
 }
-// Too many tabs for the width: the row scrolls sideways with the mouse wheel, and fades at an edge with more tabs past it.
-const tabNav = $('#tabs');
-function tabEdges() {
-  tabNav.classList.toggle('more-left', tabNav.scrollLeft > 2);
-  tabNav.classList.toggle('more-right', tabNav.scrollLeft + tabNav.clientWidth < tabNav.scrollWidth - 2);
+function fitTabs() {
+  const tabs = $$('nav#tabs .tab'), more = $('#moreBtn');
+  tabNav.classList.add('measuring');
+  tabs.forEach((b) => b.classList.remove('overflow'));
+  more.classList.add('hidden');
+  if (tabNav.scrollWidth > tabNav.clientWidth + 1) {
+    more.classList.remove('hidden');
+    const room = tabNav.clientWidth - more.offsetWidth - 8;
+    let used = 0, hidden = [];
+    for (const b of tabs) { used += b.offsetWidth + 4; if (used > room) hidden.push(b); }
+    // keep the open tab visible: it takes the place of the last tab that fits
+    const active = tabs.find((b) => b.dataset.tab === activeTab);
+    if (active && hidden.includes(active)) {
+      const lastShown = tabs.filter((b) => !hidden.includes(b)).pop();
+      hidden = hidden.filter((b) => b !== active);
+      if (lastShown) hidden.unshift(lastShown);
+    }
+    hidden.forEach((b) => b.classList.add('overflow'));
+    const badges = hidden.reduce((n, b) => n + (Number(b.querySelector('.badge')?.textContent) || 0), 0);
+    more.innerHTML = `More &#x25BE;${badges ? ` <span class="badge">${badges}</span>` : ''}`;
+    more.title = hidden.map((b) => b.childNodes[0].textContent.trim()).join(', ');
+  }
+  tabNav.classList.remove('measuring');
+  if (menuOpen) renderMoreMenu();
 }
-tabNav.addEventListener('wheel', (e) => { if (tabNav.scrollWidth <= tabNav.clientWidth) return; e.preventDefault(); tabNav.scrollLeft += e.deltaY || e.deltaX; }, { passive: false });
-tabNav.addEventListener('scroll', tabEdges);
-new ResizeObserver(tabEdges).observe(tabNav);
+new ResizeObserver(() => fitTabs()).observe(tabNav);
+
+function renderMoreMenu() {
+  const hidden = $$('nav#tabs .tab.overflow');
+  if (!hidden.length) return closeMoreMenu();
+  $('#moreMenu').innerHTML = hidden.map((b) => {
+    const badge = b.querySelector('.badge')?.textContent;
+    return `<button class="moreitem" data-pick="${esc(b.dataset.tab)}"><span class="grow ellipsis">${esc(b.childNodes[0].textContent.trim())}</span>${badge ? `<span class="badge">${esc(badge)}</span>` : ''}</button>`;
+  }).join('') + '<div class="muted small morehint">Drag tabs to change their order</div>';
+}
+function closeMoreMenu() { menuOpen = false; $('#moreMenu').classList.add('hidden'); reportLayout(); }
+$('#moreBtn').onclick = (e) => {
+  e.stopPropagation();
+  if (menuOpen) return closeMoreMenu();
+  menuOpen = true; renderMoreMenu();
+  $('#moreMenu').style.top = tabNav.getBoundingClientRect().bottom + 2 + 'px';
+  $('#moreMenu').classList.remove('hidden');
+  reportLayout(); // add-on pages are native views drawn on top; hide them while the menu is open
+};
+$('#moreMenu').onclick = (e) => { const b = e.target.closest('[data-pick]'); if (b) { closeMoreMenu(); selectTab(b.dataset.pick); } };
+document.addEventListener('click', (e) => { if (menuOpen && !e.target.closest('#moreMenu')) closeMoreMenu(); });
+
+// Drag a tab onto another to move it there. The order is saved in settings.
+let dragTab = null;
+tabNav.addEventListener('dragstart', (e) => { const b = e.target.closest('.tab'); if (!b) return; dragTab = b.dataset.tab; b.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+tabNav.addEventListener('dragend', () => { $$('.tab.dragging, .tab.dropbefore').forEach((b) => b.classList.remove('dragging', 'dropbefore')); dragTab = null; });
+tabNav.addEventListener('dragover', (e) => {
+  if (!dragTab) return;
+  e.preventDefault();
+  const over = e.target.closest('nav#tabs .tab');
+  $$('.tab.dropbefore').forEach((b) => b.classList.remove('dropbefore'));
+  if (over && over.dataset.tab !== dragTab) over.classList.add('dropbefore');
+});
+tabNav.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  const over = e.target.closest('nav#tabs .tab');
+  const ids = $$('nav#tabs .tab').map((b) => b.dataset.tab).filter((t) => t !== dragTab);
+  const at = over ? ids.indexOf(over.dataset.tab) : ids.length;
+  ids.splice(at < 0 ? ids.length : at, 0, dragTab);
+  settings = await api.setSettings({ tabOrder: ids });
+  renderTabs();
+});
+
 function selectTab(tab) {
   if (!$$('.tab').some((b) => b.dataset.tab === tab)) tab = $('nav#tabs .tab').dataset.tab;
   activeTab = tab;
   try { localStorage.setItem('tab', tab); } catch {}
   $$('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
-  $('nav#tabs .tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  fitTabs();
   const pane = tab.startsWith('p:') ? 'tab-plugin' : 'tab-' + tab;
   $$('.pane').forEach((p) => p.classList.toggle('active', p.id === pane));
   if (tab === 'vault') refreshVault().then(tickCodes);
@@ -69,7 +140,7 @@ function reportLayout() {
   requestAnimationFrame(() => {
     const rect = (el) => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; };
     const active = activeTab && activeTab.startsWith('p:') ? activeTab.slice(2) : null;
-    api.plugins.layout({ active, content: active ? rect($('#pluginArea')) : null, bars: $$('#bars .barslot').map((el) => ({ id: el.dataset.id, ...rect(el) })) });
+    api.plugins.layout({ active: menuOpen ? null : active, content: active && !menuOpen ? rect($('#pluginArea')) : null, bars: $$('#bars .barslot').map((el) => ({ id: el.dataset.id, ...rect(el) })) });
   });
 }
 new ResizeObserver(reportLayout).observe(document.body);
