@@ -12,7 +12,22 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "6f76508b544071c6a0dd61f16e327777a650fcc7777ae44a71e4a45701a73dd9"
+      "sha256": "1397ca6536b6d403147eb992eee567ec20b03af195f3917f936c91cc002605a9"
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "version": "1.1.0",
+      "author": "Lapis Studios",
+      "description": "Sign in with Google to see new emails, get notified when mail arrives, and copy sign-in codes the moment they land. Read-only. Needs DeskMate 1.1 or newer.",
+      "permissions": [
+        "gmail",
+        "notifications",
+        "status",
+        "clipboard-write"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
+      "sha256": "aae005b79d5324eca171f2aeb05a625bf124c5fc2a38544cea7333b0fbc2418d"
     },
     {
       "id": "schedule-one",
@@ -22,7 +37,7 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "d3d8e1dda0141b717eca8d261996c0ec450cbedfbdff439aee7a3ed6ab6c0dc4"
+      "sha256": "26babc51c7e83d08d404c1d20c122511f1a10fea359480c442399da4ae99a688"
     },
     {
       "id": "timers",
@@ -35,7 +50,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "aba9ef2886b26ae8012a491931110a6545c085672e1b08d81c98388bdde98caa"
+      "sha256": "053f72456de863f487d973f774ae0aa15e4c5c7257011d1904a7cc616b78db45"
     },
     {
       "id": "weather",
@@ -48,7 +63,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "752f50ceacd5e28d6d36fc3910f2b15452457a5b4ecc38ea78e640392bf00ca1"
+      "sha256": "781049ffc32b9379336becc1b87b78f282355cf6ced1222bc72d7aa638ac9346"
     }
   ]
 }
