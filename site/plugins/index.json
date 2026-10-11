@@ -1,5 +1,5 @@
 {
-  "name": "DeskMate verified plugins",
+  "name": "Lapis Supply Closet",
   "plugins": [
     {
       "id": "claude",
@@ -12,7 +12,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "1397ca6536b6d403147eb992eee567ec20b03af195f3917f936c91cc002605a9"
+      "sha256": "1a56bc19f0c48899c2c2c99972e3064534989701e749eb7d347d3f6f8fc95747"
     },
     {
       "id": "gmail",
@@ -27,7 +27,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "aae005b79d5324eca171f2aeb05a625bf124c5fc2a38544cea7333b0fbc2418d"
+      "sha256": "d4b448935c2bb309614fd9cd31bc7d30c9633971b1a2816bfb4ea60689a364c9"
     },
     {
       "id": "schedule-one",
@@ -37,7 +37,7 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "26babc51c7e83d08d404c1d20c122511f1a10fea359480c442399da4ae99a688"
+      "sha256": "4dd96e1c0b68dd4c213af27ec7afbc5c8117d20f5ed7d14852385cfa30abd5b3"
     },
     {
       "id": "timers",
@@ -50,7 +50,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "053f72456de863f487d973f774ae0aa15e4c5c7257011d1904a7cc616b78db45"
+      "sha256": "2afada89c53a2c59140d2ec9e1c48c7e1a74abb09d86816d67001029ae22b9f6"
     },
     {
       "id": "weather",
@@ -63,7 +63,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "781049ffc32b9379336becc1b87b78f282355cf6ced1222bc72d7aa638ac9346"
+      "sha256": "6e94d57c86eaf7376500954a4dc673f316483b2aabbf7a3720d2df7a4d95b2af"
     }
   ]
 }

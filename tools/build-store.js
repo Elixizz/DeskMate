@@ -44,5 +44,5 @@ for (const name of fs.readdirSync(src).sort()) {
   });
   console.log(`packed ${file} (${(buf.length / 1024).toFixed(1)} KB)`);
 }
-fs.writeFileSync(path.join(out, 'index.json'), JSON.stringify({ name: 'DeskMate verified plugins', plugins }, null, 2) + '\n');
+fs.writeFileSync(path.join(out, 'index.json'), JSON.stringify({ name: 'Lapis Supply Closet', plugins }, null, 2) + '\n');
 console.log(`wrote site/plugins/index.json with ${plugins.length} plugins`);

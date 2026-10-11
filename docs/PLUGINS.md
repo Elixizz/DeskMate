@@ -1,18 +1,20 @@
-# Making DeskMate Plugins
+# Making DeskMate Mates
 
-## What a plugin is
+Add-ons for DeskMate are called **Mates**, and the place to get them is the **Supply Closet**. In files and code they're still called plugins (`manifest.json`, `plugin://`, `verified-plugins/`, `window.deskmate`), so nothing about how you build one changes.
 
-A DeskMate plugin is a small web page (HTML, CSS and JavaScript) that DeskMate shows as its own tab, an always-visible bar at the bottom of the window, or both. If you can build a web page, you can build a plugin. There is no build step and no Node.js inside a plugin.
+## What a Mate is
 
-Only the password vault and Music come built into DeskMate. Everything else, including Claude Code tracking, is a plugin you add from the store. Music is a plugin too and uses exactly the same system described here.
+A DeskMate Mate is a small web page (HTML, CSS and JavaScript) that DeskMate shows as its own tab, an always-visible bar at the bottom of the window, or both. If you can build a web page, you can build a Mate. There is no build step and no Node.js inside a Mate.
 
-Every plugin runs boxed in:
+Only the password vault and Music come built into DeskMate. Everything else, including Claude Code tracking, is a Mate you add from the Supply Closet. Music is a Mate too and uses exactly the same system described here.
 
-- **Its own storage.** `localStorage` and cookies are private to the plugin. No other plugin, and not the vault, can read them.
-- **No files, no Node.** A plugin can't open files on the PC, run programs or reach DeskMate's internals.
+Every Mate runs boxed in:
+
+- **Its own storage.** `localStorage` and cookies are private to the Mate. No other Mate, and not the vault, can read them.
+- **No files, no Node.** A Mate can't open files on the PC, run programs or reach DeskMate's internals.
 - **Only the websites it declared.** Network requests to any host not listed in its permissions are blocked.
 - **Special abilities only with permission.** Things like controlling other apps' music or reading Claude conversations go through the `deskmate` API. Each call is checked against the permissions the user approved at install.
-- **Never the vault.** No permission exists that gives a plugin access to passwords or 2FA codes.
+- **Never the vault.** No permission exists that gives a Mate access to passwords or 2FA codes.
 
 ```
  Your plugin            DeskMate host                    Reachable, if the user approved it
@@ -24,18 +26,18 @@ Every plugin runs boxed in:
  Never reachable: the vault, your files, other plugins, sites not listed
 ```
 
-A plugin only talks to the host. The host lets through what the user approved and refuses everything else.
+A Mate only talks to the host. The host lets through what the user approved and refuses everything else.
 
-A plugin can have:
+A Mate can have:
 
 | Part | Where it shows | Size | Typical use |
 | --- | --- | --- | --- |
-| `tab` | Its own tab, in the main area | About 378 × 420 px | The plugin's main screen |
+| `tab` | Its own tab, in the main area | About 378 × 420 px | The Mate's main screen |
 | `bar` | A strip at the bottom of the window, under every tab | Full width × 24–90 px (you choose) | Controls or info that should always be visible, like a music player |
 
 Both pages stay loaded while DeskMate runs, even when hidden. That's how music keeps playing when the panel is closed.
 
-## Quick start: your first plugin in 5 minutes
+## Quick start: your first Mate in 5 minutes
 
 This builds **Quick Notes**: a tab with a text box that remembers what you type.
 
@@ -90,33 +92,33 @@ document.querySelector('#clear').onclick = () => {
 };
 ```
 
-5. In DeskMate, open the **Plugins** tab and click **From folder**. Pick your `quick-notes` folder.
-6. DeskMate shows what the plugin is asking for. Here it's nothing special, so click **Allow and install**. A **Notes** tab appears.
+5. In DeskMate, click the puzzle-piece **Mates** button in the header, then **From folder**. Pick your `quick-notes` folder.
+6. DeskMate shows what the Mate is asking for. Here it's nothing special, so click **Allow and install**. A **Notes** tab appears.
 
 While you work on it:
 
-- Edit your files, then click **Reload** on the plugin's card in the Plugins tab. If you added new permissions, DeskMate asks you to approve them again.
-- Click **DevTools** on the card to open Chrome DevTools for your plugin (console, elements, network). This only appears for plugins installed from a folder.
-- DeskMate keeps its own copy of the plugin, so edits to your folder only show up after **Reload**.
+- Edit your files, then click **Reload** on the Mate's card in the Mates panel. If you added new permissions, DeskMate asks you to approve them again.
+- Click **DevTools** on the card to open Chrome DevTools for your Mate (console, elements, network). This only appears for Mates installed from a folder.
+- DeskMate keeps its own copy of the Mate, so edits to your folder only show up after **Reload**.
 
 ## manifest.json reference
 
-Every plugin folder needs a `manifest.json` at its top level. DeskMate refuses to install a plugin whose manifest breaks any of these rules, and says which one.
+Every Mate folder needs a `manifest.json` at its top level. DeskMate refuses to install a Mate whose manifest breaks any of these rules, and says which one.
 
 | Field | Required | Rules | Example |
 | --- | --- | --- | --- |
 | `id` | Yes | Lowercase letters, numbers and dashes, 2–41 characters. Must be unique; can't be `music` | `"quick-notes"` |
 | `name` | Yes | Shown on the tab. 40 characters max; keep it short so tabs fit | `"Notes"` |
-| `version` | Yes | Three numbers: `major.minor.patch`. Raise it for every store release. DeskMate checks the store every 6 hours and installs a higher version by itself, unless it asks for new permissions or shortcuts; then the user sees an Update button and approves it | `"1.2.0"` |
+| `version` | Yes | Three numbers: `major.minor.patch`. Raise it for every Supply Closet release. DeskMate checks the Supply Closet every 6 hours and installs a higher version by itself, unless it asks for new permissions or shortcuts; then the user sees an Update button and approves it | `"1.2.0"` |
 | `author` | No | Shown on the install screen | `"Ryland"` |
-| `description` | No | One sentence, shown in the Plugins tab and the store | `"A scratchpad..."` |
-| `tab` | One of `tab` / `bar` | Path to the tab's page, inside the plugin folder | `"tab.html"` |
+| `description` | No | One sentence, shown in the Mates panel and the Supply Closet | `"A scratchpad..."` |
+| `tab` | One of `tab` / `bar` | Path to the tab's page, inside the Mate folder | `"tab.html"` |
 | `bar` | One of `tab` / `bar` | `{ "file": page, "height": 24–90 }` | `{ "file": "bar.html", "height": 64 }` |
 | `permissions` | No | List of permission names (next section). Unknown names are refused | `["status", "net:api.github.com"]` |
 | `hotkeys` | No | Up to 8 global shortcuts. Needs the `hotkeys` permission | `["Control+Alt+N"]` |
 | `sounds` | No | Up to 12 moments that make a sound. Each is a label, or `{ "label", "default" }` where default is one of `chime`, `bell`, `ping`, `pop`, `alarm`, `soft`, `none`. Users pick the actual sound in Settings → Sounds. DeskMate 1.3+ | `{"done": {"label": "Timer finished", "default": "alarm"}}` |
 
-The Music plugin's manifest, as a full example:
+The Music Mate's manifest, as a full example:
 
 ```json
 {
@@ -132,11 +134,11 @@ The Music plugin's manifest, as a full example:
 }
 ```
 
-**Hotkey rules.** Each one is one or more modifiers plus one key, joined with `+`. Modifiers are `Control`, `Alt`, `Shift`, `Super`, and you need at least two of them, one being Ctrl or Alt. Keys are `A`–`Z`, `0`–`9`, `F1`–`F12`, `Left`, `Right`, `Up`, `Down`, `Space`, `Home`, `End`, `PageUp`, `PageDown`. Single-modifier shortcuts like Ctrl+V are refused, so a plugin can't take over everyday shortcuts in other apps. DeskMate's own `Control+Alt+D` and its backups are reserved. If another program already owns a shortcut, it just won't fire.
+**Hotkey rules.** Each one is one or more modifiers plus one key, joined with `+`. Modifiers are `Control`, `Alt`, `Shift`, `Super`, and you need at least two of them, one being Ctrl or Alt. Keys are `A`–`Z`, `0`–`9`, `F1`–`F12`, `Left`, `Right`, `Up`, `Down`, `Space`, `Home`, `End`, `PageUp`, `PageDown`. Single-modifier shortcuts like Ctrl+V are refused, so a Mate can't take over everyday shortcuts in other apps. DeskMate's own `Control+Alt+D` and its backups are reserved. If another program already owns a shortcut, it just won't fire.
 
 ## Permissions
 
-Ask only for what your plugin needs. The install screen lists every permission in plain words and colors the risky ones, and people are less likely to install a plugin that asks for a lot. A plugin with no permissions still gets its tab, its own storage and toasts.
+Ask only for what your Mate needs. The install screen lists every permission in plain words and colors the risky ones, and people are less likely to install a Mate that asks for a lot. A Mate with no permissions still gets its tab, its own storage and toasts.
 
 | Permission | What it unlocks | Risk shown to users |
 | --- | --- | --- |
@@ -153,11 +155,11 @@ Ask only for what your plugin needs. The install screen lists every permission i
 | `claude` | `deskmate.claude.*`: read Claude Code conversations and send replies as the user | High |
 | `gmail` | `deskmate.gmail.*`: sign in with Google and read Gmail (senders, subjects, previews, sign-in codes). Read-only | High |
 
-When an update adds a permission, DeskMate asks again before installing and marks the new ones with **NEW**. A plugin never gets a permission it didn't list, even if it was approved for an earlier version.
+When an update adds a permission, DeskMate asks again before installing and marks the new ones with **NEW**. A Mate never gets a permission it didn't list, even if it was approved for an earlier version.
 
 ## The deskmate API
 
-Every plugin page gets a global `deskmate` object. Calls that do something return a Promise. If the plugin lacks the permission a call needs, the Promise rejects with a message like `This plugin doesn't have the "status" permission`.
+Every Mate page gets a global `deskmate` object. Calls that do something return a Promise. If the Mate lacks the permission a call needs, the Promise rejects with a message like `This plugin doesn't have the "status" permission`.
 
 **Basics (no permission needed)**
 
@@ -167,7 +169,7 @@ Every plugin page gets a global `deskmate` object. Calls that do something retur
 | `deskmate.toast(text)` | Shows a short message at the bottom of the window (140 characters max) |
 | `deskmate.setBadge(n)` | Shows a number on your tab, like unread items. `0` hides it |
 | `deskmate.hide()` | Hides the DeskMate panel |
-| `deskmate.send(message)` | Sends any JSON-able value to your plugin's own pages (tab and bar). Your own page receives it too, so tag messages with who sent them |
+| `deskmate.send(message)` | Sends any JSON-able value to your Mate's own pages (tab and bar). Your own page receives it too, so tag messages with who sent them |
 | `deskmate.onMessage(fn)` | `fn(message)` runs for every message from `send` |
 | `deskmate.onShown(fn)` | `fn()` runs when the user opens the panel |
 | `deskmate.onHidden(fn)` | `fn()` runs when the panel hides |
@@ -178,7 +180,7 @@ Every plugin page gets a global `deskmate` object. Calls that do something retur
 | Call | Permission | What it does |
 | --- | --- | --- |
 | `deskmate.status.set({ dots, tooltip })` | `status` | Publishes up to 6 dots, each `{ color: '#rrggbb' or null, pulse: true/false }`. `null` = gray. `tooltip` shows on hover (120 characters) |
-| `deskmate.notify(title, body)` | `notifications` | Windows notification, titled with your plugin's name |
+| `deskmate.notify(title, body)` | `notifications` | Windows notification, titled with your Mate's name |
 | `deskmate.playSound(name)` | None | Plays the sound the user chose for one of your manifest's `sounds`. Muted if they turned sounds off. At most one sound per 0.4 seconds. Check `if (deskmate.playSound)` to stay compatible with DeskMate older than 1.3 |
 | `deskmate.openUrl(url)` | `open-links` | Opens an `https://` link in the user's browser |
 | `deskmate.copyText(text)` | `clipboard-write` | Copies text to the clipboard |
@@ -202,7 +204,7 @@ Everything a normal web page can do also works: `fetch` (to your `net:` hosts), 
 
 ## Styling: look like DeskMate
 
-Link the shared stylesheet and your plugin matches DeskMate's theme with no extra work, including the user's colour and light/dark choice from Settings (DeskMate 1.3+). For your own CSS, use the variables `--bg`, `--panel`, `--card`, `--line`, `--text`, `--muted`, `--accent`, `--accent-2`, `--on-accent` (text on accent-coloured buttons), `--ok` and `--bad` instead of fixed colours, so it follows the theme too:
+Link the shared stylesheet and your Mate matches DeskMate's theme with no extra work, including the user's colour and light/dark choice from Settings (DeskMate 1.3+). For your own CSS, use the variables `--bg`, `--panel`, `--card`, `--line`, `--text`, `--muted`, `--accent`, `--accent-2`, `--on-accent` (text on accent-coloured buttons), `--ok` and `--bad` instead of fixed colours, so it follows the theme too:
 
 ```html
 <link rel="stylesheet" href="/__deskmate/ui.css">
@@ -226,11 +228,11 @@ Put `class="page"` on `<body>` for DeskMate's padding and a full-height column. 
 
 Colors are CSS variables, so use them instead of hard-coding: `--bg`, `--panel`, `--card`, `--line`, `--text`, `--muted`, `--accent` (orange), `--accent-2`, `--ok` (green), `--bad` (red).
 
-You can add your own `.css` files too. Plugin pages have a solid background, so you don't need to worry about the window's rounded corners.
+You can add your own `.css` files too. Mate pages have a solid background, so you don't need to worry about the window's rounded corners.
 
 ## Recipes
 
-**Save settings.** Use `localStorage`. It's private to your plugin and survives restarts and updates. It's deleted when the plugin is removed.
+**Save settings.** Use `localStorage`. It's private to your Mate and survives restarts and updates. It's deleted when the Mate is removed.
 
 ```js
 const prefs = JSON.parse(localStorage.getItem('prefs') || '{}');
@@ -283,11 +285,11 @@ audio.play();
 
 **Work in the background.** Your pages keep running when the panel is closed, so a `setInterval` that checks something every minute keeps working. Use `onShown` to refresh right when the user opens the panel, and `onHidden` to pause expensive work.
 
-## Publishing to the store
+## Publishing to the Supply Closet
 
-The store is one `index.json` file plus a zip per plugin, hosted at any `https://` address. Each DeskMate user pastes that address once under **Plugins → Store**. Whoever runs the store decides what goes in it.
+A Supply Closet is one `index.json` file plus a zip per Mate, hosted at any `https://` address. Each DeskMate user pastes that address once under **Mates → Supply Closet** (the address box at the top). Whoever runs it decides what goes in it.
 
-**As a plugin author:**
+**As a Mate author:**
 
 1. Raise `version` in your `manifest.json`.
 2. From the DeskMate folder, pack your plugin:
@@ -297,9 +299,9 @@ node tools/pack-plugin.js path\to\quick-notes --url https://YOUR-STORE-HOST/desk
 ```
 
 3. It writes `dist/quick-notes-1.0.0.zip` and prints the entry for `index.json`, including the zip's sha256 checksum.
-4. Send the zip and the printed entry to whoever runs the store.
+4. Send the zip and the printed entry to whoever runs the Supply Closet.
 
-**As the store owner:** upload the zip to the address in its `download` field, and add or replace the entry in `index.json`:
+**As the Supply Closet owner:** upload the zip to the address in its `download` field, and add or replace the entry in `index.json`:
 
 ```json
 {
@@ -324,17 +326,17 @@ node tools/pack-plugin.js path\to\quick-notes --url https://YOUR-STORE-HOST/desk
 - The downloaded zip's sha256 must match `index.json` exactly. Any change in transit or on the server means it refuses to install.
 - The zip's `manifest.json` must have the same `id` and `version` as the listing, and must pass every manifest rule.
 - The user sees the permissions from the zip's manifest, not from the listing, and approves them before anything is installed.
-- Zips over 20 MB are refused, as are zips with paths that try to escape the plugin folder.
+- Zips over 20 MB are refused, as are zips with paths that try to escape the Mate folder.
 
-**Updates.** When the store lists a newer `version` than the one installed, the Plugins store shows **Update**. Updating keeps the plugin's saved data. If the new version asks for new permissions, the user approves those first.
+**Updates.** When the Supply Closet lists a newer `version` than the one installed, the Supply Closet shows **Update**. Updating keeps the Mate's saved data. If the new version asks for new permissions, the user approves those first.
 
 ## Rules, limits and troubleshooting
 
 **Limits to design around**
 
-- The window is 380 × 560 px and doesn't resize. Your tab gets roughly 378 × 420 px, less if other plugins have bars.
-- Keep bars short (most look right at 40–80 px). Every enabled plugin's bar stacks at the bottom and takes space from all tabs.
-- Pages can't navigate away from your plugin. Links to websites need `open-links` and open in the user's browser.
+- The window is 380 × 560 px and doesn't resize. Your tab gets roughly 378 × 420 px, less if other Mates have bars.
+- Keep bars short (most look right at 40–80 px). Every enabled Mate's bar stacks at the bottom and takes space from all tabs.
+- Pages can't navigate away from your Mate. Links to websites need `open-links` and open in the user's browser.
 - No downloads, no file pickers (except `music.pickFolder`), no camera, microphone or location.
 - Pressing Esc in your page hides the DeskMate panel.
 
@@ -347,15 +349,15 @@ node tools/pack-plugin.js path\to\quick-notes --url https://YOUR-STORE-HOST/desk
 | A `deskmate.*` call rejects with a permission message | The permission isn't in your manifest, or the user hasn't approved it | Add it to `permissions`, then Reload and approve |
 | Radio or stream won't play | Plain `http://` URL used directly | Wrap it: `deskmate.mediaUrl(url)` |
 | Hotkey does nothing | Another program owns that shortcut, or the hotkey isn't in the manifest | Pick a different combination |
-| Edits don't show up | DeskMate runs its own copy of your plugin | Click **Reload** on its card |
+| Edits don't show up | DeskMate runs its own copy of your Mate | Click **Reload** on its card |
 | Tab is blank | An error in your script, or a wrong file path in `tab` | Open **DevTools** and check the Console |
 
-**Be a good plugin**
+**Be a good Mate**
 
 - Ask for the narrowest permission that works: `net:api.example.com` rather than `net:*`.
 - Don't publish status dots or badges on every tick. Update them only when the value changes.
-- Never ask users to type passwords into a plugin. That's what the vault is for, and plugins can't reach it on purpose.
+- Never ask users to type passwords into a Mate. That's what the vault is for, and Mates can't reach it on purpose.
 
-## License for plugins
+## License for Mates
 
-Plugins that use DeskMate only through the plugin API are your own work. You can license and sell them however you like; see the plugin permission at the end of [LICENSE](../LICENSE).
+Mates that use DeskMate only through the Mate API are your own work. You can license and sell them however you like; see the Mate permission at the end of [LICENSE](../LICENSE).

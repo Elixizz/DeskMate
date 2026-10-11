@@ -59,7 +59,7 @@ function start({ onChange, settings, saveSettings }) {
       onChange(s);
       if (s.available && settings.updateNotified !== s.latest) {
         settings.updateNotified = s.latest; saveSettings();
-        new Notification({ title: `DeskMate ${s.latest} is available`, body: 'Open DeskMate and go to Plugins to update.' }).show();
+        new Notification({ title: `DeskMate ${s.latest} is available`, body: 'Open DeskMate and click the Mates button to update.' }).show();
       }
     } catch {}
   };

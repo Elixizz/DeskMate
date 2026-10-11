@@ -42,7 +42,7 @@ function permLabel(p) {
   return PERMISSIONS[p] || { label: p, risk: 'high' };
 }
 function validateManifest(m, dir) {
-  const fail = (msg) => { throw new Error('Bad plugin manifest: ' + msg); };
+  const fail = (msg) => { throw new Error('Bad Mate manifest: ' + msg); };
   if (!m || typeof m !== 'object') fail('not JSON');
   if (typeof m.id !== 'string' || !ID_RE.test(m.id)) fail('id must be lowercase letters, numbers and dashes');
   if (!m.name || String(m.name).length > 40) fail('name is required (40 chars max)');
@@ -88,7 +88,7 @@ function validateManifest(m, dir) {
 }
 function readManifest(dir) {
   let m;
-  try { m = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8')); } catch { throw new Error('No readable manifest.json in that plugin'); }
+  try { m = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8')); } catch { throw new Error('No readable manifest.json in that Mate'); }
   return validateManifest(m, dir);
 }
 function pluginState(id) { return (ctx.settings.plugins ||= {})[id] ||= { enabled: true, granted: [] }; }
@@ -306,7 +306,7 @@ const API = {
   // and the user can change or mute each one. Throttled so a plugin can't spam.
   playSound: (id, name) => {
     const s = loaded.get(id).manifest.sounds[String(name)];
-    if (!s) throw new Error(`"${name}" isn't in this plugin's "sounds" list`);
+    if (!s) throw new Error(`"${name}" isn't in this Mate's "sounds" list`);
     const last = soundAt.get(id) || 0;
     if (Date.now() - last < 400) return false;
     soundAt.set(id, Date.now());
@@ -335,11 +335,11 @@ const API = {
 const secureUrl = (u) => { try { const x = new URL(u); return x.protocol === 'https:' || (x.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(x.hostname)); } catch { return false; } };
 async function fetchStore() {
   const url = ctx.settings.storeUrl || DEFAULT_STORE;
-  if (!secureUrl(url)) throw new Error('The store address must start with https://');
+  if (!secureUrl(url)) throw new Error('The Supply Closet address must start with https://');
   const res = await net.fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`Store returned ${res.status}`);
+  if (!res.ok) throw new Error(`Supply Closet returned ${res.status}`);
   const idx = await res.json();
-  return { name: idx.name || 'Plugin store', plugins: (idx.plugins || []).filter((p) => typeof p.id === 'string' && ID_RE.test(p.id) && secureUrl(p.download) && /^[0-9a-f]{64}$/i.test(p.sha256 || '')) };
+  return { name: idx.name || 'Supply Closet', plugins: (idx.plugins || []).filter((p) => typeof p.id === 'string' && ID_RE.test(p.id) && secureUrl(p.download) && /^[0-9a-f]{64}$/i.test(p.sha256 || '')) };
 }
 function stageDir() { return path.join(app.getPath('temp'), 'deskmate-stage-' + crypto.randomBytes(6).toString('hex')); }
 function extractZip(buf, dest) {
@@ -348,9 +348,9 @@ function extractZip(buf, dest) {
   let total = 0;
   for (const e of zip.getEntries()) {
     total += e.header.size;
-    if (total > MAX_ZIP_BYTES * 3) throw new Error('Plugin is too big');
+    if (total > MAX_ZIP_BYTES * 3) throw new Error('Mate is too big');
     const out = safeJoin(dest, e.entryName);
-    if (!out) throw new Error('Plugin zip tries to write outside its folder');
+    if (!out) throw new Error('Mate zip tries to write outside its folder');
     if (e.isDirectory) { fs.mkdirSync(out, { recursive: true }); continue; }
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, e.getData());
@@ -364,8 +364,8 @@ function extractZip(buf, dest) {
 }
 function stage(dir, source, expect, slot) {
   const manifest = readManifest(dir);
-  if (expect && (manifest.id !== expect.id || manifest.version !== expect.version)) throw new Error('Downloaded plugin does not match the store listing');
-  if (loaded.get(manifest.id)?.builtin) throw new Error(`"${manifest.id}" is a built-in plugin`);
+  if (expect && (manifest.id !== expect.id || manifest.version !== expect.version)) throw new Error('Downloaded Mate does not match the Supply Closet listing');
+  if (loaded.get(manifest.id)?.builtin) throw new Error(`"${manifest.id}" is a built-in Mate`);
   const prev = loaded.get(manifest.id);
   const already = prev ? pluginState(manifest.id).granted : [];
   const staged = { dir, manifest, source };
@@ -379,18 +379,18 @@ function stage(dir, source, expect, slot) {
 async function stageFromStore(id, slot) {
   const { plugins } = await fetchStore();
   const entry = plugins.find((p) => p.id === id);
-  if (!entry) throw new Error('Not in the store');
+  if (!entry) throw new Error('Not in the Supply Closet');
   const res = await net.fetch(entry.download, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Download failed (${res.status})`);
   const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.length > MAX_ZIP_BYTES) throw new Error('Plugin is too big');
+  if (buf.length > MAX_ZIP_BYTES) throw new Error('Mate is too big');
   const hash = crypto.createHash('sha256').update(buf).digest('hex');
   if (hash !== entry.sha256.toLowerCase()) throw new Error('Download was changed or corrupted (checksum mismatch). Not installing.');
   const dest = stageDir(); fs.mkdirSync(dest, { recursive: true });
   return stage(extractZip(buf, dest), 'store', entry, slot);
 }
 async function stageFromFolder() {
-  const r = await ctx.withDialog(() => dialog.showOpenDialog(ctx.win(), { title: 'Pick a plugin folder (it has a manifest.json)', properties: ['openDirectory'] }));
+  const r = await ctx.withDialog(() => dialog.showOpenDialog(ctx.win(), { title: 'Pick a Mate folder (it has a manifest.json)', properties: ['openDirectory'] }));
   if (r.canceled) return null;
   const src = r.filePaths[0];
   const dest = stageDir();
@@ -431,7 +431,7 @@ function removePlugin(id) {
 }
 function setEnabled(id, on) {
   const p = loaded.get(id);
-  if (!p) throw new Error('No such plugin');
+  if (!p) throw new Error('No such Mate');
   pluginState(id).enabled = !!on;
   const dir = p.dir, builtin = p.builtin;
   unloadPlugin(id);
@@ -441,7 +441,7 @@ function setEnabled(id, on) {
 }
 function reloadDev(id) {
   const st = pluginState(id);
-  if (!st.dev || !st.devSource) throw new Error('Only plugins installed from a folder can be reloaded');
+  if (!st.dev || !st.devSource) throw new Error('Only Mates added from a folder can be reloaded');
   const dest = stageDir();
   copyPlugin(st.devSource, dest);
   const info = stage(dest, 'folder');
@@ -515,7 +515,7 @@ function startAutoUpdate() {
   setTimeout(async () => {
     try {
       const r = await restoreFormerBuiltins();
-      if (r.length) ctx.win().webContents.send('host:toast', `Brought back ${r.join(', ')} from the store`);
+      if (r.length) ctx.win().webContents.send('host:toast', `Brought back ${r.join(', ')} from the Supply Closet`);
     } catch {}
   }, 3e3);
 }
@@ -529,7 +529,7 @@ function init(c) {
     const def = API[method];
     if (!def) throw new Error(`deskmate.${method} does not exist`);
     const [needs, fn] = Array.isArray(def) ? def : [[], def];
-    for (const perm of needs) if (!granted(id, perm)) throw new Error(`This plugin doesn't have the "${perm}" permission`);
+    for (const perm of needs) if (!granted(id, perm)) throw new Error(`This Mate doesn't have the "${perm}" permission`);
     return fn(id, ...args);
   });
   const host = c.handleHost;

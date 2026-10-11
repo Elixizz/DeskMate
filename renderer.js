@@ -186,7 +186,7 @@ function renderPlugins() {
 }
 function renderInstalled() {
   const list = $('#pInstalled');
-  list.innerHTML = pluginList.length ? '' : '<div class="empty">No plugins yet. Check the Store.</div>';
+  list.innerHTML = pluginList.length ? '' : '<div class="empty">No Mates yet. Grab some from the Supply Closet.</div>';
   for (const p of pluginList) {
     const el = document.createElement('div');
     el.className = 'card plug' + (p.enabled ? '' : ' off');
@@ -246,9 +246,9 @@ api.update.status().then((u) => { appUpdate = u; renderAppUpdate(); });
 async function renderStore() {
   $('#storeUrl').value = settings.storeUrl || '';
   const list = $('#storeList');
-  list.innerHTML = '<div class="empty">Loading the store...</div>';
+  list.innerHTML = '<div class="empty">Opening the Supply Closet...</div>';
   const r = await api.plugins.storeGet();
-  if (!r.plugins.length) { list.innerHTML = `<div class="empty">${esc(r.error || 'The store is empty')}</div>`; return; }
+  if (!r.plugins.length) { list.innerHTML = `<div class="empty">${esc(r.error || 'The Supply Closet is empty')}</div>`; return; }
   list.innerHTML = '';
   for (const sp of r.plugins) {
     const have = pluginList.find((x) => x.id === sp.id);
@@ -273,13 +273,13 @@ function showConsent(info) {
   const risky = info.permissions.some((p) => p.risk === 'high');
   c.classList.remove('hidden');
   c.innerHTML = `<div class="gate-title" style="margin:0">${info.update ? 'Update' : 'Install'} ${esc(info.name)}?</div>
-    <div class="muted small">v${esc(info.version)}${info.update ? ` (you have v${esc(info.fromVersion)})` : ''}${info.author ? ` · by ${esc(info.author)}` : ''} · ${info.source === 'store' ? 'from the store, checksum verified' : 'from a folder on this PC'}</div>
+    <div class="muted small">v${esc(info.version)}${info.update ? ` (you have v${esc(info.fromVersion)})` : ''}${info.author ? ` · by ${esc(info.author)}` : ''} · ${info.source === 'store' ? 'from the Supply Closet, checksum verified' : 'from a folder on this PC'}</div>
     ${info.description ? `<div class="small">${esc(info.description)}</div>` : ''}
     <div class="small"><b>It's asking to:</b></div>
     <div class="perms">${info.permissions.length ? permChips(info.permissions) : '<span class="muted small">Nothing special. It just gets its own tab.</span>'}</div>
     ${info.hotkeys.length ? `<div class="muted small">Keyboard shortcuts: ${info.hotkeys.map(esc).join(', ')}</div>` : ''}
-    <div class="muted small">It can never see your vault, your files, or other plugins.</div>
-    ${risky ? '<div class="err">The red items are powerful. Only allow them if you trust whoever made this plugin.</div>' : ''}
+    <div class="muted small">It can never see your vault, your files, or other Mates.</div>
+    ${risky ? '<div class="err">The red items are powerful. Only allow them if you trust whoever made this Mate.</div>' : ''}
     <div class="row"><button id="cDeny" class="ghost grow">Cancel</button><button id="cAllow" class="grow">Allow and ${info.update ? 'update' : 'install'}</button></div>`;
   $('#cDeny').onclick = async () => { await api.plugins.commit(false); c.classList.add('hidden'); };
   $('#cAllow').onclick = async () => {

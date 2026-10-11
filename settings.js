@@ -57,19 +57,19 @@ async function renderSettings() {
 
     <div class="card sect"><div class="stitle">Sounds</div>
       <div class="srow"><span class="grow">Volume</span><input type="range" min="0" max="100" step="5" value="${Math.round(p.sound.volume * 100)}" data-set="volume"><button class="icon" data-test="chime" title="Test">&#x25B8;</button></div>
-      ${toggle('muted', p.sound.muted, 'Mute all add-on sounds')}
-      ${toggle('notifSound', p.sound.notifSound, 'Windows notification sound', 'The ding Windows plays with add-on pop-ups')}
+      ${toggle('muted', p.sound.muted, 'Mute all Mate sounds')}
+      ${toggle('notifSound', p.sound.notifSound, 'Windows notification sound', 'The ding Windows plays with Mate pop-ups')}
       ${withSounds.length ? withSounds.map((x) => `<div class="ssub">${esc(x.name)}</div>` + Object.entries(x.sounds).map(([k, s]) => {
         const key = `${x.id}:${k}`, cur = p.sound.map[key] || s.default;
         return `<div class="srow"><span class="grow small">${esc(s.label)}</span>${pick('sound:' + key, soundOpts, cur)}<button class="icon" data-test-key="${esc(key)}" title="Test">&#x25B8;</button></div>`;
-      }).join('')).join('') : '<div class="muted small">Add-ons that make sounds (like Timers) list them here, so you can pick a sound for each one.</div>'}
+      }).join('')).join('') : '<div class="muted small">Mates that make sounds (like Timers) list them here, so you can pick a sound for each one.</div>'}
     </div>
 
     <div class="card sect"><div class="stitle">Shortcut and startup</div>
       <div class="srow"><span class="grow">Open DeskMate</span><button class="ghost" id="hotkeyBtn">${esc(p.hotkey)}</button></div>
       <div class="err small" id="hotkeyErr"></div>
       ${toggle('startup', p.startup, 'Start with Windows')}
-      ${toggle('mini', p.mini, 'Status dots when hidden', 'A small pill in the corner shows add-on status')}
+      ${toggle('mini', p.mini, 'Status dots when hidden', 'A small pill in the corner shows Mate status')}
     </div>
 
     <div class="card sect"><div class="stitle">Vault</div>
@@ -81,7 +81,7 @@ async function renderSettings() {
       <div class="srow"><span class="grow">DeskMate ${esc(p.version)}</span><button class="ghost" id="checkUpd">Check now</button></div>
       <div class="muted small" id="updMsg"></div>
       <button id="dlNow" class="hidden">Download now</button>
-      ${toggle('autoUpdatePlugins', p.autoUpdatePlugins, 'Update add-ons automatically', "Updates that ask for new permissions always wait for you")}
+      ${toggle('autoUpdatePlugins', p.autoUpdatePlugins, 'Update Mates automatically', "Updates that ask for new permissions always wait for you")}
     </div>
     <div class="muted small" style="text-align:center">DeskMate by Lapis Studios</div>`;
 }
@@ -107,7 +107,7 @@ body().addEventListener('click', async (e) => {
     e.target.disabled = true; $('#updMsg').textContent = 'Checking...';
     const r = await api.prefs.checkUpdates();
     const a = r.app.error ? `Couldn't reach the update server` : r.app.available ? `DeskMate ${r.app.latest} is available` : 'DeskMate is up to date';
-    const pl = r.plugins.error ? '' : r.plugins.updated.length ? ` Updated ${r.plugins.updated.join(', ')}.` : r.plugins.waiting.length ? ' Some add-on updates need your OK in Plugins.' : ' Add-ons are up to date.';
+    const pl = r.plugins.error ? '' : r.plugins.updated.length ? ` Updated ${r.plugins.updated.join(', ')}.` : r.plugins.waiting.length ? ' Some Mate updates need your OK in Mates.' : ' Mates are up to date.';
     $('#updMsg').textContent = a + '.' + pl;
     const dl = $('#dlNow');
     dl.classList.toggle('hidden', !(r.app.available && r.app.canInstall));

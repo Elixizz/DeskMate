@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DeskMate · Lapis Studios</title>
-<meta name="description" content="DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.">
+<meta name="description" content="DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds Mates (add-ons) for the rest.">
 <link rel="icon" href="icon.png">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -12,8 +12,8 @@
 <header class="top">
   <a class="brand" href="/"><img src="icon.png" alt="" width="28" height="28">DeskMate</a>
   <nav>
-    <a href="#plugins">Plugins</a>
-    <a href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Build a plugin</a>
+    <a href="#plugins">Supply Closet</a>
+    <a href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Build a Mate</a>
     <a href="https://github.com/Elixizz/DeskMate">GitHub</a>
   </nav>
 </header>
@@ -22,17 +22,17 @@
   <section class="hero">
     <div class="hero-text">
       <h1>Your corner of the screen,<br><span>upgraded.</span></h1>
-      <p class="lead">DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest, like trackers, tools and games.</p>
+      <p class="lead">DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds <b>Mates</b> for the rest, like trackers, tools and games.</p>
       <div class="cta">
         <a class="btn" href="download/DeskMate-Installer.exe" download>Download for Windows</a>
-        <span class="muted small">Version <span id="ver">1.4.2</span> · Windows 10 and 11 · free · 50 KB installer that fetches the newest version · <a href="download/DeskMate-Setup.exe" download>full offline installer</a> (107 MB)</span>
+        <span class="muted small">Version <span id="ver">1.5.0</span> · Windows 10 and 11 · free · 50 KB installer that fetches the newest version · <a href="download/DeskMate-Setup.exe" download>full offline installer</a> (107 MB)</span>
       </div>
       <p class="muted small note">Windows may say "Windows protected your PC" because the installer isn't code-signed yet. Click <b>More info</b>, then <b>Run anyway</b>.</p>
     </div>
     <div class="hero-art" aria-hidden="true">
       <div class="widget">
         <div class="w-head"><b>DeskMate</b><span class="kbd">Ctrl+Alt+D</span><span class="dots"><i class="g"></i><i></i><i></i></span></div>
-        <div class="w-tabs"><span class="on">Music</span><span>Claude</span><span>Vault</span><span>Plugins</span></div>
+        <div class="w-tabs"><span class="on">Music</span><span>Claude</span><span>Timers</span><span>Vault</span></div>
         <div class="w-card"><div class="art"></div><div><b>Late Night Lofi</b><div class="muted small">Free radio · live</div></div></div>
         <div class="w-row"></div><div class="w-row short"></div><div class="w-row"></div>
         <div class="w-bar"><span class="play"></span><div class="seek"><i></i></div></div>
@@ -51,22 +51,22 @@
       <p>Play your own files and free internet radio, and control YouTube Music, Spotify or anything else playing on your PC, from a player bar and global hotkeys.</p>
     </div>
     <div class="feature">
-      <h3>Plugins for everything else</h3>
-      <p>Plugins are small web pages that get their own tab. They run sandboxed: they can't see your vault, your files or other plugins, and only get what you approve.</p>
+      <h3>Mates for everything else</h3>
+      <p>Mates are small add-ons that get their own tab. They run sandboxed: they can't see your vault, your files or other Mates, and only get what you approve.</p>
     </div>
   </section>
 
   <section id="plugins" class="plugins">
-    <h2>Verified plugins</h2>
-    <p class="muted">Reviewed by Lapis Studios. Install them from DeskMate's <b>Plugins → Store</b> tab; DeskMate checks every download against the checksum below.</p>
-    <div id="pluginList" class="plist"><div class="muted">Loading plugins…</div></div>
+    <h2>The Supply Closet</h2>
+    <p class="muted">Verified Mates, reviewed by Lapis Studios. Grab them from the puzzle-piece <b>Mates</b> button → <b>Supply Closet</b>; DeskMate checks every download against the checksum below.</p>
+    <div id="pluginList" class="plist"><div class="muted">Opening the Supply Closet…</div></div>
     <p class="muted small">DeskMate 1.0.2 and newer use this store automatically. On an older version, paste <code>https://deskmate.lapistudios.com/plugins/index.json</code> into Plugins → Store.</p>
   </section>
 
   <section class="build">
     <h2>Build your own</h2>
-    <p>If you can make a web page, you can make a DeskMate plugin: a <code>manifest.json</code>, an HTML page, done. You can share plugins for free or sell them.</p>
-    <a class="btn ghost" href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Read the plugin guide</a>
+    <p>If you can make a web page, you can make a DeskMate Mate: a <code>manifest.json</code>, an HTML page, done. You can share Mates for free or sell them.</p>
+    <a class="btn ghost" href="https://github.com/Elixizz/DeskMate/blob/main/docs/PLUGINS.md">Read the Mate guide</a>
   </section>
 </main>
 
@@ -94,7 +94,7 @@ fetch('plugins/index.json', { cache: 'no-store' })
         <div class="muted tiny" title="sha256">sha256 ${esc(p.sha256.slice(0, 16))}…</div>
       </article>`).join('');
   })
-  .catch(() => { document.getElementById('pluginList').innerHTML = '<div class="muted">Couldn’t load the plugin list.</div>'; });
+  .catch(() => { document.getElementById('pluginList').innerHTML = '<div class="muted">Couldn’t open the Supply Closet.</div>'; });
 </script>
 </body>
 </html>

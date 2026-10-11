@@ -1,6 +1,6 @@
 {
-  "version": "1.4.2",
+  "version": "1.5.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "fbdcfa67560c0fe4ab9b9fa5be857048887d97c4efc35e95ff3139bf40ac524a",
-  "notes": "DeskMate now opens by itself after an update, and Settings > Updates has a Download now button when Check now finds one."
+  "sha256": "51941528adb82a0491e0812c9152b7ef788fe9ce9ecddaedbbdd932ad269d6f7",
+  "notes": "Add-ons are now called Mates, and you get them from the Supply Closet (puzzle-piece button in the header)."
 }

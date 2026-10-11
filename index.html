@@ -15,7 +15,7 @@
       <span id="hdrDots" class="dots"><i></i><i></i><i></i></span>
       <span>Shrink</span><svg class="arrow" width="10" height="10" viewBox="0 0 10 10"><path d="M2 2 L8 8 M8 3.5 V8 H3.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <button class="icon tab gearbtn" data-tab="plugins" title="Add-ons"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 3h5v3a2 2 0 1 0 4 0V3h3v6h-3a2 2 0 1 0 0 4h3v8h-6v-3a2 2 0 1 0-4 0v3H3v-8h3a2 2 0 1 0 0-4H3V3h6z"/></svg></button>
+    <button class="icon tab gearbtn" data-tab="plugins" title="Mates"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 3h5v3a2 2 0 1 0 4 0V3h3v6h-3a2 2 0 1 0 0 4h3v8h-6v-3a2 2 0 1 0-4 0v3H3v-8h3a2 2 0 1 0 0-4H3V3h6z"/></svg></button>
     <button class="icon tab gearbtn" data-tab="settings" title="Settings">&#x2699;</button>
     <button id="pinBtn" class="icon" title="Keep open">&#x1F4CC;</button>
     <button id="hideBtn" class="icon" title="Hide">&#x2715;</button>
@@ -88,16 +88,16 @@
     <section id="tab-plugins" class="pane">
       <div class="row">
         <div class="seg grow">
-          <button class="segbtn active" data-pseg="installed">Installed</button>
-          <button class="segbtn" data-pseg="store">Store</button>
+          <button class="segbtn active" data-pseg="installed">My Mates</button>
+          <button class="segbtn" data-pseg="store">Supply Closet</button>
         </div>
-        <button id="installFolderBtn" class="ghost" title="Install a plugin you're writing, straight from its folder">From folder</button>
+        <button id="installFolderBtn" class="ghost" title="Add a Mate you're building, straight from its folder">From folder</button>
       </div>
       <div id="appUpdate" class="card update hidden"></div>
       <div id="pInstalled" class="list"></div>
       <div id="pStore" class="hidden" style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0">
         <div class="row">
-          <input id="storeUrl" class="grow" placeholder="Verified store (default). Paste another store's address to use it" autocomplete="off">
+          <input id="storeUrl" class="grow" placeholder="Lapis Supply Closet (default). Paste another closet's address to use it" autocomplete="off">
           <button id="storeUrlSave" class="ghost">Save</button>
         </div>
         <div id="storeList" class="list"></div>
