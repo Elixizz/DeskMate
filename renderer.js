@@ -35,12 +35,23 @@ function renderTabs() {
     nav.insertBefore(b, first);
   }
   $$('.tab').forEach((b) => { b.onclick = () => selectTab(b.dataset.tab); b.classList.toggle('active', b.dataset.tab === activeTab); });
+  tabEdges();
 }
+// Too many tabs for the width: the row scrolls sideways with the mouse wheel, and fades at an edge with more tabs past it.
+const tabNav = $('#tabs');
+function tabEdges() {
+  tabNav.classList.toggle('more-left', tabNav.scrollLeft > 2);
+  tabNav.classList.toggle('more-right', tabNav.scrollLeft + tabNav.clientWidth < tabNav.scrollWidth - 2);
+}
+tabNav.addEventListener('wheel', (e) => { if (tabNav.scrollWidth <= tabNav.clientWidth) return; e.preventDefault(); tabNav.scrollLeft += e.deltaY || e.deltaX; }, { passive: false });
+tabNav.addEventListener('scroll', tabEdges);
+new ResizeObserver(tabEdges).observe(tabNav);
 function selectTab(tab) {
-  if (!$$('.tab').some((b) => b.dataset.tab === tab)) tab = $('.tab').dataset.tab;
+  if (!$$('.tab').some((b) => b.dataset.tab === tab)) tab = $('nav#tabs .tab').dataset.tab;
   activeTab = tab;
   try { localStorage.setItem('tab', tab); } catch {}
   $$('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+  $('nav#tabs .tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   const pane = tab.startsWith('p:') ? 'tab-plugin' : 'tab-' + tab;
   $$('.pane').forEach((p) => p.classList.toggle('active', p.id === pane));
   if (tab === 'vault') refreshVault().then(tickCodes);
@@ -67,11 +78,11 @@ async function refreshPlugins() {
   pluginList = await api.plugins.list();
   renderTabs(); renderBars(); renderAppUpdate();
   if (wantedTab) {
-    const tabs = $$('.tab').map((b) => b.dataset.tab);
+    const tabs = $$('nav#tabs .tab').map((b) => b.dataset.tab);
     const pick = wantedTab === 'first' ? tabs[0] : wantedTab;
     if (tabs.includes(pick) && (pick !== 'vault' || wantedTab !== 'first' || pluginList.length)) { wantedTab = null; return selectTab(pick); }
   }
-  if (!$$('.tab').some((b) => b.dataset.tab === activeTab)) return selectTab($('.tab').dataset.tab);
+  if (!$$('.tab').some((b) => b.dataset.tab === activeTab)) return selectTab($('nav#tabs .tab').dataset.tab);
   if (activeTab === 'plugins') renderPlugins();
   reportLayout();
 }
