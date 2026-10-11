@@ -20,6 +20,8 @@ const PERMISSIONS = {
   'media-control': { label: 'See and control what other apps are playing (browser, Spotify), and their volume', risk: 'high' },
   claude: { label: 'Read your Claude Code conversations and send replies as you', risk: 'high' },
   gmail: { label: 'Read your Gmail (senders, subjects, previews and sign-in codes). It cannot send or delete', risk: 'high' },
+  'system-info': { label: 'See your PC\'s CPU, GPU, memory, disk and network usage', risk: 'low' },
+  'clipboard-history': { label: 'See text you copy, while DeskMate runs (never passwords copied from the Vault)', risk: 'high' },
 };
 const ID_RE = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const SOUND_IDS = ['chime', 'bell', 'ping', 'pop', 'alarm', 'soft', 'none'];
@@ -215,6 +217,14 @@ function unloadPlugin(id) {
   for (const v of [p.tab, p.bar]) if (v) { ctx.win().contentView.removeChildView(v); v.webContents.close(); }
   loaded.delete(id); statusByPlugin.delete(id); badgeByPlugin.delete(id);
   ctx.onStatus();
+  syncClipboard();
+}
+// Clipboard watching runs only while at least one running Mate holds "clipboard-history".
+let clipPaused = false;
+function syncClipboard() {
+  const want = !clipPaused && [...loaded.entries()].some(([id, p]) => !p.disabled && granted(id, 'clipboard-history'));
+  if (want && !ctx.caps.clip.running()) ctx.caps.clip.start();
+  if (!want && ctx.caps.clip.running()) ctx.caps.clip.stop(clipPaused);
 }
 function sendTo(id, channel, ...args) {
   const p = loaded.get(id);
@@ -328,6 +338,14 @@ const API = {
   'gmail.connect': [['gmail'], () => ctx.caps.gmail.connect()],
   'gmail.disconnect': [['gmail'], () => ctx.caps.gmail.disconnect()],
   'gmail.inbox': [['gmail'], (id, max) => throttled(`${id}:gmail`, 10e3, () => ctx.caps.gmail.inbox(Number(max) || 20))],
+  'system.stats': [['system-info'], () => throttled('sysinfo', 900, () => ctx.caps.sysinfo.stats())],
+  // History lives in the host's memory only; the Mate gets a copy and new entries as they happen.
+  'clipboard.history': [['clipboard-history'], () => { syncClipboard(); return ctx.caps.clip.list(); }],
+  'clipboard.remove': [['clipboard-history'], (id, entryId) => ctx.caps.clip.remove(String(entryId))],
+  'clipboard.clear': [['clipboard-history'], () => ctx.caps.clip.clear()],
+  // Pause really stops watching the clipboard (not just hiding entries).
+  'clipboard.setPaused': [['clipboard-history'], (id, on) => { clipPaused = !!on; syncClipboard(); return clipPaused; }],
+  'clipboard.paused': [['clipboard-history'], () => clipPaused],
   'claude.revealFile': [['claude'], (id, p) => { p = String(p); if (/^[a-z]:[\\/]/i.test(p) && fs.existsSync(p)) shell.showItemInFolder(p); }],
 };
 
@@ -523,6 +541,9 @@ function startAutoUpdate() {
 // ---------- wiring ----------
 function init(c) {
   ctx = c;
+  ctx.caps.clip.onEntry((e) => {
+    for (const [id, p] of loaded) if (!p.disabled && granted(id, 'clipboard-history')) sendTo(id, 'clipboard', e);
+  });
   ipcMain.handle('plugin:call', async (e, method, ...args) => {
     const id = byWebContents.get(e.sender.id);
     if (!id || !loaded.has(id)) throw new Error('Unknown plugin');

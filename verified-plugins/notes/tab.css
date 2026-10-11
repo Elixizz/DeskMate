@@ -1,0 +1,18 @@
+.view { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+body.page { height: 100%; }
+.note { cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.note:hover { background: var(--line); }
+.note .t { font-weight: 600; display: flex; gap: 6px; align-items: center; }
+.note .t .pin { color: var(--accent); font-size: 11px; }
+.note .p { color: var(--muted); font-size: 12px; }
+#text { flex: 1; min-height: 0; resize: none; font: 13px/1.5 "Segoe UI", sans-serif; }
+#pinNote.on { color: var(--accent); }
+.todo { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+.todo input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex: none; }
+.todo .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; user-select: text; }
+.todo.done .txt { color: var(--muted); text-decoration: line-through; }
+.todo .x { opacity: 0; }
+.todo:hover .x { opacity: 1; }
+.todo.dragging { opacity: .4; }
+.todo[draggable=true] { cursor: grab; }
+mark { background: var(--accent); color: var(--on-accent); border-radius: 3px; }

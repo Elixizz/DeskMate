@@ -1,0 +1,12 @@
+{
+  "id": "clipboard",
+  "name": "Clipboard",
+  "version": "1.0.0",
+  "author": "Lapis Studios",
+  "description": "Your last 50 copied texts, searchable. Click to copy again, pin the ones you reuse. History is kept in memory only and never includes passwords copied from the Vault. Needs DeskMate 1.6 or newer.",
+  "tab": "tab.html",
+  "permissions": [
+    "clipboard-history",
+    "clipboard-write"
+  ]
+}

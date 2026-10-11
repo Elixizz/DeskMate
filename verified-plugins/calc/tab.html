@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="seg">
+    <button class="segbtn active" data-mode="calc">Calculator</button>
+    <button class="segbtn" data-mode="conv">Convert</button>
+  </div>
+
+  <section id="calcView" class="view">
+    <div class="card screen">
+      <div id="hist" class="hist"></div>
+      <input id="expr" placeholder="2 * (3 + 4)^2" autocomplete="off" spellcheck="false">
+      <div class="row"><span id="preview" class="muted grow ellipsis"></span><button id="copyRes" class="icon" title="Copy result">&#x2398;</button></div>
+    </div>
+    <div class="keys" id="keys"></div>
+  </section>
+
+  <section id="convView" class="view hidden">
+    <select id="cat"></select>
+    <div class="card conv">
+      <div class="row"><input id="fromVal" class="grow" value="1" inputmode="decimal" autocomplete="off"><select id="fromUnit"></select></div>
+      <div class="row swaprow"><button id="swap" class="icon" title="Swap">&#x21C5;</button></div>
+      <div class="row"><input id="toVal" class="grow" readonly><select id="toUnit"></select></div>
+    </div>
+    <div id="convNote" class="muted small"></div>
+    <div id="convAll" class="list"></div>
+  </section>
+  <script src="tab.js"></script>
+</body>
+</html>

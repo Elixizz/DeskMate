@@ -25,6 +25,15 @@ contextBridge.exposeInMainWorld('deskmate', {
   openUrl: (url) => call('openUrl', url),
   copyText: (text) => call('copyText', text),
   status: { set: (s) => call('status.set', s) },
+  system: { stats: () => call('system.stats') },
+  clipboard: {
+    history: () => call('clipboard.history'),
+    remove: (id) => call('clipboard.remove', id),
+    clear: () => call('clipboard.clear'),
+    setPaused: (on) => call('clipboard.setPaused', on),
+    paused: () => call('clipboard.paused'),
+    onCopy: on('clipboard'),
+  },
   // Plain-http media (most radio streams) can't load in a secure page; route it through the host.
   mediaUrl: (url) => (/^http:\/\//i.test(url) ? 'dmnet://p/' + encodeURIComponent(url) : url),
   media: {

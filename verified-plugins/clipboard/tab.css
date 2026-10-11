@@ -1,0 +1,12 @@
+body.page { height: 100%; }
+.sect { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; margin-top: 4px; }
+.clip { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; padding: 7px 10px; }
+.clip:hover { background: var(--line); }
+.clip .txt { flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 12.5px; }
+.clip .meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: none; }
+.clip .acts { display: flex; opacity: 0; }
+.clip:hover .acts { opacity: 1; }
+.clip .acts .on { color: var(--accent); }
+.clip.flash { outline: 1px solid var(--accent); }
+#pause.on { color: var(--accent); }
+.foot { text-align: center; }

@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="seg">
+    <button class="segbtn active" data-mode="notes">Notes</button>
+    <button class="segbtn" data-mode="todo">To-do <span id="todoCount" class="muted small"></span></button>
+  </div>
+
+  <section id="notesView" class="view">
+    <div id="noteList" class="view">
+      <div class="row">
+        <input id="search" class="grow" placeholder="Search notes" autocomplete="off">
+        <button id="newNote">+ New</button>
+      </div>
+      <div id="notes" class="list"></div>
+    </div>
+    <div id="editor" class="view hidden">
+      <div class="row">
+        <button id="back" class="ghost">&#x2039; Notes</button>
+        <span id="saved" class="muted small grow"></span>
+        <button id="pinNote" class="icon" title="Pin to top">&#x2605;</button>
+        <button id="delNote" class="ghost">Delete</button>
+      </div>
+      <textarea id="text" class="grow" placeholder="Start typing. The first line becomes the title." spellcheck="true"></textarea>
+    </div>
+  </section>
+
+  <section id="todoView" class="view hidden">
+    <form id="addTodo" class="row">
+      <input id="todoText" class="grow" placeholder="Add a task and press Enter" maxlength="200" autocomplete="off">
+      <button type="submit">Add</button>
+    </form>
+    <div id="todos" class="list"></div>
+    <div class="row"><span class="muted small grow" id="todoSummary"></span><button id="clearDone" class="ghost small">Clear done</button></div>
+  </section>
+  <script src="tab.js"></script>
+</body>
+</html>

@@ -154,6 +154,8 @@ Ask only for what your Mate needs. The install screen lists every permission in 
 | `media-control` | `deskmate.media.*`: see and control what other apps are playing, and their volume | High |
 | `claude` | `deskmate.claude.*`: read Claude Code conversations and send replies as the user | High |
 | `gmail` | `deskmate.gmail.*`: sign in with Google and read Gmail (senders, subjects, previews, sign-in codes). Read-only | High |
+| `system-info` | `deskmate.system.stats()`: CPU, GPU, memory, disk and network usage. DeskMate 1.6+ | Low |
+| `clipboard-history` | `deskmate.clipboard.*`: text the user copies while DeskMate runs. Kept in memory only, and passwords copied from the Vault are never included. DeskMate 1.6+ | High |
 
 When an update adds a permission, DeskMate asks again before installing and marks the new ones with **NEW**. A Mate never gets a permission it didn't list, even if it was approved for an earlier version.
 
@@ -199,6 +201,11 @@ Every Mate page gets a global `deskmate` object. Calls that do something return 
 | `deskmate.gmail.connect()` | `gmail` | Opens Google's sign-in page in the browser. Resolves once the user finishes signing in |
 | `deskmate.gmail.disconnect()` | `gmail` | Signs out and revokes DeskMate's access |
 | `deskmate.gmail.inbox(max)` | `gmail` | `{ email, unreadCount, messages: [{ id, from, subject, snippet, time, unread }], codes: [{ code, id, from, subject, time }] }` for inbox mail from the last 7 days. `codes` holds sign-in codes found in the last 30 minutes. Rejects with `signed-out` if Google ended the session |
+| `deskmate.system.stats()` | `system-info` | `{ cpu: { percent, name, cores }, memory: { usedGB, totalGB, percent }, gpu: { percent, temp, name, vramUsedGB, vramTotalGB }, disk: { percent }, network: { downBps, upBps }, uptimeHours }`. Values the PC can't report are `null` (GPU temperature and VRAM need an NVIDIA card). Sampling starts on the first call and stops 20 seconds after the last, so only poll while your tab is visible |
+| `deskmate.clipboard.history()` | `clipboard-history` | Recent copies, newest first: `[{ id, text, time }]` (up to 50) |
+| `deskmate.clipboard.onCopy(fn)` | `clipboard-history` | Calls `fn({ id, text, time })` for each new copy |
+| `deskmate.clipboard.remove(id)` / `.clear()` | `clipboard-history` | Forget one entry, or all of them |
+| `deskmate.clipboard.setPaused(on)` / `.paused()` | `clipboard-history` | Stop or resume watching the clipboard. Paused means DeskMate doesn't read it at all |
 
 Everything a normal web page can do also works: `fetch` (to your `net:` hosts), `localStorage`, `IndexedDB`, `<audio>`, `<canvas>`, timers and so on. Pages stay loaded in the background, so timers keep running when the panel is hidden.
 

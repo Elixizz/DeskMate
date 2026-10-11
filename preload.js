@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('api', {
   setSettings: call('settings:set'),
   vault: {
     status: call('vault:status'), create: call('vault:create'), unlock: call('vault:unlock'), lock: call('vault:lock'),
-    save: call('vault:save'), del: call('vault:delete'), reveal: call('vault:reveal'), copy: call('vault:copy'), generate: call('vault:generate'),
+    save: call('vault:save'), del: call('vault:delete'), reveal: call('vault:reveal'), copy: call('vault:copy'), copySecret: call('vault:copySecret'), generate: call('vault:generate'),
     codes: call('vault:codes'), qr: call('vault:qr'), verify: call('vault:verify'),
     security: call('vault:security'), securityBegin: call('vault:securityBegin'), securityConfirm: call('vault:securityConfirm'), securityDisable: call('vault:securityDisable'),
     bindInfo: call('vault:bindInfo'), pickBackup: call('vault:pickBackup'), bind: call('vault:bind'), recoveryKey: call('vault:recoveryKey'),

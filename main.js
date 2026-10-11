@@ -25,6 +25,8 @@ const plugins = require('./host/plugins');
 const gmail = require('./host/gmail');
 const updater = require('./host/updater');
 const theme = require('./host/theme');
+const sysinfo = require('./host/sysinfo');
+const clip = require('./host/cliphist');
 
 let win, tray, pinned = false;
 
@@ -127,7 +129,7 @@ app.whenReady().then(() => {
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
     theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
-    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail },
+    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip },
   });
   win.webContents.once('did-finish-load', () => {
     plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate();
@@ -145,7 +147,7 @@ app.whenReady().then(() => {
   powerMonitor.on('suspend', lockVault);
 });
 app.on('second-instance', showWindow);
-app.on('will-quit', () => globalShortcut.unregisterAll());
+app.on('will-quit', () => { globalShortcut.unregisterAll(); sysinfo.stop(); });
 app.on('window-all-closed', (e) => e.preventDefault());
 
 handleHost('win:hide', () => win.hide());
@@ -642,10 +644,13 @@ handleHost('vault:save', (_e, item) => {
 });
 handleHost('vault:delete', (_e, id) => { requireUnlocked(); vaultItems = vaultItems.filter(x => x.id !== id); persistVault(); return publicItems(); });
 handleHost('vault:reveal', (_e, id) => { requireUnlocked(); return (vaultItems.find(x => x.id === id) || {}).password || ''; });
+// Recovery key / backup codes: copied by the host so they're kept out of any Mate's clipboard history.
+handleHost('vault:copySecret', async (_e, text) => { text = String(text).slice(0, 2000); clip.ignore(text); await clipboard.writeText(text); return true; });
 handleHost('vault:copy', async (_e, id, field) => {
   requireUnlocked();
   const item = vaultItems.find(x => x.id === id) || {};
   const v = field === 'totp' ? (item.totp ? totpCode(item.totp).code : '') : ['username', 'password'].includes(field) ? item[field] || '' : '';
+  clip.ignore(v); // never lands in a Mate's clipboard history
   await clipboard.writeText(v);
   // Clipboard calls are async in Electron 44+; only clear if the user hasn't copied something else since.
   if (field !== 'username') setTimeout(async () => { if ((await clipboard.readText()) === v) clipboard.clear(); }, CLIP_CLEAR_MS());

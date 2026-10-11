@@ -2,6 +2,19 @@
   "name": "Lapis Supply Closet",
   "plugins": [
     {
+      "id": "calc",
+      "name": "Calculator",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "A calculator with history, plus a unit converter for length, weight, temperature, speed, data, time and live currency rates.",
+      "permissions": [
+        "net:open.er-api.com",
+        "clipboard-write"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.0.zip",
+      "sha256": "cd082f26d52f3334a7cf9e06648fd56a2951770e238ac6e8257a77e4de1fc4f6"
+    },
+    {
       "id": "claude",
       "name": "Claude",
       "version": "1.0.1",
@@ -12,7 +25,20 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "1a56bc19f0c48899c2c2c99972e3064534989701e749eb7d347d3f6f8fc95747"
+      "sha256": "02bf2ac7637d64a1831907a52a9202758cd6b5f6769e702f77003dddc1b2816b"
+    },
+    {
+      "id": "clipboard",
+      "name": "Clipboard",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Your last 50 copied texts, searchable. Click to copy again, pin the ones you reuse. History is kept in memory only and never includes passwords copied from the Vault. Needs DeskMate 1.6 or newer.",
+      "permissions": [
+        "clipboard-history",
+        "clipboard-write"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.0.zip",
+      "sha256": "acc34ce4659b621c1e7987128b495e6862ed7b63f0148d394ddd641587a7047c"
     },
     {
       "id": "gmail",
@@ -27,7 +53,29 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "d4b448935c2bb309614fd9cd31bc7d30c9633971b1a2816bfb4ea60689a364c9"
+      "sha256": "88f7d10f985e4564b8f2ea3ff7bef7d07c480d22646a129b96a25b91e942b9cc"
+    },
+    {
+      "id": "notes",
+      "name": "Notes",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
+      "permissions": [],
+      "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.0.zip",
+      "sha256": "b12ee9701bf87e74404c74821eb4d50c600562841118cf19f030a6c0928b5aeb"
+    },
+    {
+      "id": "pcmon",
+      "name": "PC Monitor",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Live CPU, GPU, memory, disk and network usage with a short history graph. Shows GPU temperature and VRAM on NVIDIA cards. Needs DeskMate 1.6 or newer.",
+      "permissions": [
+        "system-info"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.0.zip",
+      "sha256": "c7b7e69fddbb55814542e9181de0614899327abe55ff27c2bdec13177bf8ccbe"
     },
     {
       "id": "schedule-one",
@@ -37,7 +85,7 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "4dd96e1c0b68dd4c213af27ec7afbc5c8117d20f5ed7d14852385cfa30abd5b3"
+      "sha256": "af87270373d00863395aa2088365e47100d4e62ca0dd2037ed9656eb6d29b0e3"
     },
     {
       "id": "timers",
@@ -50,7 +98,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "2afada89c53a2c59140d2ec9e1c48c7e1a74abb09d86816d67001029ae22b9f6"
+      "sha256": "310134bc93d7df7197b53c75a2fce86d2d1b2635c833bab08e714ec31786192f"
     },
     {
       "id": "weather",
@@ -63,7 +111,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "6e94d57c86eaf7376500954a4dc673f316483b2aabbf7a3720d2df7a4d95b2af"
+      "sha256": "0fc91cab2728ea2661eed767a1885b37bd47e4dc5bfb8b03087aa0714b834dfe"
     }
   ]
 }

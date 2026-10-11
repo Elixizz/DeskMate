@@ -404,7 +404,7 @@ function showRecoveryKey(key, fresh) {
     <div class="backup" style="display:block;text-align:center;font-size:15px">${esc(key)}</div>
     <button id="copyRk" class="ghost">Copy key</button>
     <button id="secClose">${fresh ? 'I saved it' : 'Done'}</button>`;
-  $('#copyRk').onclick = async () => { await navigator.clipboard.writeText(key); toast('Recovery key copied. Paste it somewhere safe, then clear your clipboard'); };
+  $('#copyRk').onclick = async () => { await api.vault.copySecret(key); toast('Recovery key copied. Paste it somewhere safe, then clear your clipboard'); };
   $('#secClose').onclick = openSecurity;
 }
 
@@ -449,7 +449,7 @@ async function setupSecurity() {
         <div class="backup">${codes.map((c) => `<span>${c}</span>`).join('')}</div>
         <button id="copyBackup" class="ghost">Copy codes</button>
         <button id="secClose">I saved them</button>`;
-      $('#copyBackup').onclick = async () => { await navigator.clipboard.writeText(codes.join('\n')); toast('Backup codes copied'); };
+      $('#copyBackup').onclick = async () => { await api.vault.copySecret(codes.join('\n')); toast('Backup codes copied'); };
       $('#secClose').onclick = openSecurity;
     } catch (e) { $('#secErr').textContent = String(e.message).replace(/^.*Error: /, ''); }
   };

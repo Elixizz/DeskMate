@@ -1,6 +1,6 @@
 {
-  "version": "1.5.0",
+  "version": "1.6.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "51941528adb82a0491e0812c9152b7ef788fe9ce9ecddaedbbdd932ad269d6f7",
-  "notes": "Add-ons are now called Mates, and you get them from the Supply Closet (puzzle-piece button in the header)."
+  "sha256": "dcfd3a6b1866fa12069624b2762fb93749eca386928475dd25238081b8989922",
+  "notes": "New Mates in the Supply Closet: Notes & To-do, Calculator & Converter, Clipboard History and PC Monitor."
 }
