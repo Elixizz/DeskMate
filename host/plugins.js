@@ -477,6 +477,31 @@ async function updatePlugins() {
   ctx.onLayoutChange();
   return { updated, waiting: [...pendingUpdates.keys()] };
 }
+// Add-ons that used to ship inside DeskMate (like Schedule I) vanish when a newer DeskMate stops bundling them.
+// Their settings and saved data are still here, so reinstall them from the store, as long as the store copy
+// asks for nothing the user hadn't already allowed. Anything else just shows up in the Store as usual.
+async function restoreFormerBuiltins() {
+  const missing = Object.entries(ctx.settings.plugins || {}).filter(([id, st]) => st.builtin && !loaded.has(id));
+  if (!missing.length) return [];
+  const { plugins } = await fetchStore();
+  const restored = [];
+  for (const [id, st] of missing) {
+    if (!plugins.some((p) => p.id === id)) continue;
+    const slot = {};
+    try {
+      const info = await stageFromStore(id, slot);
+      const before = st.granted || [];
+      const ok = info.permissions.every((p) => before.includes(p.id)) && (!info.hotkeys.length || before.includes('hotkeys'));
+      if (!ok) { commitInstall(false, slot); continue; }
+      const wasOn = st.enabled !== false;
+      commitInstall(true, slot);
+      if (!wasOn) setEnabled(id, false);
+      restored.push(info.name);
+    } catch { if (slot.staged) commitInstall(false, slot); }
+  }
+  return restored;
+}
+
 function startAutoUpdate() {
   const run = async () => {
     if (ctx.settings.autoUpdatePlugins === false) return;
@@ -487,6 +512,12 @@ function startAutoUpdate() {
   };
   setTimeout(run, 20e3);
   setInterval(run, 6 * 3600e3);
+  setTimeout(async () => {
+    try {
+      const r = await restoreFormerBuiltins();
+      if (r.length) ctx.win().webContents.send('host:toast', `Brought back ${r.join(', ')} from the store`);
+    } catch {}
+  }, 3e3);
 }
 
 // ---------- wiring ----------
