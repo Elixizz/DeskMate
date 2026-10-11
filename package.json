@@ -1,7 +1,7 @@
 {
     "name": "deskmate",
     "productName": "DeskMate",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.",
     "main": "main.js",
     "scripts": {

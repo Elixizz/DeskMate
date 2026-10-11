@@ -336,20 +336,21 @@ function extractZip(buf, dest) {
   }
   return dest;
 }
-function stage(dir, source, expect) {
+function stage(dir, source, expect, slot) {
   const manifest = readManifest(dir);
   if (expect && (manifest.id !== expect.id || manifest.version !== expect.version)) throw new Error('Downloaded plugin does not match the store listing');
   if (loaded.get(manifest.id)?.builtin) throw new Error(`"${manifest.id}" is a built-in plugin`);
   const prev = loaded.get(manifest.id);
   const already = prev ? pluginState(manifest.id).granted : [];
-  stagedInstall = { dir, manifest, source };
+  const staged = { dir, manifest, source };
+  if (slot) slot.staged = staged; else stagedInstall = staged;
   return {
     id: manifest.id, name: manifest.name, version: manifest.version, author: manifest.author || '', description: manifest.description || '',
     update: !!prev, fromVersion: prev?.manifest.version || null, source,
     permissions: manifest.permissions.map((p) => ({ id: p, ...permLabel(p), new: !already.includes(p) })), hotkeys: manifest.hotkeys,
   };
 }
-async function stageFromStore(id) {
+async function stageFromStore(id, slot) {
   const { plugins } = await fetchStore();
   const entry = plugins.find((p) => p.id === id);
   if (!entry) throw new Error('Not in the store');
@@ -360,7 +361,7 @@ async function stageFromStore(id) {
   const hash = crypto.createHash('sha256').update(buf).digest('hex');
   if (hash !== entry.sha256.toLowerCase()) throw new Error('Download was changed or corrupted (checksum mismatch). Not installing.');
   const dest = stageDir(); fs.mkdirSync(dest, { recursive: true });
-  return stage(extractZip(buf, dest), 'store', entry);
+  return stage(extractZip(buf, dest), 'store', entry, slot);
 }
 async function stageFromFolder() {
   const r = await ctx.withDialog(() => dialog.showOpenDialog(ctx.win(), { title: 'Pick a plugin folder (it has a manifest.json)', properties: ['openDirectory'] }));
@@ -372,8 +373,9 @@ async function stageFromFolder() {
   stagedInstall.devSource = src;
   return info;
 }
-function commitInstall(approve) {
-  const s = stagedInstall; stagedInstall = null;
+function commitInstall(approve, slot) {
+  let s;
+  if (slot) { s = slot.staged; slot.staged = null; } else { s = stagedInstall; stagedInstall = null; }
   if (!s) throw new Error('Nothing waiting to install');
   if (approve) pendingUpdates.delete(s.manifest.id);
   if (!approve) { fs.rmSync(s.dir, { recursive: true, force: true }); return listForHost(); }
@@ -436,14 +438,15 @@ async function updatePlugins() {
   for (const sp of plugins) {
     const have = loaded.get(sp.id);
     if (!have || have.builtin || pluginState(sp.id).dev || !newer(sp.version, have.manifest.version)) continue;
-    if (stagedInstall) { pendingUpdates.set(sp.id, sp.version); continue; } // the user is mid-install; don't trample it
+    // Its own staging slot, so it never touches an install the user has open on the consent screen.
+    const slot = {};
     try {
-      const info = await stageFromStore(sp.id);
+      const info = await stageFromStore(sp.id, slot);
       const sameKeys = JSON.stringify(info.hotkeys) === JSON.stringify(have.manifest.hotkeys || []);
-      if (info.permissions.some((p) => p.new) || !sameKeys) { commitInstall(false); pendingUpdates.set(sp.id, sp.version); continue; }
-      commitInstall(true);
+      if (info.permissions.some((p) => p.new) || !sameKeys) { commitInstall(false, slot); pendingUpdates.set(sp.id, sp.version); continue; }
+      commitInstall(true, slot);
       updated.push(`${info.name} ${info.version}`);
-    } catch { if (stagedInstall) commitInstall(false); }
+    } catch { if (slot.staged) commitInstall(false, slot); }
   }
   ctx.onLayoutChange();
   return { updated, waiting: [...pendingUpdates.keys()] };
