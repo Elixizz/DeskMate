@@ -1,6 +1,6 @@
 {
-  "version": "1.2.1",
+  "version": "1.3.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "317a4fc0988b6031746615b8279b37193cf9f1eb7fbbef5ff0b574fe51bad82f",
-  "notes": "Fixes a rare case where a background add-on update could cancel an install you had open."
+  "sha256": "d19318c142566594fb9ee775a2a362e1d4723983cb0dc488922e79c142cce449",
+  "notes": "New Settings tab (gear icon): light and dark themes with any accent colour, a sound for each add-on event, your own open shortcut, panel size, vault timers and update options."
 }

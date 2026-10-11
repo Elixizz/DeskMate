@@ -1,7 +1,7 @@
 /* Deskmate's look for plugins. Use it with: <link rel="stylesheet" href="/__deskmate/ui.css"> */
 :root {
   --bg: #15171c; --panel: #1d2027; --card: #242832; --line: #2f3440;
-  --text: #e6e8ee; --muted: #8b92a3; --accent: #ff8a3d; --accent-2: #ffb07a; --ok: #3ccf8e; --bad: #ff5d6c;
+  --text: #e6e8ee; --muted: #8b92a3; --accent: #ff8a3d; --accent-2: #ffb07a; --ok: #3ccf8e; --bad: #ff5d6c; --on-accent: #1a1205;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); font: 13px/1.4 "Segoe UI", "Segoe UI Emoji", system-ui, sans-serif; color: var(--text); overflow: hidden; user-select: none; }
@@ -14,7 +14,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); font: 13px/1.4 "Seg
 .grow { flex: 1; min-width: 0; }
 .err { color: var(--bad); font-size: 12px; }
 
-button { font: inherit; background: var(--accent); color: #1a1205; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-weight: 600; }
+button { font: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-weight: 600; }
 button:hover { background: var(--accent-2); }
 button:disabled { opacity: .5; cursor: default; }
 button.ghost { background: var(--card); color: var(--text); font-weight: 500; }
@@ -38,7 +38,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .chip { background: var(--panel); color: var(--muted); border-radius: 6px; padding: 1px 7px; font-size: 11px; }
 button.chip { cursor: pointer; font-weight: 500; }
-button.chip.active, button.chip:hover { background: var(--accent); color: #1a1205; }
+button.chip.active, button.chip:hover { background: var(--accent); color: var(--on-accent); }
 .seg { display: flex; background: var(--panel); border-radius: 8px; padding: 3px; }
 .segbtn { flex: 1; background: transparent; color: var(--muted); padding: 5px; }
 .segbtn.active { background: var(--card); color: var(--text); }

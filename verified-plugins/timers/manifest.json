@@ -1,9 +1,22 @@
 {
   "id": "timers",
   "name": "Timers",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Lapis Studios",
   "description": "Quick timers and reminders with Windows notifications, so you don't have to leave your game to keep track of time.",
   "tab": "tab.html",
-  "permissions": ["notifications", "status"]
+  "permissions": [
+    "notifications",
+    "status"
+  ],
+  "sounds": {
+    "done": {
+      "label": "Timer finished",
+      "default": "alarm"
+    },
+    "reminder": {
+      "label": "Reminder",
+      "default": "bell"
+    }
+  }
 }

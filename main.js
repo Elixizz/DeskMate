@@ -1,15 +1,17 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, screen, Tray, Menu, nativeImage, clipboard, dialog, shell, powerMonitor, safeStorage, protocol } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, screen, Tray, Menu, nativeImage, clipboard, dialog, shell, powerMonitor, safeStorage, protocol, nativeTheme } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 
-const W = 380, H = 560, MARGIN = 12;
+const SIZES = { compact: [340, 480], normal: [380, 560], large: [440, 680] };
+const MARGIN = 12;
+const winSize = () => SIZES[settings.size] || SIZES.normal;
 const HOTKEYS = ['Control+Alt+D', 'Control+Shift+D', 'Control+Shift+Space', 'Control+Alt+Space'];
 let hotkey = null;
 const prettyKey = () => (hotkey ? hotkey.replace('Control', 'Ctrl') : 'tray icon');
-const AUTO_LOCK_MS = 5 * 60 * 1000;
-const CLIP_CLEAR_MS = 20 * 1000;
+const AUTO_LOCK_MS = () => (settings.autoLockMin || 5) * 60 * 1000;
+const CLIP_CLEAR_MS = () => (settings.clipClearSec || 20) * 1000;
 
 if (!app.requestSingleInstanceLock()) { app.quit(); process.exit(0); }
 // Shown by Windows in notifications and the startup list (instead of "Electron").
@@ -22,6 +24,7 @@ protocol.registerSchemesAsPrivileged(['plugin', 'dmmedia', 'dmnet'].map((scheme)
 const plugins = require('./host/plugins');
 const gmail = require('./host/gmail');
 const updater = require('./host/updater');
+const theme = require('./host/theme');
 
 let win, tray, pinned = false;
 
@@ -49,6 +52,7 @@ function saveSettings() { fs.mkdirSync(dataDir, { recursive: true }); fs.writeFi
 // ---------- window ----------
 function placeWindow() {
   const wa = screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea;
+  const [W, H] = winSize();
   win.setBounds({ x: wa.x + wa.width - W - MARGIN, y: wa.y + wa.height - H - MARGIN, width: W, height: H });
 }
 function showWindow() { placeWindow(); win.show(); win.focus(); win.webContents.send('shown'); plugins.broadcast('shown'); }
@@ -56,11 +60,13 @@ function toggleWindow() { win.isVisible() && win.isFocused() ? win.hide() : show
 
 function createWindow() {
   win = new BrowserWindow({
-    width: W, height: H, show: false, frame: false, transparent: true, resizable: false,
+    width: winSize()[0], height: winSize()[1], show: false, frame: false, transparent: true, resizable: false,
     skipTaskbar: true, alwaysOnTop: true, fullscreenable: false,
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), backgroundThrottling: false },
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), backgroundThrottling: false, autoplayPolicy: 'no-user-gesture-required' },
   });
   win.setAlwaysOnTop(true, 'pop-up-menu');
+  win.setOpacity(settings.opacity || 1);
+  win.webContents.on('did-finish-load', () => applyTheme(win.webContents));
   win.loadFile('index.html');
   win.on('blur', () => { if (!pinned && !win.webContents.isDevToolsOpened()) win.hide(); });
   win.on('show', () => syncMini());
@@ -112,7 +118,7 @@ function buildTray() {
 }
 
 app.whenReady().then(() => {
-  hotkey = HOTKEYS.find((k) => globalShortcut.register(k, toggleWindow)) || null;
+  hotkey = [settings.hotkey, ...HOTKEYS].filter(Boolean).find((k) => globalShortcut.register(k, toggleWindow)) || null;
   createWindow();
   buildTray();
   createMini();
@@ -120,11 +126,13 @@ app.whenReady().then(() => {
   plugins.init({
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
+    theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
     caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail },
   });
   win.webContents.once('did-finish-load', () => { plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate(); });
   updater.start({ settings, saveSettings, onChange: (s) => win.webContents.send('host:app-update', s) });
   tray.displayBalloon({ title: 'Deskmate is running', content: hotkey ? `Press ${prettyKey()} to open it.` : 'Hotkeys are taken. Click the tray icon to open it.' });
+  nativeTheme.on('updated', () => { if (settings.theme?.mode === 'system') retheme(); });
   powerMonitor.on('lock-screen', lockVault);
   powerMonitor.on('suspend', lockVault);
 });
@@ -139,6 +147,87 @@ handleHost('app:updateInstall', () => updater.install());
 handleHost('win:hotkey', prettyKey);
 handleHost('win:pin', (_e, v) => { pinned = !!v; return pinned; });
 handleHost('settings:get', () => settings);
+
+// ---------- Settings tab ----------
+// Theme CSS is injected into every page we own (panel, pill, plugin views); replacing it re-themes live.
+const themeKeys = new Map();
+async function applyTheme(wc) {
+  if (!wc || wc.isDestroyed()) return;
+  try {
+    const key = await wc.insertCSS(theme.css(settings.theme));
+    const old = themeKeys.get(wc.id); themeKeys.set(wc.id, key);
+    if (old) wc.removeInsertedCSS(old).catch(() => {});
+  } catch {}
+}
+function retheme() {
+  for (const w of [win, mini]) if (w) applyTheme(w.webContents);
+  plugins.retheme();
+}
+// The panel's renderer makes the sounds (Web Audio), so they play even while it's hidden.
+function playSound(id) {
+  const s = settings.sound || {};
+  if (s.muted || id === 'none' || !plugins.SOUND_IDS.includes(id)) return false;
+  win.webContents.send('host:sound', { id, volume: typeof s.volume === 'number' ? s.volume : 0.7 });
+  return true;
+}
+const loginOpts = () => ({ name: 'DeskMate', path: process.execPath, args: app.isPackaged ? [] : [__dirname] });
+function setHotkey(accel) {
+  accel = String(accel || '');
+  const parts = accel.split('+'), key = parts.pop();
+  const modsOk = parts.length >= 2 && new Set(parts).size === parts.length && parts.every((p) => ['Control', 'Alt', 'Shift', 'Super'].includes(p)) && parts.some((p) => p === 'Control' || p === 'Alt');
+  if (!modsOk || !/^([A-Z0-9]|F([1-9]|1[0-2])|Space|Up|Down|Left|Right|Home|End|PageUp|PageDown)$/.test(key)) throw new Error('Use two modifiers (one of them Ctrl or Alt) plus a letter, number, F-key or Space');
+  if (accel === hotkey) return prettyKey();
+  if (!globalShortcut.register(accel, toggleWindow)) throw new Error(`${accel.replace('Control', 'Ctrl')} is already used by another app`);
+  if (hotkey) globalShortcut.unregister(hotkey);
+  hotkey = accel; settings.hotkey = accel; saveSettings();
+  tray.setToolTip(`Deskmate (${prettyKey()})`);
+  return prettyKey();
+}
+function prefs() {
+  const s = settings.sound || {};
+  return {
+    version: app.getVersion(), theme: { ...theme.DEFAULTS, ...(settings.theme || {}) }, accents: theme.ACCENTS,
+    size: SIZES[settings.size] ? settings.size : 'normal', opacity: settings.opacity || 1,
+    hotkey: prettyKey(), startup: app.getLoginItemSettings(loginOpts()).openAtLogin, mini: !!settings.mini,
+    autoLockMin: settings.autoLockMin || 5, clipClearSec: settings.clipClearSec || 20, autoUpdatePlugins: settings.autoUpdatePlugins !== false,
+    sound: { volume: typeof s.volume === 'number' ? s.volume : 0.7, muted: !!s.muted, notifSound: s.notifSound !== false, map: s.map || {} },
+    soundIds: plugins.SOUND_IDS,
+  };
+}
+function setPrefs(p = {}) {
+  if (p.theme) {
+    const t = { ...(settings.theme || {}) };
+    if (['dark', 'light', 'system'].includes(p.theme.mode)) t.mode = p.theme.mode;
+    if (theme.hexOk(p.theme.accent)) t.accent = p.theme.accent.toLowerCase();
+    settings.theme = t; retheme();
+  }
+  if (p.size && SIZES[p.size]) { settings.size = p.size; placeWindow(); }
+  if (typeof p.opacity === 'number') { settings.opacity = Math.max(0.6, Math.min(1, p.opacity)); win.setOpacity(settings.opacity); }
+  if (typeof p.startup === 'boolean') { app.setLoginItemSettings({ ...loginOpts(), openAtLogin: p.startup }); buildTrayMenu(); }
+  if (typeof p.mini === 'boolean') { settings.mini = p.mini; syncMini(); buildTrayMenu(); }
+  if ([1, 2, 5, 10, 15, 30, 60].includes(p.autoLockMin)) { settings.autoLockMin = p.autoLockMin; if (vaultKey) touchVault(); }
+  if ([10, 20, 30, 60].includes(p.clipClearSec)) settings.clipClearSec = p.clipClearSec;
+  if (typeof p.autoUpdatePlugins === 'boolean') settings.autoUpdatePlugins = p.autoUpdatePlugins;
+  if (p.sound) {
+    const s = { ...(settings.sound || {}) };
+    if (typeof p.sound.volume === 'number') s.volume = Math.max(0, Math.min(1, p.sound.volume));
+    if (typeof p.sound.muted === 'boolean') s.muted = p.sound.muted;
+    if (typeof p.sound.notifSound === 'boolean') s.notifSound = p.sound.notifSound;
+    if (p.sound.set && /^[a-z0-9-]+:[a-z0-9-]+$/.test(p.sound.set.key) && plugins.SOUND_IDS.includes(p.sound.set.value)) s.map = { ...(s.map || {}), [p.sound.set.key]: p.sound.set.value };
+    settings.sound = s;
+  }
+  saveSettings();
+  return prefs();
+}
+handleHost('prefs:get', () => prefs());
+handleHost('prefs:set', (_e, p) => setPrefs(p));
+handleHost('prefs:hotkey', (_e, accel) => setHotkey(accel));
+handleHost('prefs:testSound', (_e, id) => { const s = settings.sound || {}; win.webContents.send('host:sound', { id, volume: typeof s.volume === 'number' ? s.volume : 0.7 }); });
+handleHost('prefs:checkUpdates', async () => {
+  const [app_, plug] = await Promise.allSettled([updater.check(), plugins.updatePlugins()]);
+  if (app_.status === 'fulfilled') win.webContents.send('host:app-update', app_.value);
+  return { app: app_.status === 'fulfilled' ? app_.value : { error: app_.reason.message }, plugins: plug.status === 'fulfilled' ? plug.value : { error: plug.reason.message } };
+});
 handleHost('settings:set', (_e, patch) => { Object.assign(settings, patch); saveSettings(); return settings; });
 handleHost('shell:reveal', (_e, p) => shell.showItemInFolder(p));
 
@@ -230,6 +319,7 @@ function createMini() {
   });
   mini.setAlwaysOnTop(true, 'screen-saver');
   mini.loadFile('mini.html');
+  mini.webContents.on('did-finish-load', () => applyTheme(mini.webContents));
 }
 function placeMini() {
   const wa = screen.getPrimaryDisplay().workArea;
@@ -421,7 +511,7 @@ function lockVault() {
   clearTimeout(lockTimer);
   if (win) win.webContents.send('vault:locked');
 }
-function touchVault() { clearTimeout(lockTimer); lockTimer = setTimeout(lockVault, AUTO_LOCK_MS); }
+function touchVault() { clearTimeout(lockTimer); lockTimer = setTimeout(lockVault, AUTO_LOCK_MS()); }
 function publicItems() { return vaultItems.map(({ password, totp, ...rest }) => ({ ...rest, hasPassword: !!password, hasTotp: !!totp, totpLabel: totp ? totp.issuer || totp.label || '' : '' })); }
 function requireUnlocked() { if (!vaultKey) throw new Error('Vault is locked'); touchVault(); }
 function openVault(ctx) {
@@ -550,7 +640,7 @@ handleHost('vault:copy', async (_e, id, field) => {
   const v = field === 'totp' ? (item.totp ? totpCode(item.totp).code : '') : ['username', 'password'].includes(field) ? item[field] || '' : '';
   await clipboard.writeText(v);
   // Clipboard calls are async in Electron 44+; only clear if the user hasn't copied something else since.
-  if (field !== 'username') setTimeout(async () => { if ((await clipboard.readText()) === v) clipboard.clear(); }, CLIP_CLEAR_MS);
+  if (field !== 'username') setTimeout(async () => { if ((await clipboard.readText()) === v) clipboard.clear(); }, CLIP_CLEAR_MS());
   return true;
 });
 handleHost('vault:generate', () => {

@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('api', {
     bindInfo: call('vault:bindInfo'), pickBackup: call('vault:pickBackup'), bind: call('vault:bind'), recoveryKey: call('vault:recoveryKey'),
     backupNow: call('vault:backupNow'), pickRestore: call('vault:pickRestore'), restore: call('vault:restore'),
   },
+  prefs: { get: call('prefs:get'), set: call('prefs:set'), hotkey: call('prefs:hotkey'), testSound: call('prefs:testSound'), checkUpdates: call('prefs:checkUpdates') },
   update: { status: call('app:updateStatus'), check: call('app:updateCheck'), install: call('app:updateInstall') },
   plugins: {
     list: call('plugins:list'), layout: call('plugins:layout'), status: call('plugins:status'),

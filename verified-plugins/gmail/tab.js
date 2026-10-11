@@ -74,6 +74,8 @@ function notifyNew(box) {
     deskmate.notify(code ? `Code ${spaced(code)}` : m.from, code ? `${m.from}: ${m.subject}` : m.subject);
   }
   if (fresh.length > 3) deskmate.notify(`${fresh.length - 3} more new emails`, '');
+  // One sound per check, picked in Settings > Sounds (DeskMate 1.3+).
+  if (fresh.length && deskmate.playSound) deskmate.playSound(fresh.some((m) => codeFor.has(m.id)) ? 'code' : 'mail').catch(() => {});
 }
 
 // One dot: blue and pulsing when a fresh sign-in code is waiting, orange when there's unread mail.

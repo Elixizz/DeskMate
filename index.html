@@ -22,6 +22,7 @@
   <nav id="tabs">
     <button class="tab" data-tab="vault">Vault</button>
     <button class="tab" data-tab="plugins" title="Plugins">Plugins</button>
+    <button class="tab gear" data-tab="settings" title="Settings">&#x2699;</button>
   </nav>
 
   <main>
@@ -101,11 +102,13 @@
       </div>
       <div id="consent" class="hidden card form"></div>
     </section>
+    <section id="tab-settings" class="pane"><div id="settingsBody" class="list"></div></section>
   </main>
 
   <div id="bars"></div>
 </div>
 <div id="toast" class="toast"></div>
 <script src="renderer.js"></script>
+<script src="settings.js"></script>
 </body>
 </html>

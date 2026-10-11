@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('deskmate', {
   onShown: on('shown'),
   onHidden: on('hidden'),
   notify: (title, body) => call('notify', title, body),
+  playSound: (name) => call('playSound', name),
   openUrl: (url) => call('openUrl', url),
   copyText: (text) => call('copyText', text),
   status: { set: (s) => call('status.set', s) },

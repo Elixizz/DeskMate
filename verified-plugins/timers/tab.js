@@ -130,6 +130,8 @@ function fire(i, missed) {
   const title = i.kind === 'timer' ? `Time's up: ${i.label}` : `Reminder: ${i.label}`;
   const body = missed ? `This was due at ${clock(i.due)} while DeskMate was closed.` : i.kind === 'timer' ? `${fmtSpan(i.total)} timer finished.` : `It's ${clock(i.due)}.`;
   deskmate.notify(title, body).catch(() => {});
+  // Sound picked in Settings > Sounds (DeskMate 1.3+). Missed alarms stay quiet.
+  if (!missed && deskmate.playSound) deskmate.playSound(i.kind === 'timer' ? 'done' : 'reminder').catch(() => {});
 }
 function tick() {
   const now = Date.now();

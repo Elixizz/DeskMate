@@ -9,6 +9,7 @@ Press **Ctrl+Alt+D** and it pops up in the bottom-right corner of your screen. P
 - **Password vault**: AES-256 encrypted, stored only on your PC. Built-in authenticator (2FA codes, with QR import), an optional phone code to unlock, and an optional lock to your Windows account with automatic encrypted backups.
 - **Music**: play your own music files and free internet radio, and control YouTube Music, Spotify or anything else playing on your PC from a player bar and global hotkeys (Ctrl+Alt+P, Ctrl+Alt+Left/Right).
 - **Status pill**: shrink DeskMate to a few dots in the corner that plugins can light up.
+- **Settings**: light, dark or match-Windows themes with any accent colour (add-ons follow along), a sound for each add-on event, your own open shortcut, panel size and see-through, vault lock timers, and automatic updates for DeskMate and its add-ons.
 
 ## Plugins
 

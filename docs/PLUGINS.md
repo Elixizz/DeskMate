@@ -114,6 +114,7 @@ Every plugin folder needs a `manifest.json` at its top level. DeskMate refuses t
 | `bar` | One of `tab` / `bar` | `{ "file": page, "height": 24–90 }` | `{ "file": "bar.html", "height": 64 }` |
 | `permissions` | No | List of permission names (next section). Unknown names are refused | `["status", "net:api.github.com"]` |
 | `hotkeys` | No | Up to 8 global shortcuts. Needs the `hotkeys` permission | `["Control+Alt+N"]` |
+| `sounds` | No | Up to 12 moments that make a sound. Each is a label, or `{ "label", "default" }` where default is one of `chime`, `bell`, `ping`, `pop`, `alarm`, `soft`, `none`. Users pick the actual sound in Settings → Sounds. DeskMate 1.3+ | `{"done": {"label": "Timer finished", "default": "alarm"}}` |
 
 The Music plugin's manifest, as a full example:
 
@@ -178,6 +179,7 @@ Every plugin page gets a global `deskmate` object. Calls that do something retur
 | --- | --- | --- |
 | `deskmate.status.set({ dots, tooltip })` | `status` | Publishes up to 6 dots, each `{ color: '#rrggbb' or null, pulse: true/false }`. `null` = gray. `tooltip` shows on hover (120 characters) |
 | `deskmate.notify(title, body)` | `notifications` | Windows notification, titled with your plugin's name |
+| `deskmate.playSound(name)` | None | Plays the sound the user chose for one of your manifest's `sounds`. Muted if they turned sounds off. At most one sound per 0.4 seconds. Check `if (deskmate.playSound)` to stay compatible with DeskMate older than 1.3 |
 | `deskmate.openUrl(url)` | `open-links` | Opens an `https://` link in the user's browser |
 | `deskmate.copyText(text)` | `clipboard-write` | Copies text to the clipboard |
 | `deskmate.onHotkey(fn)` | `hotkeys` | `fn(accelerator)` runs when one of your manifest hotkeys is pressed, even with DeskMate hidden |
@@ -200,7 +202,7 @@ Everything a normal web page can do also works: `fetch` (to your `net:` hosts), 
 
 ## Styling: look like DeskMate
 
-Link the shared stylesheet and your plugin matches DeskMate's dark theme with no extra work:
+Link the shared stylesheet and your plugin matches DeskMate's theme with no extra work, including the user's colour and light/dark choice from Settings (DeskMate 1.3+). For your own CSS, use the variables `--bg`, `--panel`, `--card`, `--line`, `--text`, `--muted`, `--accent`, `--accent-2`, `--on-accent` (text on accent-coloured buttons), `--ok` and `--bad` instead of fixed colours, so it follows the theme too:
 
 ```html
 <link rel="stylesheet" href="/__deskmate/ui.css">

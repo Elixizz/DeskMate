@@ -4,38 +4,38 @@
     {
       "id": "claude",
       "name": "Claude",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "See what Claude Code did since you last checked, watch a conversation with the status dots, and reply in the background.",
       "permissions": [
         "claude",
         "status"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.0.zip",
-      "sha256": "42ed326c2866ae91bbb27b0b43c1bc4782d79f0a41a35223b30ee20fce3a113b"
+      "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
+      "sha256": "6f76508b544071c6a0dd61f16e327777a650fcc7777ae44a71e4a45701a73dd9"
     },
     {
       "id": "schedule-one",
       "name": "Schedule I",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
-      "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.0.zip",
-      "sha256": "c8038740a8eb6214df451188e87642490a965a59628463aa4149c8920e0f8574"
+      "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
+      "sha256": "d3d8e1dda0141b717eca8d261996c0ec450cbedfbdff439aee7a3ed6ab6c0dc4"
     },
     {
       "id": "timers",
       "name": "Timers",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "Lapis Studios",
       "description": "Quick timers and reminders with Windows notifications, so you don't have to leave your game to keep track of time.",
       "permissions": [
         "notifications",
         "status"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/timers-1.0.0.zip",
-      "sha256": "a4d8095a9dccde84702b9b065806eb010327e9eb7b42169e4e393a8637283b5a"
+      "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
+      "sha256": "aba9ef2886b26ae8012a491931110a6545c085672e1b08d81c98388bdde98caa"
     },
     {
       "id": "weather",
@@ -48,7 +48,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "66b96bde86d704320bcc0ad54513aedff60bbcf14b5dc3f41b683f04e6cd6a40"
+      "sha256": "752f50ceacd5e28d6d36fc3910f2b15452457a5b4ecc38ea78e640392bf00ca1"
     }
   ]
 }

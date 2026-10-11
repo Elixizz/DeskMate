@@ -45,6 +45,7 @@ function selectTab(tab) {
   $$('.pane').forEach((p) => p.classList.toggle('active', p.id === pane));
   if (tab === 'vault') refreshVault().then(tickCodes);
   if (tab === 'plugins') renderPlugins();
+  if (tab === 'settings') renderSettings();
   reportLayout();
 }
 function renderBars() {

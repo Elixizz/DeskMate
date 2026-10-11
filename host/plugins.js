@@ -22,6 +22,7 @@ const PERMISSIONS = {
   gmail: { label: 'Read your Gmail (senders, subjects, previews and sign-in codes). It cannot send or delete', risk: 'high' },
 };
 const ID_RE = /^[a-z0-9][a-z0-9-]{1,40}$/;
+const SOUND_IDS = ['chime', 'bell', 'ping', 'pop', 'alarm', 'soft', 'none'];
 const HOST_RE = /^(\*|(\*\.)?[a-z0-9-]+(\.[a-z0-9-]+)+)$/;
 const RESERVED_KEYS = ['Control+Alt+D', 'Control+Shift+D', 'Control+Shift+Space', 'Control+Alt+Space', 'Alt+F4', 'Control+Alt+Delete'];
 const MAX_ZIP_BYTES = 20 * 1024 * 1024;
@@ -32,6 +33,7 @@ const loaded = new Map();       // id -> { manifest, dir, builtin, ses, tab, bar
 const byWebContents = new Map(); // webContents.id -> id
 const statusByPlugin = new Map();
 const badgeByPlugin = new Map();
+const soundAt = new Map();
 let stagedInstall = null;       // { dir, manifest, source } waiting for the user's consent
 
 // ---------- manifests & permissions ----------
@@ -68,6 +70,19 @@ function validateManifest(m, dir) {
     const modsOk = parts.length >= 2 && new Set(parts).size === parts.length && parts.every((p) => ['Control', 'Alt', 'Shift', 'Super'].includes(p)) && parts.some((p) => p === 'Control' || p === 'Alt');
     if (!modsOk || !/^([A-Z0-9]|F([1-9]|1[0-2])|Left|Right|Up|Down|Space|Home|End|PageUp|PageDown)$/.test(key)) fail(`hotkey ${k} must be two modifiers (one of them Ctrl or Alt) plus one key`);
     if (RESERVED_KEYS.includes(k)) fail(`hotkey ${k} is reserved`);
+  }
+  // "sounds": { "done": "Time's up" } or { "done": { "label": "Time's up", "default": "alarm" } }
+  // Plugins name the moments that make a sound; the user picks the actual sound for each in Settings.
+  const sounds = m.sounds || {};
+  if (typeof sounds !== 'object' || Array.isArray(sounds)) fail('sounds must be an object');
+  if (Object.keys(sounds).length > 12) fail('12 sounds max');
+  m.sounds = {};
+  for (const [k, v] of Object.entries(sounds)) {
+    if (!/^[a-z0-9-]{1,24}$/.test(k)) fail(`sound name ${k} must be lowercase letters, numbers and dashes`);
+    const label = typeof v === 'string' ? v : v?.label;
+    if (!label || String(label).length > 40) fail(`sound ${k} needs a label (40 chars max)`);
+    const def = typeof v === 'object' && SOUND_IDS.includes(v.default) ? v.default : 'chime';
+    m.sounds[k] = { label: String(label), default: def };
   }
   return m;
 }
@@ -157,9 +172,10 @@ function makeView(id, file, kind) {
       devTools: !!pluginState(id).dev, spellcheck: false,
     },
   });
-  view.setBackgroundColor('#15171c');
+  view.setBackgroundColor(ctx.theme.bg());
   view.setVisible(false);
   const wc = view.webContents;
+  wc.on('dom-ready', () => ctx.theme.apply(wc));
   byWebContents.set(wc.id, id);
   wc.on('will-navigate', (e, url) => { if (!url.startsWith(`plugin://${id}/`)) e.preventDefault(); });
   wc.setWindowOpenHandler(({ url }) => {
@@ -249,7 +265,7 @@ function listForHost() {
     return {
       id: m.id, name: m.name, version: m.version, author: m.author || '', description: m.description || '',
       builtin: !!builtin, enabled: !disabled, dev: !!st.dev, updateTo: pendingUpdates.get(m.id) || null, hasTab: !!m.tab, bar: m.bar ? { height: m.bar.height } : null,
-      permissions: m.permissions.map((p) => ({ id: p, ...permLabel(p) })), hotkeys: m.hotkeys, badge: badgeByPlugin.get(m.id) || 0,
+      permissions: m.permissions.map((p) => ({ id: p, ...permLabel(p) })), hotkeys: m.hotkeys, badge: badgeByPlugin.get(m.id) || 0, sounds: m.sounds,
     };
   });
 }
@@ -284,8 +300,18 @@ const API = {
     ctx.onStatus();
   }],
   notify: [['notifications'], (id, title, body) => {
-    new Notification({ title: `${loaded.get(id).manifest.name}: ${String(title).slice(0, 60)}`, body: String(body || '').slice(0, 200), silent: false }).show();
+    new Notification({ title: `${loaded.get(id).manifest.name}: ${String(title).slice(0, 60)}`, body: String(body || '').slice(0, 200), silent: ctx.settings.sound?.notifSound === false }).show();
   }],
+  // Plays the sound the user picked for one of the plugin's declared moments. No permission: it's only a sound,
+  // and the user can change or mute each one. Throttled so a plugin can't spam.
+  playSound: (id, name) => {
+    const s = loaded.get(id).manifest.sounds[String(name)];
+    if (!s) throw new Error(`"${name}" isn't in this plugin's "sounds" list`);
+    const last = soundAt.get(id) || 0;
+    if (Date.now() - last < 400) return false;
+    soundAt.set(id, Date.now());
+    return ctx.playSound(ctx.settings.sound?.map?.[`${id}:${name}`] || s.default);
+  },
   copyText: [['clipboard-write'], async (id, text) => { await clipboard.writeText(String(text).slice(0, 10000)); return true; }],
   openUrl: [['open-links'], (id, url) => { if (/^https:\/\//i.test(url)) shell.openExternal(url); }],
   'media.sessions': [['media-control'], () => ctx.caps.mediaStatus()],
@@ -453,6 +479,7 @@ async function updatePlugins() {
 }
 function startAutoUpdate() {
   const run = async () => {
+    if (ctx.settings.autoUpdatePlugins === false) return;
     try {
       const r = await updatePlugins();
       if (r.updated.length) ctx.win().webContents.send('host:toast', `Updated ${r.updated.join(', ')}`);
@@ -490,4 +517,13 @@ function init(c) {
   host('plugins:devtools', (_e, id) => { const p = loaded.get(id); if (pluginState(id).dev && p?.tab) p.tab.webContents.openDevTools({ mode: 'detach' }); });
 }
 
-module.exports = { init, loadAll, broadcast, statusList, startAutoUpdate, PERMISSIONS };
+// Re-theme every open plugin page (tabs and bars).
+function retheme() {
+  for (const p of loaded.values()) for (const v of [p.tab, p.bar]) {
+    if (!v || v.webContents.isDestroyed()) continue;
+    v.setBackgroundColor(ctx.theme.bg());
+    ctx.theme.apply(v.webContents);
+  }
+}
+
+module.exports = { init, loadAll, broadcast, statusList, startAutoUpdate, retheme, updatePlugins, PERMISSIONS, SOUND_IDS };
