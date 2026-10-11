@@ -27,6 +27,7 @@ const updater = require('./host/updater');
 const theme = require('./host/theme');
 const sysinfo = require('./host/sysinfo');
 const clip = require('./host/cliphist');
+const wallet = require('./host/wallet');
 
 let win, tray, pinned = false;
 
@@ -129,7 +130,7 @@ app.whenReady().then(() => {
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
     theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
-    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip },
+    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip, wallet, walletUi },
   });
   win.webContents.once('did-finish-load', () => {
     plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate();
@@ -644,6 +645,62 @@ handleHost('vault:save', (_e, item) => {
 });
 handleHost('vault:delete', (_e, id) => { requireUnlocked(); vaultItems = vaultItems.filter(x => x.id !== id); persistVault(); return publicItems(); });
 handleHost('vault:reveal', (_e, id) => { requireUnlocked(); return (vaultItems.find(x => x.id === id) || {}).password || ''; });
+// ---------- wallet screens ----------
+// Everything that touches the recovery phrase or the password happens here and in walletui.js (DeskMate's own
+// window). A Mate can only open these screens and get back a result.
+let walletOpen = null; // { resolve, reject, mode, quote, prevPinned }
+let newPhrase = null;  // a freshly generated phrase waiting to be confirmed and saved
+function walletUi(mode, data, requester) {
+  if (walletOpen) return Promise.reject(new Error('Another wallet screen is already open'));
+  return new Promise((resolve, reject) => {
+    walletOpen = { resolve, reject, mode, quote: mode === 'send' ? data : null, prevPinned: pinned };
+    pinned = true; // keep the panel open while the user reads and types
+    showWindow();
+    const view = mode === 'send' ? { ...data, utxos: undefined } : data;
+    win.webContents.send('host:wallet-ui', { mode, data: view, requester });
+  });
+}
+function walletClose(result, error) {
+  const w = walletOpen; if (!w) return;
+  walletOpen = null; newPhrase = null; pinned = w.prevPinned;
+  error ? w.reject(new Error(error)) : w.resolve(result);
+  plugins.broadcast('wallet-changed');
+}
+handleHost('wallet:status', () => wallet.status());
+handleHost('wallet:generate', () => { newPhrase = wallet.newPhrase(); return newPhrase.split(' '); });
+handleHost('wallet:checkWords', (_e, answers) => !!newPhrase && Object.entries(answers || {}).every(([i, w]) => newPhrase.split(' ')[Number(i)] === String(w).trim().toLowerCase()));
+handleHost('wallet:create', (_e, password) => { if (!newPhrase) throw new Error('Start again'); const st = wallet.save(newPhrase, password); newPhrase = null; return st; });
+handleHost('wallet:validate', (_e, phrase) => wallet.validPhrase(phrase));
+handleHost('wallet:import', (_e, phrase, password) => wallet.save(phrase, password));
+handleHost('wallet:reveal', (_e, password) => wallet.reveal(password).split(' '));
+handleHost('wallet:changePassword', (_e, oldPw, newPw) => wallet.changePassword(oldPw, newPw));
+handleHost('wallet:setNetwork', (_e, n) => { const st = wallet.setNetwork(n); plugins.broadcast('wallet-changed'); return st; });
+handleHost('wallet:remove', (_e, password) => wallet.remove(password));
+handleHost('wallet:confirmSend', async (_e, password) => {
+  const w = walletOpen;
+  if (!w?.quote || w.busy) throw new Error('Nothing to send');
+  // Take the quote before the first await so a second click or Enter can't sign it again.
+  const q = w.quote; w.quote = null; w.busy = true;
+  try {
+    const r = await wallet.send(q, password);
+    w.sent = r;
+    return r;
+  } catch (e) {
+    if (e.notSent) w.quote = q; // nothing reached the network: let them fix the password and try again
+    else throw new Error(`${e.message}. It may or may not have been sent: check your balance before trying again`);
+    throw e;
+  } finally { w.busy = false; }
+});
+handleHost('wallet:busy', () => !!walletOpen?.busy);
+handleHost('wallet:close', () => {
+  const w = walletOpen; if (!w || w.busy) return false; // never close mid-send
+  w.sent ? walletClose(w.sent) : w.mode === 'send' ? walletClose(null, 'Canceled') : walletClose(wallet.status());
+  return true;
+});
+handleHost('wallet:openExplorer', (_e, url) => {
+  if (/^https:\/\/(mempool\.space|etherscan\.io|sepolia\.etherscan\.io|solscan\.io)\//.test(String(url))) shell.openExternal(String(url));
+});
+
 // Recovery key / backup codes: copied by the host so they're kept out of any Mate's clipboard history.
 handleHost('vault:copySecret', async (_e, text) => { text = String(text).slice(0, 2000); clip.ignore(text); await clipboard.writeText(text); return true; });
 handleHost('vault:copy', async (_e, id, field) => {

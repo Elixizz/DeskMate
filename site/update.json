@@ -1,6 +1,6 @@
 {
-  "version": "1.6.0",
+  "version": "1.7.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "dcfd3a6b1866fa12069624b2762fb93749eca386928475dd25238081b8989922",
-  "notes": "New Mates in the Supply Closet: Notes & To-do, Calculator & Converter, Clipboard History and PC Monitor."
+  "sha256": "068eeb2657cee3d4eb928dc13c71ad305c8290a3d9e73f7f4fadb5b905a95760",
+  "notes": "New Wallet Mate: a crypto wallet for Bitcoin, Ethereum and Solana (plus USDC and other tokens), with every send approved in DeskMate's own window."
 }

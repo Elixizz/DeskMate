@@ -140,7 +140,9 @@ function reportLayout() {
   requestAnimationFrame(() => {
     const rect = (el) => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; };
     const active = activeTab && activeTab.startsWith('p:') ? activeTab.slice(2) : null;
-    api.plugins.layout({ active: menuOpen ? null : active, content: active && !menuOpen ? rect($('#pluginArea')) : null, bars: $$('#bars .barslot').map((el) => ({ id: el.dataset.id, ...rect(el) })) });
+    // Mate pages are native views drawn on top of this page: hide them under menus and wallet screens.
+    const cover = menuOpen || !$('#walletModal').classList.contains('hidden');
+    api.plugins.layout({ active: cover ? null : active, content: active && !cover ? rect($('#pluginArea')) : null, bars: cover ? [] : $$('#bars .barslot').map((el) => ({ id: el.dataset.id, ...rect(el) })) });
   });
 }
 new ResizeObserver(reportLayout).observe(document.body);

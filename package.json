@@ -1,62 +1,71 @@
 {
-    "name": "deskmate",
+  "name": "deskmate",
+  "productName": "DeskMate",
+  "version": "1.7.0",
+  "description": "DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Lapis Studios",
+    "url": "https://lapistudios.com"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.9.2",
+    "@noble/hashes": "^1.8.0",
+    "@scure/bip32": "^1.7.0",
+    "@scure/bip39": "^1.6.0",
+    "@scure/btc-signer": "^1.8.1",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.2",
+    "adm-zip": "^0.6.1",
+    "ethers": "^6.15.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4"
+  },
+  "build": {
+    "appId": "com.lapistudios.deskmate",
     "productName": "DeskMate",
-    "version": "1.6.0",
-    "description": "DeskMate is an open-source desk widget you can add anything to. It ships with a password vault and music player, and the community builds plugins for the rest.",
-    "main": "main.js",
-    "scripts": {
-        "start": "electron .",
-        "dist": "electron-builder --win nsis"
+    "asar": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
     },
-    "keywords": [],
-    "author": {
-        "name": "Lapis Studios",
-        "url": "https://lapistudios.com"
+    "files": [
+      "**/*",
+      "!verified-plugins/**",
+      "!tools/**",
+      "!dist/**",
+      "!_*.js",
+      "!**/*.md",
+      "!site/**",
+      "!docs/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "executableName": "DeskMate"
     },
-    "license": "SEE LICENSE IN LICENSE",
-    "type": "commonjs",
-    "devDependencies": {
-        "electron": "^44.5.1",
-        "electron-builder": "^26.15.3"
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DeskMate",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
     },
-    "dependencies": {
-        "adm-zip": "^0.6.1",
-        "jsqr": "^1.4.0",
-        "qrcode": "^1.5.4"
-    },
-    "build": {
-        "appId": "com.lapistudios.deskmate",
-        "productName": "DeskMate",
-        "asar": false,
-        "directories": {
-            "output": "dist",
-            "buildResources": "build"
-        },
-        "files": [
-            "**/*",
-            "!verified-plugins/**",
-            "!tools/**",
-            "!dist/**",
-            "!_*.js",
-            "!**/*.md",
-            "!site/**",
-            "!docs/**"
-        ],
-        "win": {
-            "target": "nsis",
-            "icon": "build/icon.ico",
-            "executableName": "DeskMate"
-        },
-        "nsis": {
-            "oneClick": true,
-            "perMachine": false,
-            "createDesktopShortcut": true,
-            "createStartMenuShortcut": true,
-            "shortcutName": "DeskMate",
-            "runAfterFinish": true,
-            "deleteAppDataOnUninstall": false
-        },
-        "copyright": "Copyright \u00a9 2026 Lapis Studios"
-    },
-    "homepage": "https://lapistudios.com"
+    "copyright": "Copyright \u00a9 2026 Lapis Studios",
+    "npmRebuild": false
+  },
+  "homepage": "https://lapistudios.com"
 }

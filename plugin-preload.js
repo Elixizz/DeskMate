@@ -26,6 +26,15 @@ contextBridge.exposeInMainWorld('deskmate', {
   copyText: (text) => call('copyText', text),
   status: { set: (s) => call('status.set', s) },
   system: { stats: () => call('system.stats') },
+  wallet: {
+    status: () => call('wallet.status'),
+    balances: () => call('wallet.balances'),
+    setup: () => call('wallet.setup'),
+    manage: () => call('wallet.manage'),
+    send: (req) => call('wallet.send', req),
+    qr: (text) => call('wallet.qr', text),
+    onChange: on('wallet-changed'),
+  },
   clipboard: {
     history: () => call('clipboard.history'),
     remove: (id) => call('clipboard.remove', id),

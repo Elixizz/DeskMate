@@ -154,6 +154,7 @@ Ask only for what your Mate needs. The install screen lists every permission in 
 | `media-control` | `deskmate.media.*`: see and control what other apps are playing, and their volume | High |
 | `claude` | `deskmate.claude.*`: read Claude Code conversations and send replies as the user | High |
 | `gmail` | `deskmate.gmail.*`: sign in with Google and read Gmail (senders, subjects, previews, sign-in codes). Read-only | High |
+| `wallet` | `deskmate.wallet.*`: the user's crypto balances and addresses, and asking DeskMate to send (the user approves every send in DeskMate's own window with their wallet password). Never gives access to the recovery phrase, keys or password. DeskMate 1.7+ | High |
 | `system-info` | `deskmate.system.stats()`: CPU, GPU, memory, disk and network usage. DeskMate 1.6+ | Low |
 | `clipboard-history` | `deskmate.clipboard.*`: text the user copies while DeskMate runs. Kept in memory only, and passwords copied from the Vault are never included. DeskMate 1.6+ | High |
 
@@ -201,6 +202,12 @@ Every Mate page gets a global `deskmate` object. Calls that do something return 
 | `deskmate.gmail.connect()` | `gmail` | Opens Google's sign-in page in the browser. Resolves once the user finishes signing in |
 | `deskmate.gmail.disconnect()` | `gmail` | Signs out and revokes DeskMate's access |
 | `deskmate.gmail.inbox(max)` | `gmail` | `{ email, unreadCount, messages: [{ id, from, subject, snippet, time, unread }], codes: [{ code, id, from, subject, time }] }` for inbox mail from the last 7 days. `codes` holds sign-in codes found in the last 30 minutes. Rejects with `signed-out` if Google ended the session |
+| `deskmate.wallet.status()` | `wallet` | `{ exists, network, addresses: { btc, eth, sol } }` |
+| `deskmate.wallet.balances()` | `wallet` | `{ network, addresses, total, assets: [{ id, chain, symbol, name, amount, usd, price, change24h, token, unknown }], errors }`. `unknown` marks tokens that are likely spam airdrops |
+| `deskmate.wallet.send({ asset, to, amount, max })` | `wallet` | Checks the send and opens DeskMate's approval screen. Resolves `{ txid, explorer }` once the user approves and it's broadcast, or rejects with `Canceled` |
+| `deskmate.wallet.setup()` / `.manage()` | `wallet` | Opens DeskMate's own setup or wallet-settings screen |
+| `deskmate.wallet.qr(text)` | `wallet` | A QR code image (data URL) for an address |
+| `deskmate.wallet.onChange(fn)` | `wallet` | Called after a send, setup, removal or network switch |
 | `deskmate.system.stats()` | `system-info` | `{ cpu: { percent, name, cores }, memory: { usedGB, totalGB, percent }, gpu: { percent, temp, name, vramUsedGB, vramTotalGB }, disk: { percent }, network: { downBps, upBps }, uptimeHours }`. Values the PC can't report are `null` (GPU temperature and VRAM need an NVIDIA card). Sampling starts on the first call and stops 20 seconds after the last, so only poll while your tab is visible |
 | `deskmate.clipboard.history()` | `clipboard-history` | Recent copies, newest first: `[{ id, text, time }]` (up to 50) |
 | `deskmate.clipboard.onCopy(fn)` | `clipboard-history` | Calls `fn({ id, text, time })` for each new copy |

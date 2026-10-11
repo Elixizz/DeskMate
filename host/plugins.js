@@ -20,6 +20,7 @@ const PERMISSIONS = {
   'media-control': { label: 'See and control what other apps are playing (browser, Spotify), and their volume', risk: 'high' },
   claude: { label: 'Read your Claude Code conversations and send replies as you', risk: 'high' },
   gmail: { label: 'Read your Gmail (senders, subjects, previews and sign-in codes). It cannot send or delete', risk: 'high' },
+  wallet: { label: 'See your crypto wallet\'s balances and addresses, and ask you to approve sends in DeskMate\'s own window. It never sees your recovery phrase or password', risk: 'high' },
   'system-info': { label: 'See your PC\'s CPU, GPU, memory, disk and network usage', risk: 'low' },
   'clipboard-history': { label: 'See text you copy, while DeskMate runs (never passwords copied from the Vault)', risk: 'high' },
 };
@@ -338,6 +339,17 @@ const API = {
   'gmail.connect': [['gmail'], () => ctx.caps.gmail.connect()],
   'gmail.disconnect': [['gmail'], () => ctx.caps.gmail.disconnect()],
   'gmail.inbox': [['gmail'], (id, max) => throttled(`${id}:gmail`, 10e3, () => ctx.caps.gmail.inbox(Number(max) || 20))],
+  // Wallet: balances and addresses only. Setup, the phrase and approving sends all happen in DeskMate's window.
+  'wallet.status': [['wallet'], () => ctx.caps.wallet.status()],
+  'wallet.balances': [['wallet'], (id) => throttled(`${id}:wallet:${ctx.caps.wallet.status().network}`, 8e3, () => ctx.caps.wallet.balances())],
+  'wallet.setup': [['wallet'], (id) => ctx.caps.walletUi('setup', null, loaded.get(id).manifest.name)],
+  'wallet.manage': [['wallet'], (id) => ctx.caps.walletUi('manage', ctx.caps.wallet.status(), loaded.get(id).manifest.name)],
+  'wallet.send': [['wallet'], async (id, req) => {
+    const r = req || {};
+    const q = await ctx.caps.wallet.quote({ asset: String(r.asset || ''), to: String(r.to || '').slice(0, 120), amount: String(r.amount ?? '').slice(0, 40), max: !!r.max });
+    return ctx.caps.walletUi('send', q, loaded.get(id).manifest.name);
+  }],
+  'wallet.qr': [['wallet'], (id, text) => require('qrcode').toDataURL(String(text).slice(0, 200), { margin: 1, width: 240 })],
   'system.stats': [['system-info'], () => throttled('sysinfo', 900, () => ctx.caps.sysinfo.stats())],
   // History lives in the host's memory only; the Mate gets a copy and new entries as they happen.
   'clipboard.history': [['clipboard-history'], () => { syncClipboard(); return ctx.caps.clip.list(); }],

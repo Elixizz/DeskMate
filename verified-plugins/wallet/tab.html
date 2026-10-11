@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <section id="empty" class="view hidden">
+    <div class="card hero">
+      <div class="big">Crypto wallet</div>
+      <div class="muted">Bitcoin, Ethereum and Solana in one place. Create a new wallet or bring your recovery phrase from Phantom, MetaMask and others.</div>
+      <button id="setupBtn">Set up wallet</button>
+      <div class="muted small">Your recovery phrase stays encrypted inside DeskMate. This Mate never sees it.</div>
+    </div>
+  </section>
+
+  <section id="main" class="view hidden">
+    <div class="row top">
+      <div class="grow"><div class="muted small">Total balance <span id="net"></span></div><div id="total" class="total">…</div></div>
+      <button id="refresh" class="icon" title="Refresh">&#x21BB;</button>
+      <button id="manage" class="icon" title="Wallet settings">&#x2699;</button>
+    </div>
+    <div class="row acts">
+      <button id="sendBtn" class="grow">Send</button>
+      <button id="recvBtn" class="ghost grow">Receive</button>
+    </div>
+    <div id="assets" class="list"></div>
+    <div id="errs" class="muted small"></div>
+  </section>
+
+  <section id="send" class="view hidden">
+    <div class="row"><button class="ghost back">&#x2039; Back</button><span class="grow"></span></div>
+    <label class="fld">Asset<select id="sAsset"></select></label>
+    <label class="fld">To address<input id="sTo" autocomplete="off" spellcheck="false" placeholder="Paste the address"></label>
+    <label class="fld">Amount<div class="row"><input id="sAmt" class="grow" inputmode="decimal" autocomplete="off" placeholder="0.00"><button id="sMax" class="ghost">Max</button></div></label>
+    <div id="sHave" class="muted small"></div>
+    <div id="sErr" class="err"></div>
+    <button id="sReview">Review</button>
+    <div class="muted small">You'll check the details and type your wallet password in DeskMate's own window.</div>
+  </section>
+
+  <section id="recv" class="view hidden">
+    <div class="row"><button class="ghost back">&#x2039; Back</button><span class="grow"></span></div>
+    <div class="seg" id="rChain"><button class="segbtn active" data-c="btc">Bitcoin</button><button class="segbtn" data-c="eth">Ethereum</button><button class="segbtn" data-c="sol">Solana</button></div>
+    <div class="card qrcard"><img id="rQr" alt="QR code"><code id="rAddr"></code><button id="rCopy" class="ghost">Copy address</button></div>
+    <div id="rNote" class="muted small"></div>
+  </section>
+  <script src="tab.js"></script>
+</body>
+</html>

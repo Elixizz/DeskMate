@@ -12,7 +12,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.0.zip",
-      "sha256": "cd082f26d52f3334a7cf9e06648fd56a2951770e238ac6e8257a77e4de1fc4f6"
+      "sha256": "720e32b503cd2bdb97c6e9ccf2e2729618ef2cf6bd7b3cd4ee4a72f3bb7ae67a"
     },
     {
       "id": "claude",
@@ -25,7 +25,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "02bf2ac7637d64a1831907a52a9202758cd6b5f6769e702f77003dddc1b2816b"
+      "sha256": "15b336b9aae5d0fbb9cc3668b3076cf252c6bad708e220abea784e3a2b3bafc0"
     },
     {
       "id": "clipboard",
@@ -38,7 +38,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.0.zip",
-      "sha256": "acc34ce4659b621c1e7987128b495e6862ed7b63f0148d394ddd641587a7047c"
+      "sha256": "e58327caab2c1365b05cf6aa574bf9ec2d5529c80b9f29096a6b06c37dc5866f"
     },
     {
       "id": "gmail",
@@ -53,7 +53,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "88f7d10f985e4564b8f2ea3ff7bef7d07c480d22646a129b96a25b91e942b9cc"
+      "sha256": "1fdb6d717a30ec283608dddd778a6bbc67b332d4e89cf50f2ac97347b33b8bd6"
     },
     {
       "id": "notes",
@@ -63,7 +63,7 @@
       "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.0.zip",
-      "sha256": "b12ee9701bf87e74404c74821eb4d50c600562841118cf19f030a6c0928b5aeb"
+      "sha256": "c40d950eebe17834089ec71794c9d33c85554ff35abb03c2287c220969d1d1d5"
     },
     {
       "id": "pcmon",
@@ -75,7 +75,7 @@
         "system-info"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.0.zip",
-      "sha256": "c7b7e69fddbb55814542e9181de0614899327abe55ff27c2bdec13177bf8ccbe"
+      "sha256": "83c8e92f97a7193ff8c13d7b0c84a56e279921445b37f7e915137e890e669e6d"
     },
     {
       "id": "schedule-one",
@@ -85,7 +85,7 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "af87270373d00863395aa2088365e47100d4e62ca0dd2037ed9656eb6d29b0e3"
+      "sha256": "4095632fd7868c34dbf01243e1040c28cc4ffd9a9327b292415a20f2543b2e1c"
     },
     {
       "id": "timers",
@@ -98,7 +98,20 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "310134bc93d7df7197b53c75a2fce86d2d1b2635c833bab08e714ec31786192f"
+      "sha256": "218b0974b12acbe90f96147823a62b5d87bec6f01afe50c060d7eedd2f37d906"
+    },
+    {
+      "id": "wallet",
+      "name": "Wallet",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "A crypto wallet for Bitcoin, Ethereum (plus USDC, USDT, DAI, WBTC) and Solana (plus USDC and other tokens). Create one or import your recovery phrase. Your phrase stays encrypted inside DeskMate, and every send is approved in DeskMate's own window. Needs DeskMate 1.7 or newer.",
+      "permissions": [
+        "wallet",
+        "clipboard-write"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/wallet-1.0.0.zip",
+      "sha256": "fc9e2483dab09acd8b6e5bb1c173fbbf6911c6b261ffeadbddf346fac46e90ea"
     },
     {
       "id": "weather",
@@ -111,7 +124,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "0fc91cab2728ea2661eed767a1885b37bd47e4dc5bfb8b03087aa0714b834dfe"
+      "sha256": "877c3d91b98c2b387c862ab84494964a68e2c4cb968f6237d9c4498a29cf980b"
     }
   ]
 }

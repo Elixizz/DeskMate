@@ -17,6 +17,12 @@ contextBridge.exposeInMainWorld('api', {
     bindInfo: call('vault:bindInfo'), pickBackup: call('vault:pickBackup'), bind: call('vault:bind'), recoveryKey: call('vault:recoveryKey'),
     backupNow: call('vault:backupNow'), pickRestore: call('vault:pickRestore'), restore: call('vault:restore'),
   },
+  wallet: {
+    status: call('wallet:status'), generate: call('wallet:generate'), checkWords: call('wallet:checkWords'), create: call('wallet:create'),
+    validate: call('wallet:validate'), import: call('wallet:import'), reveal: call('wallet:reveal'), changePassword: call('wallet:changePassword'),
+    setNetwork: call('wallet:setNetwork'), remove: call('wallet:remove'), confirmSend: call('wallet:confirmSend'), close: call('wallet:close'), busy: call('wallet:busy'),
+    openExplorer: call('wallet:openExplorer'),
+  },
   prefs: { get: call('prefs:get'), set: call('prefs:set'), hotkey: call('prefs:hotkey'), testSound: call('prefs:testSound'), checkUpdates: call('prefs:checkUpdates') },
   update: { status: call('app:updateStatus'), check: call('app:updateCheck'), install: call('app:updateInstall') },
   plugins: {

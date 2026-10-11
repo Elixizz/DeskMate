@@ -1,0 +1,9 @@
+{
+  "id": "wallet",
+  "name": "Wallet",
+  "version": "1.0.0",
+  "author": "Lapis Studios",
+  "description": "A crypto wallet for Bitcoin, Ethereum (plus USDC, USDT, DAI, WBTC) and Solana (plus USDC and other tokens). Create one or import your recovery phrase. Your phrase stays encrypted inside DeskMate, and every send is approved in DeskMate's own window. Needs DeskMate 1.7 or newer.",
+  "tab": "tab.html",
+  "permissions": ["wallet", "clipboard-write"]
+}

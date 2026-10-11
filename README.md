@@ -27,6 +27,7 @@ Everything else is a Mate (called a plugin in the code): a small web page (HTML,
     - `calc` is a calculator with history and a unit converter, including live currency rates.
     - `clipboard` keeps your last 50 copied texts in memory, with pins. Never records Vault passwords. Needs DeskMate 1.6.
     - `pcmon` shows live CPU, GPU, memory, disk and network usage, plus GPU temperature on NVIDIA cards. Needs DeskMate 1.6.
+    - `wallet` is a self-custody crypto wallet for Bitcoin, Ethereum (+ USDC, USDT, DAI, WBTC) and Solana (+ USDC and other tokens). The recovery phrase stays encrypted inside DeskMate (password + Windows account) and every send is approved in DeskMate's own window. Needs DeskMate 1.7.
     - `gmail` signs in with Google to show new emails, notify you, and pull out sign-in codes. Read-only. Building it yourself needs your own Google OAuth client in `host/google-oauth.json`.
 - Package a Mate for the Supply Closet with `node tools/pack-plugin.js <plugin-folder> --url <download-base-url>`.
 
