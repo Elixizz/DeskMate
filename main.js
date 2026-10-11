@@ -129,9 +129,17 @@ app.whenReady().then(() => {
     theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
     caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail },
   });
-  win.webContents.once('did-finish-load', () => { plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate(); });
+  win.webContents.once('did-finish-load', () => {
+    plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate();
+    // First run after an install or update (however it was installed): open the panel so it's clear it worked.
+    if (app.isPackaged && settings.lastVersion !== app.getVersion()) {
+      const updated = !!settings.lastVersion;
+      settings.lastVersion = app.getVersion(); saveSettings();
+      setTimeout(() => { showWindow(); win.webContents.send('host:toast', updated ? `Updated to DeskMate ${app.getVersion()}` : 'DeskMate is installed'); }, 1200);
+    }
+  });
   updater.start({ settings, saveSettings, onChange: (s) => win.webContents.send('host:app-update', s) });
-  tray.displayBalloon({ title: 'Deskmate is running', content: hotkey ? `Press ${prettyKey()} to open it.` : 'Hotkeys are taken. Click the tray icon to open it.' });
+  if (!app.isPackaged || settings.lastVersion === app.getVersion()) tray.displayBalloon({ title: 'Deskmate is running', content: hotkey ? `Press ${prettyKey()} to open it.` : 'Hotkeys are taken. Click the tray icon to open it.' });
   nativeTheme.on('updated', () => { if (settings.theme?.mode === 'system') retheme(); });
   powerMonitor.on('lock-screen', lockVault);
   powerMonitor.on('suspend', lockVault);

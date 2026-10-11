@@ -1,6 +1,6 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "d82486e5826f4cb2ca3c9e5136627990efb4f45ed93abb2342630ad4ab416c93",
-  "notes": "Settings > Updates: when Check now finds a new DeskMate, a Download now button installs it right there."
+  "sha256": "fbdcfa67560c0fe4ab9b9fa5be857048887d97c4efc35e95ff3139bf40ac524a",
+  "notes": "DeskMate now opens by itself after an update, and Settings > Updates has a Download now button when Check now finds one."
 }
