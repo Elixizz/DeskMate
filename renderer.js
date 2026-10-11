@@ -64,7 +64,7 @@ new ResizeObserver(reportLayout).observe(document.body);
 
 async function refreshPlugins() {
   pluginList = await api.plugins.list();
-  renderTabs(); renderBars();
+  renderTabs(); renderBars(); renderAppUpdate();
   if (wantedTab) {
     const tabs = $$('.tab').map((b) => b.dataset.tab);
     const pick = wantedTab === 'first' ? tabs[0] : wantedTab;
@@ -98,6 +98,7 @@ const permChips = (perms) => perms.map((p) => `<span class="perm ${p.risk}${p.ne
 function renderPlugins() {
   $('#pInstalled').classList.toggle('hidden', pseg !== 'installed');
   $('#pStore').classList.toggle('hidden', pseg !== 'store');
+  $('#appUpdate').classList.toggle('hidden', pseg !== 'installed' || !appUpdate?.available);
   pseg === 'installed' ? renderInstalled() : renderStore();
 }
 function renderInstalled() {
@@ -108,7 +109,8 @@ function renderInstalled() {
     el.className = 'card plug' + (p.enabled ? '' : ' off');
     el.innerHTML = `
       <div class="row"><span class="name grow ellipsis">${esc(p.name)} <span class="muted small">v${esc(p.version)}</span></span>
-        ${p.builtin ? '<span class="tag">Built-in</span>' : ''}${p.dev ? '<span class="tag dev">Dev</span>' : ''}</div>
+        ${p.builtin ? '<span class="tag">Built-in</span>' : ''}${p.dev ? '<span class="tag dev">Dev</span>' : ''}
+        ${p.updateTo ? `<button data-a="update" title="This version asks for new permissions, so it needs your OK">Update to v${esc(p.updateTo)}</button>` : ''}</div>
       <div class="muted small">${esc(p.description)}${p.author ? ` · by ${esc(p.author)}` : ''}</div>
       <details class="small"><summary>${p.permissions.length ? `${p.permissions.length} permission${p.permissions.length > 1 ? 's' : ''}` : 'No special permissions'}</summary>
         <div class="perms">${permChips(p.permissions)}</div>${p.hotkeys.length ? `<div class="muted small">Shortcuts: ${p.hotkeys.map(esc).join(', ')}</div>` : ''}</details>
@@ -131,12 +133,33 @@ function renderInstalled() {
           pluginList = r.plugins; toast(`${p.name} reloaded`);
         }
         if (btn.dataset.a === 'devtools') return api.plugins.devtools(p.id);
+        if (btn.dataset.a === 'update') return stageAndConsent(api.plugins.stageStore(p.id));
         refreshPlugins();
       } catch (err) { toast(errText(err)); }
     };
     list.appendChild(el);
   }
 }
+// DeskMate updates (checked by the host every 6 hours) show as a card above the installed list.
+let appUpdate = null;
+function renderAppUpdate() {
+  const box = $('#appUpdate'), u = appUpdate;
+  box.classList.toggle('hidden', !u?.available);
+  document.querySelector('.tab[data-tab="plugins"]')?.classList.toggle('has-update', !!u?.available || pluginList.some((p) => p.updateTo));
+  if (!u?.available) return;
+  box.innerHTML = `<div class="row"><span class="grow"><b>DeskMate ${esc(u.latest)}</b> is available <span class="muted small">(you have ${esc(u.current)})</span></span>
+      ${u.canInstall ? '<button id="appUpdateBtn">Update now</button>' : '<span class="muted small">Dev copy: pull the code</span>'}</div>
+    ${u.notes ? `<div class="muted small">${esc(u.notes)}</div>` : ''}`;
+  const b = $('#appUpdateBtn');
+  if (b) b.onclick = async () => {
+    b.disabled = true; b.textContent = 'Downloading...';
+    try { await api.update.install(); b.textContent = 'Restarting...'; }
+    catch (e) { toast(errText(e)); b.disabled = false; b.textContent = 'Update now'; }
+  };
+}
+api.on('host:app-update', (u) => { appUpdate = u; renderAppUpdate(); });
+api.update.status().then((u) => { appUpdate = u; renderAppUpdate(); });
+
 async function renderStore() {
   $('#storeUrl').value = settings.storeUrl || '';
   const list = $('#storeList');

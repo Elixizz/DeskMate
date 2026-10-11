@@ -21,6 +21,7 @@ protocol.registerSchemesAsPrivileged(['plugin', 'dmmedia', 'dmnet'].map((scheme)
 })));
 const plugins = require('./host/plugins');
 const gmail = require('./host/gmail');
+const updater = require('./host/updater');
 
 let win, tray, pinned = false;
 
@@ -121,7 +122,8 @@ app.whenReady().then(() => {
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
     caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail },
   });
-  win.webContents.once('did-finish-load', () => { plugins.loadAll(); win.webContents.send('host:plugins-changed'); });
+  win.webContents.once('did-finish-load', () => { plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate(); });
+  updater.start({ settings, saveSettings, onChange: (s) => win.webContents.send('host:app-update', s) });
   tray.displayBalloon({ title: 'Deskmate is running', content: hotkey ? `Press ${prettyKey()} to open it.` : 'Hotkeys are taken. Click the tray icon to open it.' });
   powerMonitor.on('lock-screen', lockVault);
   powerMonitor.on('suspend', lockVault);
@@ -131,6 +133,9 @@ app.on('will-quit', () => globalShortcut.unregisterAll());
 app.on('window-all-closed', (e) => e.preventDefault());
 
 handleHost('win:hide', () => win.hide());
+handleHost('app:updateStatus', () => updater.status());
+handleHost('app:updateCheck', () => updater.check());
+handleHost('app:updateInstall', () => updater.install());
 handleHost('win:hotkey', prettyKey);
 handleHost('win:pin', (_e, v) => { pinned = !!v; return pinned; });
 handleHost('settings:get', () => settings);

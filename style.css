@@ -178,3 +178,7 @@ nav#tabs::-webkit-scrollbar { display: none; }
 details summary { cursor: pointer; color: var(--muted); }
 #consent { z-index: 3; }
 nav#tabs .tab { flex: 1 0 auto; white-space: nowrap; padding: 6px 9px; }
+
+/* updates */
+.tab.has-update::after { content: ''; display: inline-block; width: 6px; height: 6px; margin-left: 5px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+#appUpdate.update { border: 1px solid var(--accent); display: flex; flex-direction: column; gap: 4px; flex: none; }

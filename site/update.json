@@ -1,0 +1,6 @@
+{
+  "version": "1.2.0",
+  "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
+  "sha256": "c7112ecdbeefb1d8152a0dac92f026cb1b2e18bfd0c1886489087f06058a3a0b",
+  "notes": "DeskMate now checks for updates on its own: add-ons update automatically, and new versions of DeskMate install with one click."
+}

@@ -248,7 +248,7 @@ function listForHost() {
     const st = pluginState(m.id);
     return {
       id: m.id, name: m.name, version: m.version, author: m.author || '', description: m.description || '',
-      builtin: !!builtin, enabled: !disabled, dev: !!st.dev, hasTab: !!m.tab, bar: m.bar ? { height: m.bar.height } : null,
+      builtin: !!builtin, enabled: !disabled, dev: !!st.dev, updateTo: pendingUpdates.get(m.id) || null, hasTab: !!m.tab, bar: m.bar ? { height: m.bar.height } : null,
       permissions: m.permissions.map((p) => ({ id: p, ...permLabel(p) })), hotkeys: m.hotkeys, badge: badgeByPlugin.get(m.id) || 0,
     };
   });
@@ -375,6 +375,7 @@ async function stageFromFolder() {
 function commitInstall(approve) {
   const s = stagedInstall; stagedInstall = null;
   if (!s) throw new Error('Nothing waiting to install');
+  if (approve) pendingUpdates.delete(s.manifest.id);
   if (!approve) { fs.rmSync(s.dir, { recursive: true, force: true }); return listForHost(); }
   const id = s.manifest.id;
   const target = path.join(userPluginsDir(), id);
@@ -423,6 +424,41 @@ function reloadDev(id) {
   return { plugins: commitInstall(true) };
 }
 
+// ---------- automatic updates ----------
+// Store plugins update themselves when the new version asks for nothing new (same permissions and shortcuts).
+// Anything that wants more is left for the user: it shows an Update button and goes through the consent screen.
+const pendingUpdates = new Map(); // id -> version waiting for approval
+const { newer } = require('./updater');
+async function updatePlugins() {
+  const { plugins } = await fetchStore();
+  const updated = [];
+  pendingUpdates.clear();
+  for (const sp of plugins) {
+    const have = loaded.get(sp.id);
+    if (!have || have.builtin || pluginState(sp.id).dev || !newer(sp.version, have.manifest.version)) continue;
+    if (stagedInstall) { pendingUpdates.set(sp.id, sp.version); continue; } // the user is mid-install; don't trample it
+    try {
+      const info = await stageFromStore(sp.id);
+      const sameKeys = JSON.stringify(info.hotkeys) === JSON.stringify(have.manifest.hotkeys || []);
+      if (info.permissions.some((p) => p.new) || !sameKeys) { commitInstall(false); pendingUpdates.set(sp.id, sp.version); continue; }
+      commitInstall(true);
+      updated.push(`${info.name} ${info.version}`);
+    } catch { if (stagedInstall) commitInstall(false); }
+  }
+  ctx.onLayoutChange();
+  return { updated, waiting: [...pendingUpdates.keys()] };
+}
+function startAutoUpdate() {
+  const run = async () => {
+    try {
+      const r = await updatePlugins();
+      if (r.updated.length) ctx.win().webContents.send('host:toast', `Updated ${r.updated.join(', ')}`);
+    } catch {}
+  };
+  setTimeout(run, 20e3);
+  setInterval(run, 6 * 3600e3);
+}
+
 // ---------- wiring ----------
 function init(c) {
   ctx = c;
@@ -447,7 +483,8 @@ function init(c) {
   host('plugins:remove', (_e, id) => removePlugin(id));
   host('plugins:enable', (_e, id, on) => setEnabled(id, on));
   host('plugins:reload', (_e, id) => reloadDev(id));
+  host('plugins:checkUpdates', () => updatePlugins());
   host('plugins:devtools', (_e, id) => { const p = loaded.get(id); if (pluginState(id).dev && p?.tab) p.tab.webContents.openDevTools({ mode: 'detach' }); });
 }
 
-module.exports = { init, loadAll, broadcast, statusList, PERMISSIONS };
+module.exports = { init, loadAll, broadcast, statusList, startAutoUpdate, PERMISSIONS };

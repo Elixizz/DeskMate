@@ -107,7 +107,7 @@ Every plugin folder needs a `manifest.json` at its top level. DeskMate refuses t
 | --- | --- | --- | --- |
 | `id` | Yes | Lowercase letters, numbers and dashes, 2–41 characters. Must be unique; can't be `music` | `"quick-notes"` |
 | `name` | Yes | Shown on the tab. 40 characters max; keep it short so tabs fit | `"Notes"` |
-| `version` | Yes | Three numbers: `major.minor.patch`. Raise it for every store release | `"1.2.0"` |
+| `version` | Yes | Three numbers: `major.minor.patch`. Raise it for every store release. DeskMate checks the store every 6 hours and installs a higher version by itself, unless it asks for new permissions or shortcuts; then the user sees an Update button and approves it | `"1.2.0"` |
 | `author` | No | Shown on the install screen | `"Ryland"` |
 | `description` | No | One sentence, shown in the Plugins tab and the store | `"A scratchpad..."` |
 | `tab` | One of `tab` / `bar` | Path to the tab's page, inside the plugin folder | `"tab.html"` |

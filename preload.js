@@ -17,10 +17,11 @@ contextBridge.exposeInMainWorld('api', {
     bindInfo: call('vault:bindInfo'), pickBackup: call('vault:pickBackup'), bind: call('vault:bind'), recoveryKey: call('vault:recoveryKey'),
     backupNow: call('vault:backupNow'), pickRestore: call('vault:pickRestore'), restore: call('vault:restore'),
   },
+  update: { status: call('app:updateStatus'), check: call('app:updateCheck'), install: call('app:updateInstall') },
   plugins: {
     list: call('plugins:list'), layout: call('plugins:layout'), status: call('plugins:status'),
     storeGet: call('plugins:storeGet'), storeUrl: call('plugins:storeUrl'), stageStore: call('plugins:stageStore'), stageFolder: call('plugins:stageFolder'),
-    commit: call('plugins:commit'), remove: call('plugins:remove'), enable: call('plugins:enable'), reload: call('plugins:reload'), devtools: call('plugins:devtools'),
+    commit: call('plugins:commit'), checkUpdates: call('plugins:checkUpdates'), remove: call('plugins:remove'), enable: call('plugins:enable'), reload: call('plugins:reload'), devtools: call('plugins:devtools'),
   },
   on: (ch, fn) => ipcRenderer.on(ch, (_e, ...a) => fn(...a)),
 });
