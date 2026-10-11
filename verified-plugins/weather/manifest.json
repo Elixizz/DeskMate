@@ -1,0 +1,9 @@
+{
+  "id": "weather",
+  "name": "Weather",
+  "version": "1.0.0",
+  "author": "Lapis Studios",
+  "description": "Current weather, the next 12 hours and a 7-day forecast for cities you type in. Never uses your device location.",
+  "tab": "tab.html",
+  "permissions": ["net:api.open-meteo.com", "net:geocoding-api.open-meteo.com"]
+}

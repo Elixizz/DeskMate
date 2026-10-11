@@ -1,0 +1,16 @@
+.form { display: flex; flex-direction: column; gap: 6px; }
+.dur { width: 78px; text-align: center; }
+input[type=time] { color-scheme: dark; }
+.item { display: flex; flex-direction: column; gap: 6px; }
+.item .top { display: flex; align-items: baseline; gap: 8px; }
+.item .label { flex: 1; min-width: 0; font-weight: 600; }
+.item .left { font: 700 22px/1 Consolas, "Cascadia Mono", monospace; color: var(--text); }
+.item.reminder .left { font-size: 15px; }
+.item.paused .left { color: var(--muted); }
+.item.ringing { border: 1px solid #6b2a31; animation: ring 1.2s ease-in-out infinite; }
+@keyframes ring { 50% { background: #2a1d22; } }
+.bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.item .row button { padding: 4px 9px; font-size: 12px; }
+.section { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+.done .label, .done .left { color: var(--muted); }

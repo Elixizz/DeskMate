@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="seg">
+    <button class="segbtn active" data-mode="timer">Timer</button>
+    <button class="segbtn" data-mode="reminder">Reminder</button>
+  </div>
+
+  <form id="timerForm" class="form">
+    <div class="row">
+      <input id="tLabel" class="grow" placeholder="Label (optional)" maxlength="60" autocomplete="off">
+      <input id="tDur" class="dur" placeholder="10m" maxlength="12" autocomplete="off" title="Like 90s, 10, 10m, 1h 15m or 2:30">
+      <button type="submit">Start</button>
+    </div>
+    <div class="chips" id="presets"></div>
+    <div id="tErr" class="err"></div>
+  </form>
+
+  <form id="reminderForm" class="form hidden">
+    <div class="row">
+      <input id="rText" class="grow" placeholder="Remind me to..." maxlength="80" autocomplete="off">
+    </div>
+    <div class="row">
+      <input id="rTime" type="time" class="grow">
+      <button type="submit">Add reminder</button>
+    </div>
+    <div id="rErr" class="err"></div>
+  </form>
+
+  <div id="list" class="list"></div>
+  <script src="tab.js"></script>
+</body>
+</html>

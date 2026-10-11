@@ -1,0 +1,23 @@
+.results { display: flex; flex-direction: column; gap: 2px; margin: 6px 0; }
+.results button { text-align: left; }
+#search { display: flex; flex-direction: column; gap: 4px; }
+.place { display: inline-flex; align-items: center; gap: 4px; }
+.place .x { opacity: .6; font-size: 10px; }
+.place .x:hover { opacity: 1; }
+.now { display: flex; align-items: center; gap: 12px; }
+.now .ico { font-size: 40px; line-height: 1; }
+.now .temp { font-size: 34px; font-weight: 600; line-height: 1; }
+.now .desc { font-size: 14px; }
+.hours { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.hours::-webkit-scrollbar { height: 5px; }
+.hours::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.hour { flex: none; width: 46px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.hour .ico { font-size: 18px; }
+.day { display: grid; grid-template-columns: 44px 24px 1fr auto; gap: 6px; align-items: center; padding: 3px 0; }
+.day .ico { font-size: 16px; text-align: center; }
+.day .t { white-space: nowrap; }
+.day .lo { color: var(--muted); }
+.wet { color: #6cb6ff; font-size: 11px; }
+.ico { font-family: "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; }
+.foot { text-align: center; }
+.foot a { color: var(--muted); }

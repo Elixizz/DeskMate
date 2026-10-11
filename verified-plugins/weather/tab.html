@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="row">
+    <div id="places" class="chips grow"></div>
+    <button id="unit" class="ghost small" title="Switch units">°F</button>
+    <button id="addBtn" class="ghost" title="Add a city">+ City</button>
+  </div>
+
+  <form id="search" class="card hidden">
+    <div class="row">
+      <input id="q" class="grow" placeholder="City or town, e.g. Denver" maxlength="60" autocomplete="off">
+      <button type="submit">Search</button>
+    </div>
+    <div id="results" class="results"></div>
+    <div id="sErr" class="err"></div>
+    <div class="muted small">DeskMate never uses your device location. Only the name you type is sent to Open-Meteo to find the city.</div>
+  </form>
+
+  <div id="body" class="list">
+    <div class="empty">Add a city to see the weather.</div>
+  </div>
+  <script src="tab.js"></script>
+</body>
+</html>

@@ -12,7 +12,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.0.zip",
-      "sha256": "ae1b1555a7bb2073214b4b2c88d19be6e4cdcfa1368adde17779fb694e749991"
+      "sha256": "42ed326c2866ae91bbb27b0b43c1bc4782d79f0a41a35223b30ee20fce3a113b"
     },
     {
       "id": "schedule-one",
@@ -22,7 +22,33 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.0.zip",
-      "sha256": "14f93354b9317af646664f4b9891a1ccce9d76346355eaf4651af33fddec8f3f"
+      "sha256": "c8038740a8eb6214df451188e87642490a965a59628463aa4149c8920e0f8574"
+    },
+    {
+      "id": "timers",
+      "name": "Timers",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Quick timers and reminders with Windows notifications, so you don't have to leave your game to keep track of time.",
+      "permissions": [
+        "notifications",
+        "status"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/timers-1.0.0.zip",
+      "sha256": "a4d8095a9dccde84702b9b065806eb010327e9eb7b42169e4e393a8637283b5a"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "version": "1.0.0",
+      "author": "Lapis Studios",
+      "description": "Current weather, the next 12 hours and a 7-day forecast for cities you type in. Never uses your device location.",
+      "permissions": [
+        "net:api.open-meteo.com",
+        "net:geocoding-api.open-meteo.com"
+      ],
+      "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
+      "sha256": "66b96bde86d704320bcc0ad54513aedff60bbcf14b5dc3f41b683f04e6cd6a40"
     }
   ]
 }

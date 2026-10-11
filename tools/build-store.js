@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Rebuilds the verified-plugin store in site/plugins from verified-plugins/: one zip per plugin plus index.json.
 //
-//   node tools/build-store.js
+//   node tools/build-store.js [--skip gmail,other]   (--skip leaves plugins that aren't ready out of the store)
 //
 // Then upload site/ to deskmate.lapistudios.com (see site/README in the repo, or ask).
 const fs = require('fs');
@@ -17,11 +17,15 @@ const out = path.join(root, 'site', 'plugins');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 
+const skipAt = process.argv.indexOf('--skip');
+const skip = new Set(skipAt > 0 ? (process.argv[skipAt + 1] || '').split(',') : []);
+
 const plugins = [];
 for (const name of fs.readdirSync(src).sort()) {
   const dir = path.join(src, name);
   if (!fs.existsSync(path.join(dir, 'manifest.json'))) continue;
   const m = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+  if (skip.has(m.id) || skip.has(name)) { console.log(`skipped ${m.id}`); continue; }
   const zip = new AdmZip();
   (function add(rel) {
     for (const e of fs.readdirSync(path.join(dir, rel), { withFileTypes: true })) {
