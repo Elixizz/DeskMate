@@ -456,9 +456,11 @@
       for (const f of floats) { g.globalAlpha = 1 - f.t / 1.1; g.fillStyle = f.col; g.font = '700 10px Segoe UI'; g.fillText(f.text, f.x, f.y - f.t * 20); }
       g.globalAlpha = 1;
       g.restore();
+      drawFog(g, 1 / 60);
       drawLight(g, cx, cy, now);
       // Almost black and white: grey out everything drawn so far, then add the few red accents on top.
       g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.filter = 'grayscale(1) contrast(1.25) brightness(1.05)'; g.drawImage(g.canvas, 0, 0); g.restore();
+      drawGrain(g);
       drawEyes(g, cx, cy, now);
       drawHud(g);
       if (ui) drawUi(g);
@@ -466,88 +468,191 @@
   };
 
   // ---------- sprites ----------
-  function person(g, x, y, body, skin, hat, dir, walk) {
-    g.fillStyle = '#00000044'; g.beginPath(); g.ellipse(x, y + 7, 6, 2.5, 0, 0, 7); g.fill();
-    const lg = Math.sin(walk) * 2;
-    g.fillStyle = '#3b2a1a'; g.fillRect(x - 3, y + 2, 2, 5 + lg * 0.5); g.fillRect(x + 1, y + 2, 2, 5 - lg * 0.5);
-    g.fillStyle = body; g.beginPath(); g.roundRect(x - 5, y - 5, 10, 9, 3); g.fill();
-    g.fillStyle = skin; g.beginPath(); g.arc(x, y - 8, 4.5, 0, 7); g.fill();
-    if (hat) { g.fillStyle = hat; g.beginPath(); g.arc(x, y - 9.5, 4.6, Math.PI, 0); g.fill(); }
-    g.fillStyle = '#222'; if (dir.y >= 0) { g.fillRect(x - 2 + dir.x * 1.5, y - 9, 1.2, 1.5); g.fillRect(x + 1 + dir.x * 1.5, y - 9, 1.2, 1.5); }
+  // Darken a colour toward black (enemies and villagers read as silhouettes in the gloom).
+  function shade(hex, k) {
+    const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, gg = (n >> 8) & 255, b = n & 255;
+    return `rgb(${Math.round(r * k)},${Math.round(gg * k)},${Math.round(b * k)})`;
   }
+  const facing = (fx, fy) => (Math.abs(fx) > Math.abs(fy) ? (fx > 0 ? 'right' : 'left') : fy < 0 ? 'up' : 'down');
+
+  // A hooded, robed figure for villagers.
+  function robed(g, x, y, robe, now, opts = {}) {
+    g.fillStyle = '#00000066'; g.beginPath(); g.ellipse(x, y + 7, 6, 2.2, 0, 0, 7); g.fill();
+    const br = Math.sin(now * 1.6 + x) * 0.4;
+    g.fillStyle = robe; g.beginPath(); g.moveTo(x - 4, y - 5 + br); g.lineTo(x + 4, y - 5 + br); g.lineTo(x + 6, y + 7); g.lineTo(x - 6, y + 7); g.fill();
+    g.fillStyle = '#0d0d10'; g.beginPath(); g.moveTo(x - 6, y + 7); for (let k = 0; k <= 6; k++) g.lineTo(x - 6 + k * 2, y + 7 + (k % 2 ? 1.2 : 0)); g.lineTo(x + 6, y + 7); g.fill();
+    g.fillStyle = '#34343a'; g.beginPath(); g.arc(x, y - 8 + br, 4.8, 0, 7); g.fill();
+    g.beginPath(); g.moveTo(x - 3.5, y - 11 + br); g.lineTo(x, y - 16 + br); g.lineTo(x + 3.5, y - 11 + br); g.fill();
+    g.fillStyle = '#050506'; g.beginPath(); g.ellipse(x, y - 7.5 + br, 3, 2.6, 0, 0, 7); g.fill();
+    if (opts.lantern) {
+      const lx = x + 6, ly = y + 1 + Math.sin(now * 2) * 0.6;
+      g.strokeStyle = '#2a2a2a'; g.lineWidth = 1; g.beginPath(); g.moveTo(lx, ly - 4); g.lineTo(lx, ly - 2); g.stroke();
+      g.fillStyle = '#ffe2a8'; g.shadowColor = '#ffd27a'; g.shadowBlur = 8; g.fillRect(lx - 1.5, ly - 2, 3, 4); g.shadowBlur = 0;
+    }
+    if (opts.spear) { g.strokeStyle = '#6b6b70'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(x + 6, y + 6); g.lineTo(x + 6, y - 16); g.stroke(); g.fillStyle = '#c9c9c9'; g.beginPath(); g.moveTo(x + 6, y - 19); g.lineTo(x + 4.5, y - 15); g.lineTo(x + 7.5, y - 15); g.fill(); }
+  }
+
+  // The hero: a hooded knight with a tattered cape, a pauldron and a pale blade.
   function drawPlayer(g, now) {
-    if (P.inv_t > 0 && Math.floor(now * 20) % 2) return;
+    const blink = P.inv_t > 0 && Math.floor(now * 20) % 2;
     const moving = A.key('KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight');
-    const body = { tunic: '#3d6fb0', leather: '#7a5230', chain: '#9aa3ad', fur: '#c9b79c', plate: '#c7ccd4', dragon: '#2e7d6b' }[P.armor];
-    person(g, P.x, P.y, body, '#f1d3b3', '#6b3e1f', { x: P.fx, y: P.fy }, moving ? now * 14 : 0);
-    // sword
-    const wcol = { wood: '#b08a5a', iron: '#cfd5db', steel: '#e8eef5', flame: '#ff8a3d', frost: '#8fd3ff' }[P.weapon];
-    g.strokeStyle = wcol; g.lineWidth = 2.5; g.lineCap = 'round';
+    const x = P.x, y = P.y, dir = facing(P.fx, P.fy), lr = dir === 'left' ? -1 : 1;
+    const walk = moving ? now * 13 : 0, step = Math.sin(walk), br = moving ? Math.abs(step) * 0.8 : Math.sin(now * 2) * 0.45;
+    const armor = { tunic: '#2b2b30', leather: '#3d332b', chain: '#5a5e65', fur: '#4d463d', plate: '#7d828a', dragon: '#2e3d38' }[P.armor];
+    const blade = { wood: '#8c7d69', iron: '#c4c8cd', steel: '#e4e7ec', flame: '#ffd2ad', frost: '#d8f1ff' }[P.weapon];
+    if (blink) g.globalAlpha = 0.35;
+    g.fillStyle = '#00000077'; g.beginPath(); g.ellipse(x, y + 7, 6.5, 2.4, 0, 0, 7); g.fill();
+
+    const sway = Math.sin(now * 2.6) * 0.8 + (moving ? -P.fx * 2.5 : 0), trail = moving ? 2.5 : 0;
+    const cape = () => {
+      g.fillStyle = '#121214'; g.beginPath();
+      g.moveTo(x - 5, y - 6 + br); g.lineTo(x + 5, y - 6 + br);
+      g.lineTo(x + 6.5 + sway, y + 8 + trail);
+      for (let k = 6; k >= 0; k--) g.lineTo(x - 6.5 + sway + k * (13 / 6), y + 8 + trail + (k % 2 ? 2 : 0) + Math.sin(now * 5 + k) * 0.6);
+      g.closePath(); g.fill();
+      g.strokeStyle = '#ffffff1f'; g.lineWidth = 0.6; g.stroke();
+    };
+    const sword = (inFront) => {
+      if (P.swing > 0 || P.spin > 0) return;
+      if (inFront !== (dir !== 'up')) return;
+      const hx = dir === 'up' ? x - 5 : x + 6 * lr, hy = y + 1 + br;
+      const tx = hx + 4 * (dir === 'up' ? -1 : lr), ty = hy + 10;
+      g.lineCap = 'round';
+      g.strokeStyle = '#222'; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke();
+      g.strokeStyle = blade; g.lineWidth = 1.6; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke();
+      g.strokeStyle = '#555'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(hx - 2, hy + 0.5); g.lineTo(hx + 2, hy - 0.5); g.stroke();
+    };
+    if (dir !== 'up') cape();
+    sword(false);
+    // legs
+    g.fillStyle = '#0e0e10';
+    g.fillRect(x - 3.2, y + 1, 2.4, 6 + step * 1.2); g.fillRect(x + 0.8, y + 1, 2.4, 6 - step * 1.2);
+    // torso
+    g.fillStyle = armor; g.beginPath(); g.moveTo(x - 5, y - 6 + br); g.lineTo(x + 5, y - 6 + br); g.lineTo(x + 4, y + 2); g.lineTo(x - 4, y + 2); g.fill();
+    g.fillStyle = '#00000066'; g.fillRect(x - 4, y, 8, 1.2);
+    if (P.armor === 'chain' || P.armor === 'plate' || P.armor === 'dragon') { g.fillStyle = '#ffffff22'; g.fillRect(x - 3.5, y - 4 + br, 7, 1); }
+    // pauldron on the sword arm
+    const px = dir === 'up' ? x - 4.5 : x + 4.5 * lr;
+    g.fillStyle = '#6e7279'; g.beginPath(); g.ellipse(px, y - 5.5 + br, 2.8, 2, 0, 0, 7); g.fill(); g.fillStyle = '#ffffff30'; g.fillRect(px - 1.5, y - 6.8 + br, 3, 0.8);
+    // hood with a shadowed face and two pale glints
+    const hy = y - 9 + br;
+    g.fillStyle = '#18181c'; g.beginPath(); g.arc(x, hy, 5.2, 0, 7); g.fill();
+    const tip = dir === 'left' ? 2.2 : dir === 'right' ? -2.2 : 0;
+    g.beginPath(); g.moveTo(x - 4, hy - 2.5); g.quadraticCurveTo(x + tip, hy - 9, x + tip * 2.3, hy - 7.5); g.lineTo(x + 4, hy - 2.5); g.fill();
+    g.strokeStyle = '#ffffff2a'; g.lineWidth = 0.7; g.beginPath(); g.arc(x, hy, 5.2, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
+    if (dir !== 'up') {
+      const fo = dir === 'left' ? -1.6 : dir === 'right' ? 1.6 : 0;
+      g.fillStyle = '#030304'; g.beginPath(); g.ellipse(x + fo, hy + 0.8, dir === 'down' ? 3.1 : 2.4, 2.8, 0, 0, 7); g.fill();
+      g.fillStyle = '#e9e9e9';
+      if (dir === 'down') { g.fillRect(x - 1.7, hy + 0.5, 1, 1); g.fillRect(x + 0.8, hy + 0.5, 1, 1); }
+      else g.fillRect(x + fo + (dir === 'right' ? 0.6 : -1.4), hy + 0.5, 1, 1);
+    }
+    if (dir === 'up') cape();
+    sword(true);
+    // attacks
+    g.lineCap = 'round';
     if (P.spin > 0) {
       const a = (1 - P.spin / 0.35) * Math.PI * 2;
-      g.beginPath(); g.moveTo(P.x, P.y - 2); g.lineTo(P.x + Math.cos(a) * 18, P.y - 2 + Math.sin(a) * 18); g.stroke();
-      g.strokeStyle = '#ffffff66'; g.lineWidth = 4; g.beginPath(); g.arc(P.x, P.y - 2, 18, a - 1.5, a); g.stroke();
+      g.strokeStyle = '#ffffff40'; g.lineWidth = 6; g.beginPath(); g.arc(x, y - 2, 18, a - 2.2, a); g.stroke();
+      g.strokeStyle = blade; g.lineWidth = 2; g.beginPath(); g.moveTo(x + Math.cos(a) * 4, y - 2 + Math.sin(a) * 4); g.lineTo(x + Math.cos(a) * 19, y - 2 + Math.sin(a) * 19); g.stroke();
     } else if (P.swing > 0) {
-      const base = Math.atan2(P.fy, P.fx), k = 1 - P.swing / 0.24, a = base - 1.1 + k * 2.2;
-      g.beginPath(); g.moveTo(P.x + Math.cos(a) * 4, P.y - 2 + Math.sin(a) * 4); g.lineTo(P.x + Math.cos(a) * 17, P.y - 2 + Math.sin(a) * 17); g.stroke();
-      g.strokeStyle = '#ffffff55'; g.lineWidth = 3; g.beginPath(); g.arc(P.x, P.y - 2, 15, base - 1.1, a); g.stroke();
-    } else {
-      g.beginPath(); g.moveTo(P.x + 5, P.y); g.lineTo(P.x + 7, P.y - 10); g.stroke();
+      const base = Math.atan2(P.fy, P.fx), k = 1 - P.swing / 0.24, a = base - 1.2 + k * 2.4;
+      g.strokeStyle = '#ffffff38'; g.lineWidth = 7; g.beginPath(); g.arc(x, y - 2, 14, base - 1.2, a); g.stroke();
+      g.strokeStyle = '#ffffff70'; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y - 2, 17, base - 1.2, a); g.stroke();
+      g.strokeStyle = '#111'; g.lineWidth = 3.2; g.beginPath(); g.moveTo(x + Math.cos(a) * 4, y - 2 + Math.sin(a) * 4); g.lineTo(x + Math.cos(a) * 18, y - 2 + Math.sin(a) * 18); g.stroke();
+      g.strokeStyle = blade; g.lineWidth = 1.8; g.beginPath(); g.moveTo(x + Math.cos(a) * 4, y - 2 + Math.sin(a) * 4); g.lineTo(x + Math.cos(a) * 18, y - 2 + Math.sin(a) * 18); g.stroke();
     }
-    if (P.shield) { g.fillStyle = '#8a6440'; g.beginPath(); g.arc(P.x + P.fx * 8, P.y + P.fy * 8 - 2, 5, 0, 7); g.fill(); g.strokeStyle = '#e6c35c'; g.lineWidth = 1; g.stroke(); }
+    if (P.shield) {
+      const sx = x + P.fx * 7, sy = y - 1 + P.fy * 6;
+      g.fillStyle = '#1d1d22'; g.beginPath(); g.moveTo(sx - 4, sy - 5); g.lineTo(sx + 4, sy - 5); g.lineTo(sx + 4, sy + 1); g.lineTo(sx, sy + 6); g.lineTo(sx - 4, sy + 1); g.closePath(); g.fill();
+      g.strokeStyle = '#9a9ea6'; g.lineWidth = 1; g.stroke();
+    }
+    g.globalAlpha = 1;
   }
+  const LANTERN = new Set(['elder', 'innkeep', 'trader', 'peddler', 'ranger']);
   function drawNpc(g, n, now) {
     const x = n.x * TS + 8, y = n.y * TS + 8;
-    person(g, x, y, n.color, '#f1d3b3', n.hat, { x: 0, y: 1 }, 0);
+    robed(g, x, y, shade(n.color, 0.45), now, { lantern: LANTERN.has(n.id), spear: !!n.gate });
     // "!" when they have a quest for you, "?" when you can turn one in
     const quest = n.id === 'elder' ? ['lamp1', 'lamp2', 'lamp3'] : Object.entries(QUESTS).filter(([, q]) => q.giver === n.id).map(([id]) => id);
     const offer = quest.some((q) => !qState(q) && (n.id !== 'elder' || q === 'lamp1')), ready = quest.some((q) => qReady(q));
-    if (offer || ready) { g.fillStyle = ready ? '#3ccf8e' : '#ffd23d'; g.font = '800 12px Segoe UI'; g.textAlign = 'center'; g.fillText(ready ? '?' : '!', x, y - 16 + Math.sin(now * 4) * 1.5); }
-    if (n.shop) { g.fillStyle = '#ffd23d'; g.font = '700 9px Segoe UI'; g.textAlign = 'center'; g.fillText('$', x + 8, y - 12); }
+    if (offer || ready) { g.fillStyle = '#f0f0f0'; g.font = '800 12px Segoe UI'; g.textAlign = 'center'; g.fillText(ready ? '?' : '!', x, y - 19 + Math.sin(now * 4) * 1.5); }
+    if (n.shop) { g.fillStyle = '#cfcfcf'; g.font = '700 9px Segoe UI'; g.textAlign = 'center'; g.fillText('$', x + 9, y - 13); }
   }
+  // Monsters are dark shapes with a faint rim; their red eyes are drawn later, over the dark.
   function drawEnemy(g, e, now) {
     const flash = e.hurtT > 0 && Math.floor(now * 30) % 2;
-    const col = flash ? '#fff' : e.burn > 0 ? '#ff9a5a' : e.chill > 0 ? '#a8dcff' : e.color;
-    g.fillStyle = '#00000044'; g.beginPath(); g.ellipse(e.x, e.y + e.r * 0.8, e.r, e.r * 0.35, 0, 0, 7); g.fill();
+    const col = flash ? '#e8e8e8' : shade(e.color, e.boss ? 0.42 : 0.38);
+    g.fillStyle = '#00000088'; g.beginPath(); g.ellipse(e.x, e.y + e.r * 0.8, e.r, e.r * 0.35, 0, 0, 7); g.fill();
     const bob = e.ai === 'fly' || e.flies || e.ai === 'boss3' ? Math.sin(now * 8 + e.t) * 2 - 4 : 0;
-    g.fillStyle = col;
-    if (e.ai === 'hop' || e.ai === 'boss1') { const sq = 1 + Math.sin(now * 6 + e.t) * 0.08; g.beginPath(); g.ellipse(e.x, e.y, e.r * sq, e.r * 0.8 / sq, 0, Math.PI, 0); g.lineTo(e.x + e.r * sq, e.y + e.r * 0.4); g.lineTo(e.x - e.r * sq, e.y + e.r * 0.4); g.fill(); if (e.ai === 'boss1') { g.fillStyle = '#ffd23d'; g.beginPath(); g.moveTo(e.x - 8, e.y - e.r * 0.75); g.lineTo(e.x - 4, e.y - e.r * 1.15); g.lineTo(e.x, e.y - e.r * 0.8); g.lineTo(e.x + 4, e.y - e.r * 1.15); g.lineTo(e.x + 8, e.y - e.r * 0.75); g.fill(); } }
-    else if (e.ai === 'fly') { g.beginPath(); g.arc(e.x, e.y + bob, e.r * 0.7, 0, 7); g.fill(); const fl = Math.sin(now * 30) * 4; g.beginPath(); g.moveTo(e.x, e.y + bob); g.lineTo(e.x - 9, e.y + bob - 3 + fl); g.lineTo(e.x - 3, e.y + bob + 2); g.moveTo(e.x, e.y + bob); g.lineTo(e.x + 9, e.y + bob - 3 + fl); g.lineTo(e.x + 3, e.y + bob + 2); g.fill(); }
-    else if (e.ai === 'boss3') { g.beginPath(); g.ellipse(e.x, e.y + bob, e.r, e.r * 0.6, 0, 0, 7); g.fill(); const fl = Math.sin(now * 6) * 8; g.beginPath(); g.moveTo(e.x - 6, e.y + bob); g.lineTo(e.x - 30, e.y + bob - 14 + fl); g.lineTo(e.x - 10, e.y + bob + 6); g.moveTo(e.x + 6, e.y + bob); g.lineTo(e.x + 30, e.y + bob - 14 + fl); g.lineTo(e.x + 10, e.y + bob + 6); g.fill(); }
-    else { g.beginPath(); g.roundRect(e.x - e.r, e.y - e.r + bob, e.r * 2, e.r * 1.7, e.r * 0.5); g.fill(); }
-    if (e.state === 'wind') { g.strokeStyle = '#ff5d6c'; g.lineWidth = 1.5; g.beginPath(); g.arc(e.x, e.y, e.r + 4, 0, 7); g.stroke(); }
-    g.fillStyle = e.boss ? '#ff3b3b' : '#111'; g.fillRect(e.x - 3, e.y - e.r * 0.3 + bob, 2, 2); g.fillRect(e.x + 1, e.y - e.r * 0.3 + bob, 2, 2);
-    if (!e.boss && e.hp < e.max) { g.fillStyle = '#000a'; g.fillRect(e.x - 8, e.y - e.r - 7, 16, 2.5); g.fillStyle = '#ff5d6c'; g.fillRect(e.x - 8, e.y - e.r - 7, 16 * Math.max(0, e.hp / e.max), 2.5); }
+    g.fillStyle = col; g.strokeStyle = '#ffffff22'; g.lineWidth = 0.8;
+    g.beginPath();
+    if (e.ai === 'hop' || e.ai === 'boss1') {
+      const sq = 1 + Math.sin(now * 6 + e.t) * 0.08;
+      g.ellipse(e.x, e.y, e.r * sq, e.r * 0.8 / sq, 0, Math.PI, 0); g.lineTo(e.x + e.r * sq, e.y + e.r * 0.4); g.lineTo(e.x - e.r * sq, e.y + e.r * 0.4); g.closePath(); g.fill(); g.stroke();
+      if (e.ai === 'boss1') { g.fillStyle = '#9a9a9a'; g.beginPath(); g.moveTo(e.x - 8, e.y - e.r * 0.75); g.lineTo(e.x - 4, e.y - e.r * 1.15); g.lineTo(e.x, e.y - e.r * 0.8); g.lineTo(e.x + 4, e.y - e.r * 1.15); g.lineTo(e.x + 8, e.y - e.r * 0.75); g.fill(); }
+    } else if (e.ai === 'fly') {
+      g.arc(e.x, e.y + bob, e.r * 0.7, 0, 7); g.fill();
+      const fl = Math.sin(now * 30) * 4; g.beginPath(); g.moveTo(e.x, e.y + bob); g.lineTo(e.x - 9, e.y + bob - 3 + fl); g.lineTo(e.x - 3, e.y + bob + 2); g.moveTo(e.x, e.y + bob); g.lineTo(e.x + 9, e.y + bob - 3 + fl); g.lineTo(e.x + 3, e.y + bob + 2); g.fill();
+    } else if (e.ai === 'boss3') {
+      g.ellipse(e.x, e.y + bob, e.r, e.r * 0.6, 0, 0, 7); g.fill(); g.stroke();
+      const fl = Math.sin(now * 6) * 8; g.beginPath(); g.moveTo(e.x - 6, e.y + bob); g.lineTo(e.x - 30, e.y + bob - 14 + fl); g.lineTo(e.x - 10, e.y + bob + 6); g.moveTo(e.x + 6, e.y + bob); g.lineTo(e.x + 30, e.y + bob - 14 + fl); g.lineTo(e.x + 10, e.y + bob + 6); g.fill();
+    } else { g.roundRect(e.x - e.r, e.y - e.r + bob, e.r * 2, e.r * 1.7, e.r * 0.5); g.fill(); g.stroke(); }
+    if (e.state === 'wind') { g.strokeStyle = '#ff3b3b'; g.lineWidth = 1.5; g.beginPath(); g.arc(e.x, e.y, e.r + 4, 0, 7); g.stroke(); }
+    if (!e.boss && e.hp < e.max) { g.fillStyle = '#000c'; g.fillRect(e.x - 8, e.y - e.r - 7, 16, 2.5); g.fillStyle = '#9a9a9a'; g.fillRect(e.x - 8, e.y - e.r - 7, 16 * Math.max(0, e.hp / e.max), 2.5); }
   }
 
-  // ---------- lighting ----------
-  // A darkness layer with holes cut out for lights (you, lava, doorways, fire, glowcaps), a warm glow on top,
-  // and a vignette. Dungeons are much darker than the village.
-  const DARKNESS = { village: 0.5, woods: 0.68, hills: 0.58, peak: 0.6, cave1: 0.88, cave2: 0.86, tower: 0.84 };
+  // ---------- lighting and atmosphere ----------
+  // A heavy darkness layer with holes cut out for lights (your torch, lanterns, lava, doorways, fire, glowcaps),
+  // drifting fog that only shows where there's light, falling ash, and a deep vignette.
+  // Outside the light you can still just make things out (about 5%).
+  const DARKNESS = { village: 0.95, woods: 0.95, hills: 0.95, peak: 0.95, cave1: 0.95, cave2: 0.95, tower: 0.95 };
   let lc, lg;
+  const fog = Array.from({ length: 7 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: 50 + Math.random() * 70, v: 4 + Math.random() * 8, a: 0.04 + Math.random() * 0.05 }));
+  const ash = Array.from({ length: 40 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 6 + Math.random() * 14, d: Math.random() * 6 }));
+  function drawFog(g, dt) {
+    for (const f of fog) {
+      f.x += f.v * dt; if (f.x - f.r > W) { f.x = -f.r; f.y = Math.random() * H; }
+      const gr = g.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r); gr.addColorStop(0, `rgba(200,200,205,${f.a})`); gr.addColorStop(1, 'rgba(200,200,205,0)');
+      g.fillStyle = gr; g.fillRect(f.x - f.r, f.y - f.r, f.r * 2, f.r * 2);
+    }
+  }
   function drawLight(g, cx, cy, now) {
     if (!lc) { lc = document.createElement('canvas'); lc.width = W; lc.height = H; lg = lc.getContext('2d'); }
     const dungeon = !!world.boss, warm = [];
     lg.globalCompositeOperation = 'source-over'; lg.clearRect(0, 0, W, H);
-    lg.fillStyle = `rgba(3,4,9,${DARKNESS[world.id] ?? 0.6})`; lg.fillRect(0, 0, W, H);
+    lg.fillStyle = `rgba(1,1,3,${DARKNESS[world.id] ?? 0.8})`; lg.fillRect(0, 0, W, H);
     lg.globalCompositeOperation = 'destination-out';
-    const hole = (x, y, r, a = 1) => { const gr = lg.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(0.55, `rgba(0,0,0,${a * 0.6})`); gr.addColorStop(1, 'rgba(0,0,0,0)'); lg.fillStyle = gr; lg.beginPath(); lg.arc(x, y, r, 0, 7); lg.fill(); };
-    hole(P.x - cx, P.y - cy - 4, (dungeon ? 74 : 104) + Math.sin(now * 9) * 1.5 + Math.sin(now * 3.1) * 1.5);
+    // bright across most of the radius, then a soft fall-off into the dark
+    const hole = (x, y, r, a = 1) => { const gr = lg.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(0.55, `rgba(0,0,0,${a * 0.92})`); gr.addColorStop(0.8, `rgba(0,0,0,${a * 0.45})`); gr.addColorStop(1, 'rgba(0,0,0,0)'); lg.fillStyle = gr; lg.beginPath(); lg.arc(x, y, r, 0, 7); lg.fill(); };
+    const flick = Math.sin(now * 11) * 1.6 + Math.sin(now * 4.3) * 2 + Math.sin(now * 23) * 0.6;
+    hole(P.x - cx, P.y - cy - 4, (dungeon ? 118 : 148) + flick * 1.5);
+    for (const n of world.npcs) if (LANTERN.has(n.id)) hole(n.x * TS + 14 - cx, n.y * TS + 8 - cy, 40 + flick * 0.6, 0.85);
     for (let ty = Math.floor(cy / TS) - 1; ty <= Math.floor((cy + H) / TS) + 1; ty++) for (let tx = Math.floor(cx / TS) - 1; tx <= Math.floor((cx + W) / TS) + 1; tx++) {
       const t = RPG.get(world, tx, ty), x = tx * TS + 8 - cx, y = ty * TS + 8 - cy;
-      if (t === T.LAVA) { hole(x, y, 22 + Math.sin(now * 4 + tx) * 3, 0.4); warm.push([x, y, 18, '255,110,30', 0.05]); }
-      if (t === T.DOOR) { hole(x, y + 6, 30, 0.7); warm.push([x, y + 6, 26, '255,170,70', 0.14]); }
-      if (t === T.CAVE) hole(x, y, 14, 0.3);
+      if (t === T.LAVA) { hole(x, y, 20 + Math.sin(now * 4 + tx) * 3, 0.35); warm.push([x, y, 16, '255,110,30', 0.04]); }
+      if (t === T.DOOR) { hole(x, y + 6, 24, 0.55); warm.push([x, y + 6, 20, '255,170,70', 0.08]); }
+      if (t === T.CAVE) hole(x, y, 12, 0.2);
     }
-    for (const sh of shots) { hole(sh.x - cx, sh.y - cy, 22, 0.8); if (sh.kind === 'fire') warm.push([sh.x - cx, sh.y - cy, 18, '255,120,40', 0.3]); if (sh.kind === 'ice') warm.push([sh.x - cx, sh.y - cy, 16, '120,200,255', 0.3]); }
-    for (const pk of world.picks) if (!P.opened.includes(pk.id)) { const x = pk.x * TS + 8 - cx, y = pk.y * TS + 8 - cy; hole(x, y, 20, 0.6); warm.push([x, y, 14, '120,255,190', 0.18]); }
-    if (P.weapon === 'flame') warm.push([P.x - cx, P.y - cy, 30, '255,120,40', 0.08]);
-    if (P.weapon === 'frost') warm.push([P.x - cx, P.y - cy, 30, '120,200,255', 0.08]);
+    for (const sh of shots) hole(sh.x - cx, sh.y - cy, 20, 0.75);
+    for (const pk of world.picks) if (!P.opened.includes(pk.id)) hole(pk.x * TS + 8 - cx, pk.y * TS + 8 - cy, 16, 0.5);
     g.drawImage(lc, 0, 0, W, H);
     g.globalCompositeOperation = 'lighter';
     for (const [x, y, r, rgb, a] of warm) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(${rgb},${a})`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
     g.globalCompositeOperation = 'source-over';
-    const vg = g.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.85); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.6)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+    // ash drifting down, catching your torchlight
+    g.fillStyle = '#d0d0d0';
+    for (const a of ash) {
+      a.y += a.v / 60; a.x += Math.sin(now + a.d) * 0.2;
+      if (a.y > H) { a.y = -2; a.x = Math.random() * W; }
+      g.globalAlpha = Math.hypot(a.x - (P.x - cx), a.y - (P.y - cy)) < 120 ? 0.45 : 0.05; g.fillRect(a.x, a.y, 1, 1);
+    }
+    g.globalAlpha = 1;
+    const vg = g.createRadialGradient(W / 2, H / 2, H * 0.22, W / 2, H / 2, H * 0.8); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+  }
+  // A little film grain, drawn after the black-and-white pass.
+  function drawGrain(g) {
+    for (let i = 0; i < 160; i++) { g.fillStyle = Math.random() < 0.5 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.12)'; g.fillRect(Math.random() * W, Math.random() * H, 1, 1); }
   }
 
   // Red eyes in a grey world: the only colour on the map.
