@@ -1,10 +1,11 @@
 {
   "id": "taskman",
   "name": "Task Manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Lapis Studios",
   "description": "See what's running and how much CPU and memory it uses, force end or restart programs, turn startup programs on and off, and get warned when something hogs your PC. Needs DeskMate 1.9 or newer.",
   "tab": "tab.html",
+  "icon": "icon.svg",
   "permissions": [
     "processes",
     "notifications"

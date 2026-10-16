@@ -1,10 +1,11 @@
 {
   "id": "pcmon",
   "name": "PC Monitor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Lapis Studios",
   "description": "Live CPU, GPU, memory, disk and network usage with a short history graph. Shows GPU temperature and VRAM on NVIDIA cards. Needs DeskMate 1.6 or newer.",
   "tab": "tab.html",
+  "icon": "icon.svg",
   "permissions": [
     "system-info"
   ]

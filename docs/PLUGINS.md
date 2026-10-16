@@ -103,6 +103,9 @@ While you work on it:
 
 ## manifest.json reference
 
+> **`icon`** (optional, DeskMate 1.10+): an `.svg` file in your Mate's folder, 16 KB max. DeskMate shows it as a compact icon tab (the name appears on hover) so more Mates fit across the bar. Draw it in one colour on a transparent background: DeskMate tints it to match the theme.
+
+
 Every Mate folder needs a `manifest.json` at its top level. DeskMate refuses to install a Mate whose manifest breaks any of these rules, and says which one.
 
 | Field | Required | Rules | Example |

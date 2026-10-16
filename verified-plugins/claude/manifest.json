@@ -1,9 +1,13 @@
 {
   "id": "claude",
   "name": "Claude",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Lapis Studios",
   "description": "See what Claude Code did since you last checked, watch a conversation with the status dots, and reply in the background.",
   "tab": "tab.html",
-  "permissions": ["claude", "status"]
+  "icon": "icon.svg",
+  "permissions": [
+    "claude",
+    "status"
+  ]
 }

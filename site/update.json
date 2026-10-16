@@ -1,6 +1,6 @@
 {
-  "version": "1.9.1",
+  "version": "1.10.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "e6296e796e257bbd0a925621bdb9245ba0ed580a2e57219ae95b47e3c4c835dc",
-  "notes": "Task Manager can now switch off startup programs installed for all users (Windows asks you to allow it)."
+  "sha256": "0f1e510fe3fe505caf48a8e5f6f2215d06be6661914bdc1375854ca77bdeae57",
+  "notes": "Mates now show as icons in the tab bar (Music is a music note), so about twice as many fit before the overflow menu."
 }

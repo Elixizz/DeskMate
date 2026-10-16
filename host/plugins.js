@@ -60,6 +60,12 @@ function validateManifest(m, dir) {
     if (dir && !fs.existsSync(path.join(dir, f))) fail(`missing ${f}`);
   }
   if (m.bar && !(m.bar.height >= 24 && m.bar.height <= 90)) fail('bar.height must be 24-90');
+  // "icon": an .svg in the Mate's folder. The tab shows it (tinted to the theme) instead of the name, to save room.
+  if (m.icon != null) {
+    if (typeof m.icon !== 'string' || !/\.svg$/i.test(m.icon) || m.icon.includes('..') || path.isAbsolute(m.icon)) fail('icon must be an .svg file inside the Mate');
+    if (dir && !fs.existsSync(path.join(dir, m.icon))) fail(`missing ${m.icon}`);
+    if (dir && fs.statSync(path.join(dir, m.icon)).size > 16384) fail('icon must be 16 KB or smaller');
+  }
   m.permissions = m.permissions || [];
   if (!Array.isArray(m.permissions)) fail('permissions must be a list');
   for (const p of m.permissions) {
@@ -273,12 +279,24 @@ function applyLayout(layout) {
 }
 const roundRect = (r) => ({ x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) });
 
+// The icon goes to DeskMate's own window as a data: URL used only as a CSS mask, so nothing in the SVG can run.
+const iconCache = new Map();
+function iconUrl(m, dir) {
+  if (!m.icon || !dir) return null;
+  const k = `${m.id}@${m.version}`;
+  if (!iconCache.has(k)) {
+    let url = null;
+    try { url = 'data:image/svg+xml;base64,' + fs.readFileSync(path.join(dir, m.icon)).toString('base64'); } catch {}
+    iconCache.set(k, url);
+  }
+  return iconCache.get(k);
+}
 function listForHost() {
-  return [...loaded.values()].map(({ manifest: m, builtin, disabled }) => {
+  return [...loaded.values()].map(({ manifest: m, builtin, disabled, dir }) => {
     const st = pluginState(m.id);
     return {
       id: m.id, name: m.name, version: m.version, author: m.author || '', description: m.description || '',
-      builtin: !!builtin, enabled: !disabled, dev: !!st.dev, updateTo: pendingUpdates.get(m.id) || null, hasTab: !!m.tab, bar: m.bar ? { height: m.bar.height } : null,
+      builtin: !!builtin, enabled: !disabled, dev: !!st.dev, updateTo: pendingUpdates.get(m.id) || null, hasTab: !!m.tab, icon: iconUrl(m, dir), bar: m.bar ? { height: m.bar.height } : null,
       permissions: m.permissions.map((p) => ({ id: p, ...permLabel(p) })), hotkeys: m.hotkeys, badge: badgeByPlugin.get(m.id) || 0, sounds: m.sounds,
     };
   });

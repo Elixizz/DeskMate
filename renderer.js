@@ -31,12 +31,15 @@ let menuOpen = false;
 function tabOrder() { return Array.isArray(settings?.tabOrder) ? settings.tabOrder : []; }
 function renderTabs() {
   tabNav.querySelectorAll('.ptab').forEach((b) => b.remove());
-  const vault = tabNav.querySelector('[data-tab="vault"]');
   for (const p of pluginList.filter((x) => x.enabled && x.hasTab)) {
     const b = document.createElement('button');
-    b.className = 'tab ptab'; b.dataset.tab = 'p:' + p.id;
-    b.innerHTML = esc(p.name) + (p.badge ? ` <span class="badge">${p.badge}</span>` : '');
-    tabNav.insertBefore(b, vault);
+    b.className = 'tab ptab'; b.dataset.tab = 'p:' + p.id; b.dataset.name = p.name;
+    // Mates with an icon get a compact icon tab (name on hover), so more of them fit across
+    if (p.icon && /^data:image\/svg\+xml;base64,[A-Za-z0-9+/=]+$/.test(p.icon)) {
+      b.classList.add('icontab'); b.title = p.name; b.dataset.icon = p.icon;
+      b.innerHTML = `<span class="ticon" style="--icon:url('${p.icon}')"></span>` + (p.badge ? `<span class="badge">${p.badge}</span>` : '');
+    } else b.innerHTML = esc(p.name) + (p.badge ? ` <span class="badge">${p.badge}</span>` : '');
+    tabNav.insertBefore(b, $('#moreBtn')); // after Vault, so Vault stays first unless the user drags it
   }
   // saved order first, then anything new in its natural place
   const order = tabOrder();
@@ -68,20 +71,22 @@ function fitTabs() {
     }
     hidden.forEach((b) => b.classList.add('overflow'));
     const badges = hidden.reduce((n, b) => n + (Number(b.querySelector('.badge')?.textContent) || 0), 0);
-    more.innerHTML = `More &#x25BE;${badges ? ` <span class="badge">${badges}</span>` : ''}`;
-    more.title = hidden.map((b) => b.childNodes[0].textContent.trim()).join(', ');
+    more.innerHTML = `&#x22EF;${badges ? ` <span class="badge">${badges}</span>` : ''}`;
+    more.title = hidden.map(tabName).join(', ');
   }
   tabNav.classList.remove('measuring');
   if (menuOpen) renderMoreMenu();
 }
 new ResizeObserver(() => fitTabs()).observe(tabNav);
 
+const tabName = (b) => b.dataset.name || b.childNodes[0].textContent.trim();
 function renderMoreMenu() {
   const hidden = $$('nav#tabs .tab.overflow');
   if (!hidden.length) return closeMoreMenu();
   $('#moreMenu').innerHTML = hidden.map((b) => {
     const badge = b.querySelector('.badge')?.textContent;
-    return `<button class="moreitem" data-pick="${esc(b.dataset.tab)}"><span class="grow ellipsis">${esc(b.childNodes[0].textContent.trim())}</span>${badge ? `<span class="badge">${esc(badge)}</span>` : ''}</button>`;
+    const ic = b.dataset.icon ? `<span class="ticon" style="--icon:url('${b.dataset.icon}')"></span>` : '';
+    return `<button class="moreitem" data-pick="${esc(b.dataset.tab)}">${ic}<span class="grow ellipsis">${esc(tabName(b))}</span>${badge ? `<span class="badge">${esc(badge)}</span>` : ''}</button>`;
   }).join('') + '<div class="muted small morehint">Drag tabs to change their order</div>';
 }
 function closeMoreMenu() { menuOpen = false; $('#moreMenu').classList.add('hidden'); reportLayout(); }

@@ -1,9 +1,10 @@
 {
   "id": "notes",
   "name": "Notes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Lapis Studios",
   "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
   "tab": "tab.html",
+  "icon": "icon.svg",
   "permissions": []
 }

@@ -1,9 +1,13 @@
 {
   "id": "calc",
   "name": "Calculator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Lapis Studios",
   "description": "A calculator with history, plus a unit converter for length, weight, temperature, speed, data, time and live currency rates.",
   "tab": "tab.html",
-  "permissions": ["net:open.er-api.com", "clipboard-write"]
+  "icon": "icon.svg",
+  "permissions": [
+    "net:open.er-api.com",
+    "clipboard-write"
+  ]
 }

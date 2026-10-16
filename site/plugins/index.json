@@ -4,58 +4,58 @@
     {
       "id": "arcade",
       "name": "Arcade",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "author": "Lapis Studios",
       "description": "Four games for the corner of your screen: Mate Factory (build a Mate-making business), Rooftop Run (parkour), Desk Defense (24 towers with 3 upgrade paths each, 6 desks) and Sword Quest (an open-world adventure). Games pause when you hide DeskMate. Needs DeskMate 1.8 or newer.",
       "permissions": [
         "screen-effects"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/arcade-1.0.3.zip",
-      "sha256": "fadd9f0446d082154d1e1f1c2308eed2b75c6eb6aca6aa87d007967b1ec623fb"
+      "download": "https://deskmate.lapistudios.com/plugins/arcade-1.0.4.zip",
+      "sha256": "d2311a70494b4320886590c3c4c9447bd3af050f9c22a9a7bc9c1bba7f9a5f2a"
     },
     {
       "id": "calc",
       "name": "Calculator",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "A calculator with history, plus a unit converter for length, weight, temperature, speed, data, time and live currency rates.",
       "permissions": [
         "net:open.er-api.com",
         "clipboard-write"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.0.zip",
-      "sha256": "4d87fa8dfa77587bba1d51f68aa5d9a8cf875b5a152aeb53c8d5ac850c94868d"
+      "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.1.zip",
+      "sha256": "977731300f948c94e8d3c43746e06c4250d492ea6ebc3abc7fad358278cb0aaa"
     },
     {
       "id": "claude",
       "name": "Claude",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": "Lapis Studios",
       "description": "See what Claude Code did since you last checked, watch a conversation with the status dots, and reply in the background.",
       "permissions": [
         "claude",
         "status"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "038cd6331ce5681c65e1c49b0f69ae86d719cf5c752c8ef8d4b6c093c24fcda7"
+      "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.2.zip",
+      "sha256": "272b7f59737a238395c2a42b0a9c37aebc6cf76e055f8370241d250baa72733f"
     },
     {
       "id": "clipboard",
       "name": "Clipboard",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Your last 50 copied texts, searchable. Click to copy again, pin the ones you reuse. History is kept in memory only and never includes passwords copied from the Vault. Needs DeskMate 1.6 or newer.",
       "permissions": [
         "clipboard-history",
         "clipboard-write"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.0.zip",
-      "sha256": "bd9d68e1009c7cc5c339ec91a7f3665929b0cf284b0f1ef9fa70003a34d21860"
+      "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.1.zip",
+      "sha256": "dddc8279433dbea2d7641cff6e696d7b4c9cb182cd5f0fbad81436a9c36605a1"
     },
     {
       "id": "gmail",
       "name": "Gmail",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": "Lapis Studios",
       "description": "Sign in with Google to see new emails, get notified when mail arrives, and copy sign-in codes the moment they land. Read-only. Needs DeskMate 1.1 or newer.",
       "permissions": [
@@ -64,92 +64,92 @@
         "status",
         "clipboard-write"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "067a6802ccc74fbbf03a62e716c6f294af5271ef47d6034acbbe8b4156278b22"
+      "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.1.zip",
+      "sha256": "61b87005fcdb16deba8fb137a704fd34cd30d8dd4d7f11ae92d879be35e66da1"
     },
     {
       "id": "notes",
       "name": "Notes",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
       "permissions": [],
-      "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.0.zip",
-      "sha256": "2581ab3ffd425ee4df9421c0971e4bc542b4d57028376ec4bd76c4967c00782d"
+      "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.1.zip",
+      "sha256": "873d76b6a72db800828b68963fe6e06029d762387c5d0227bf6c96290e5ec2bf"
     },
     {
       "id": "pcmon",
       "name": "PC Monitor",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Live CPU, GPU, memory, disk and network usage with a short history graph. Shows GPU temperature and VRAM on NVIDIA cards. Needs DeskMate 1.6 or newer.",
       "permissions": [
         "system-info"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.0.zip",
-      "sha256": "1c60b5c746526f3c9f44f6d02cf3f9b3e3b7a8f377bff3cf5a7430315724b1c9"
+      "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.1.zip",
+      "sha256": "39563a71837e2d2d2a791fd1b7c8e71fc31ae55daf851d9bc00ba249dffa7fa5"
     },
     {
       "id": "schedule-one",
       "name": "Schedule I",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": "Lapis Studios",
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
-      "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "f03bba87cc25ca4d0fc2c2d7bbfa32eeecab4f1c494c9a02e0ea8115b6a52236"
+      "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.2.zip",
+      "sha256": "457453e8ef90787d7d134be422daaf8871aa02c4127af321ca57f9aa444a63a9"
     },
     {
       "id": "taskman",
       "name": "Task Manager",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": "Lapis Studios",
       "description": "See what's running and how much CPU and memory it uses, force end or restart programs, turn startup programs on and off, and get warned when something hogs your PC. Needs DeskMate 1.9 or newer.",
       "permissions": [
         "processes",
         "notifications"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/taskman-1.0.1.zip",
-      "sha256": "192f9883866bbc3d32fe92eb53c211777883a51659adb60a052b8fa5b65734f5"
+      "download": "https://deskmate.lapistudios.com/plugins/taskman-1.0.2.zip",
+      "sha256": "429b9395a678e3a00396dac5f9a6f8637e5b0f5fa0f4c8e577fa69cb2abdb522"
     },
     {
       "id": "timers",
       "name": "Timers",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": "Lapis Studios",
       "description": "Quick timers and reminders with Windows notifications, so you don't have to leave your game to keep track of time.",
       "permissions": [
         "notifications",
         "status"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "61e1abcb05113b5cc86dfb506b8e4498982fca70cbf3c179b07c8e08e7e14b5e"
+      "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.1.zip",
+      "sha256": "ea11ffcc55fd39811b4e89e25146a8ed06dba753bbc2b54da2ef3381051805f0"
     },
     {
       "id": "wallet",
       "name": "Wallet",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "A crypto wallet for Bitcoin, Ethereum (plus USDC, USDT, DAI, WBTC) and Solana (plus USDC and other tokens). Create one or import your recovery phrase. Your phrase stays encrypted inside DeskMate, and every send is approved in DeskMate's own window. Needs DeskMate 1.7 or newer.",
       "permissions": [
         "wallet",
         "clipboard-write"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/wallet-1.0.0.zip",
-      "sha256": "0c551f0d2eaee25171c6351bcc5dc0353501e2a443bd41ad32ea214768805f92"
+      "download": "https://deskmate.lapistudios.com/plugins/wallet-1.0.1.zip",
+      "sha256": "adbcc699fb658db7560daa13d636a53d3af64a5985519e628df9fbbcb43f1110"
     },
     {
       "id": "weather",
       "name": "Weather",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "Current weather, the next 12 hours and a 7-day forecast for cities you type in. Never uses your device location.",
       "permissions": [
         "net:api.open-meteo.com",
         "net:geocoding-api.open-meteo.com"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "f9586d5cfd71cb880da192c2202a30c3270ef502c3e4c8f463d81d392bad7bea"
+      "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.1.zip",
+      "sha256": "f3cdb3a9aa3eb82974b6e9c86c143c188b765c859845a4859a64662cc1ca11c1"
     }
   ]
 }
