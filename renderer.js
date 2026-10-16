@@ -165,9 +165,13 @@ async function refreshPlugins() {
     if (tabs.includes(pick) && (pick !== 'vault' || wantedTab !== 'first' || pluginList.length)) { wantedTab = null; return selectTab(pick); }
   }
   if (!$$('.tab:not(.hidden)').some((b) => b.dataset.tab === activeTab)) return selectTab('vault');
-  if (activeTab === 'plugins') renderPlugins();
+  // redraw the Mates page only when the list itself changed, not for badge counts (the store view re-downloads)
+  const sig = JSON.stringify(pluginList.map((p) => ({ ...p, badge: 0 })));
+  if (activeTab === 'plugins' && sig !== pluginSig) renderPlugins();
+  pluginSig = sig;
   reportLayout();
 }
+let pluginSig = '';
 api.on('host:plugins-changed', refreshPlugins);
 api.on('host:toast', (t) => toast(t));
 

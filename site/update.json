@@ -1,6 +1,6 @@
 {
-  "version": "1.10.1",
+  "version": "1.10.2",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "ec90ad164f9f1421b6104a2c31d7b5c4b502d126665de90996ec790bcada2361",
-  "notes": "Vault and Music now have their own buttons at the top, so the whole tab bar is free for your other Mates."
+  "sha256": "5c61701dfe8221b4c74d454ac1e41fc33d6d1047d32f5c722efb4835070fcd15",
+  "notes": "Fixes the Mates page and Supply Closet refreshing over and over while Task Manager was running."
 }

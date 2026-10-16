@@ -321,7 +321,12 @@ const API = {
   info: (id) => ({ id, version: loaded.get(id).manifest.version, permissions: pluginState(id).granted }),
   hide: () => ctx.win().hide(),
   toast: (id, text) => ctx.win().webContents.send('host:toast', String(text).slice(0, 140)),
-  setBadge: (id, n) => { badgeByPlugin.set(id, Math.max(0, Math.min(999, n | 0))); ctx.win().webContents.send('host:plugins-changed'); },
+  // only tell the window when the number actually changes (Mates may call this every few seconds)
+  setBadge: (id, n) => {
+    const v = Math.max(0, Math.min(999, n | 0));
+    if ((badgeByPlugin.get(id) || 0) === v) return;
+    badgeByPlugin.set(id, v); ctx.win().webContents.send('host:plugins-changed');
+  },
   send: (id, msg) => { sendTo(id, 'message', msg); },
   legacy: (id) => ctx.caps.legacySettings(id, loaded.get(id).builtin),
   'status.set': [['status'], (id, s) => {

@@ -11,7 +11,7 @@ const open = load('open', { background: false, other: false });
 const icons = new Map(), asked = new Set(), rows = new Map();
 const alerts = load('alerts', { on: true, cpu: 40, for: 60, mem: 8192 });
 const hog = new Map(); // key -> { since, memHits, notified }
-let hogging = [];
+let hogging = [], lastBadge = -1;
 
 // ---------- programs ----------
 async function refresh() {
@@ -136,7 +136,7 @@ function checkHogs() {
   hogging = cur;
   const n = alerts.on ? cur.length : 0;
   $('#hogCount').textContent = n; $('#hogCount').classList.toggle('hidden', !n);
-  deskmate.setBadge(n).catch(() => {});
+  if (n !== lastBadge) { lastBadge = n; deskmate.setBadge(n).catch(() => {}); }
 }
 function renderHogs() {
   $('#hogList').innerHTML = hogging.length ? hogging.map(({ g, why }) => `<div><b style="color:var(--text)">${esc(g.name)}</b> · ${esc(why)}</div>`).join('') : 'Nothing is hogging your PC.';
