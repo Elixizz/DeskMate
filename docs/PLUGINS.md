@@ -158,6 +158,7 @@ Ask only for what your Mate needs. The install screen lists every permission in 
 | `screen-effects` | `deskmate.fx.*`: small built-in animations just outside the DeskMate panel (click-through, they vanish by themselves). DeskMate 1.8+ | Low |
 | `system-info` | `deskmate.system.stats()`: CPU, GPU, memory, disk and network usage. DeskMate 1.6+ | Low |
 | `clipboard-history` | `deskmate.clipboard.*`: text the user copies while DeskMate runs. Kept in memory only, and passwords copied from the Vault are never included. DeskMate 1.6+ | High |
+| `processes` | `deskmate.processes.*` and `deskmate.startup.*`: running programs with their CPU and memory, force ending or restarting them (DeskMate shows its own confirm box first), and switching the user's startup programs on or off. Windows-critical processes and DeskMate itself can never be ended. DeskMate 1.9+ | High |
 
 When an update adds a permission, DeskMate asks again before installing and marks the new ones with **NEW**. A Mate never gets a permission it didn't list, even if it was approved for an earlier version.
 
@@ -215,6 +216,12 @@ Every Mate page gets a global `deskmate` object. Calls that do something return 
 | `deskmate.clipboard.onCopy(fn)` | `clipboard-history` | Calls `fn({ id, text, time })` for each new copy |
 | `deskmate.clipboard.remove(id)` / `.clear()` | `clipboard-history` | Forget one entry, or all of them |
 | `deskmate.clipboard.setPaused(on)` / `.paused()` | `clipboard-history` | Stop or resume watching the clipboard. Paused means DeskMate doesn't read it at all |
+| `deskmate.processes.list()` | `processes` | `{ cores, groups: [{ key, name, exe, title, cpu, memMB, count, level, protected, canRestart }] }`. One group per program (all its processes together, like Task Manager). `level` is `'app'` (has a window), `'background'` (yours, no window) or `'other'` (Windows services and other users). `cpu` is a percent of the whole PC since your last call, so the first call reads 0. Poll every second or two at most |
+| `deskmate.processes.icons(keys)` | `processes` | `{ [key]: dataUrl }` program icons for up to 120 keys from `list()` |
+| `deskmate.processes.end(key)` / `.restart(key)` | `processes` | Force end (or end and start again) a program. DeskMate asks the user first in its own box; you get `{ canceled: true }` if they say no, otherwise `{ name, ended, denied }`. Throws for protected programs, and when Windows needs admin rights |
+| `deskmate.processes.asks()` / `.askAgain()` | `processes` | Whether DeskMate still asks before ending (the user can tick "Don't ask again" for your Mate), and turn the question back on |
+| `deskmate.startup.list()` | `processes` | `[{ key, name, command, enabled, scope, canChange, icon }]`: the same startup programs Windows Task Manager shows. Ones installed for every user have `canChange: false` |
+| `deskmate.startup.set(key, enabled)` | `processes` | Switch a startup program on or off, the same way Windows Task Manager does (so both stay in sync) |
 
 Everything a normal web page can do also works: `fetch` (to your `net:` hosts), `localStorage`, `IndexedDB`, `<audio>`, `<canvas>`, timers and so on. Pages stay loaded in the background, so timers keep running when the panel is hidden.
 

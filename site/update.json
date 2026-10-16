@@ -1,6 +1,6 @@
 {
-  "version": "1.8.0",
+  "version": "1.9.0",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "27d06bd9efddf3968cdee7281651b7f7ec7e054516de3b033b15aea2e4eb7894",
-  "notes": "New Arcade Mate: Mate Factory, Rooftop Run, Desk Defense and Sword Quest. Bugs that escape Desk Defense crawl out onto your screen."
+  "sha256": "4ffd15820ee0a401ba0f567bb8eb59618cf7bfc45b4916e383708152e5afcc0f",
+  "notes": "New Task Manager Mate: see what is running, force end or restart programs, turn startup programs on and off, and get warned when something hogs your PC."
 }

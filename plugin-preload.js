@@ -36,6 +36,18 @@ contextBridge.exposeInMainWorld('deskmate', {
     qr: (text) => call('wallet.qr', text),
     onChange: on('wallet-changed'),
   },
+  processes: {
+    list: () => call('processes.list'),
+    icons: (keys) => call('processes.icons', keys),
+    end: (key) => call('processes.end', key),
+    restart: (key) => call('processes.restart', key),
+    asks: () => call('processes.asks'),
+    askAgain: () => call('processes.askAgain'),
+  },
+  startup: {
+    list: () => call('startup.list'),
+    set: (key, enabled) => call('startup.set', key, enabled),
+  },
   clipboard: {
     history: () => call('clipboard.history'),
     remove: (id) => call('clipboard.remove', id),

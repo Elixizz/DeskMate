@@ -24,6 +24,7 @@ const PERMISSIONS = {
   'screen-effects': { label: 'Show small animations just outside the DeskMate panel (they can\'t be clicked and vanish by themselves)', risk: 'low' },
   'system-info': { label: 'See your PC\'s CPU, GPU, memory, disk and network usage', risk: 'low' },
   'clipboard-history': { label: 'See text you copy, while DeskMate runs (never passwords copied from the Vault)', risk: 'high' },
+  processes: { label: 'See your running programs and force end or restart them (DeskMate asks you first), and turn startup programs on or off', risk: 'high' },
 };
 const ID_RE = /^[a-z0-9][a-z0-9-]{1,40}$/;
 const SOUND_IDS = ['chime', 'bell', 'ping', 'pop', 'alarm', 'soft', 'none'];
@@ -369,6 +370,16 @@ const API = {
   // Pause really stops watching the clipboard (not just hiding entries).
   'clipboard.setPaused': [['clipboard-history'], (id, on) => { clipPaused = !!on; syncClipboard(); return clipPaused; }],
   'clipboard.paused': [['clipboard-history'], () => clipPaused],
+  // Running programs. Ending or restarting one always goes through DeskMate's own confirm box (unless you ticked
+  // "Don't ask again" for this Mate), and Windows-critical processes and DeskMate itself can't be ended at all.
+  'processes.list': [['processes'], () => throttled('procs', 900, () => ctx.caps.procs.list())],
+  'processes.icons': [['processes'], (id, keys) => ctx.caps.procs.icons(Array.isArray(keys) ? keys.slice(0, 120).map(String) : [])],
+  'processes.end': [['processes'], (id, key) => confirmProc(id, 'end', String(key))],
+  'processes.restart': [['processes'], (id, key) => confirmProc(id, 'restart', String(key))],
+  'processes.askAgain': [['processes'], (id) => { if (ctx.settings.procNoAsk) { delete ctx.settings.procNoAsk[id]; ctx.saveSettings(); } return true; }],
+  'processes.asks': [['processes'], (id) => !ctx.settings.procNoAsk?.[id]],
+  'startup.list': [['processes'], () => throttled('startup', 1500, () => ctx.caps.startup.list(ctx.caps.procs.iconFor))],
+  'startup.set': [['processes'], (id, key, on) => ctx.caps.startup.set(String(key), !!on)],
   'claude.revealFile': [['claude'], (id, p) => { p = String(p); if (/^[a-z]:[\\/]/i.test(p) && fs.existsSync(p)) shell.showItemInFolder(p); }],
 };
 
@@ -460,6 +471,30 @@ function commitInstall(approve, slot) {
   ctx.saveSettings(); ctx.onLayoutChange();
   return listForHost();
 }
+const procAsking = new Set(); // one confirm box per Mate at a time
+async function confirmProc(id, action, key) {
+  if (procAsking.has(id)) throw new Error('DeskMate is already asking you about another program');
+  procAsking.add(id);
+  try { return await confirmProcOnce(id, action, key); } finally { procAsking.delete(id); }
+}
+async function confirmProcOnce(id, action, key) {
+  const g = ctx.caps.procs.info(key);
+  if (!g) throw new Error('That program has already closed');
+  if (g.protected) throw new Error(`${g.name} is part of Windows or DeskMate and can't be ended here`);
+  if (!ctx.settings.procNoAsk?.[id]) {
+    const mate = loaded.get(id).manifest.name, verb = action === 'end' ? 'End' : 'Restart';
+    const r = await ctx.withDialog(() => dialog.showMessageBox(ctx.win(), {
+      type: 'warning', title: 'DeskMate', noLink: true, defaultId: 1, cancelId: 1, buttons: [verb, 'Cancel'],
+      message: `${verb} ${g.name}?`,
+      detail: `${mate} wants to force ${action === 'end' ? 'close' : 'close and reopen'} ${g.name}${g.count > 1 ? ` (${g.count} processes)` : ''}. Anything unsaved in it will be lost.`,
+      checkboxLabel: `Don't ask again for ${mate}`,
+    }));
+    if (r.response !== 0) return { canceled: true };
+    if (r.checkboxChecked) { ctx.settings.procNoAsk = { ...(ctx.settings.procNoAsk || {}), [id]: true }; ctx.saveSettings(); }
+  }
+  return action === 'end' ? ctx.caps.procs.end(key) : ctx.caps.procs.restart(key);
+}
+
 function removePlugin(id) {
   const p = loaded.get(id);
   if (!p || p.builtin) throw new Error("Built-in plugins can be turned off but not removed");
@@ -467,6 +502,7 @@ function removePlugin(id) {
   fs.rmSync(path.join(userPluginsDir(), id), { recursive: true, force: true });
   session.fromPartition('persist:plugin-' + id).clearStorageData().catch(() => {});
   delete ctx.settings.plugins[id];
+  if (ctx.settings.procNoAsk) delete ctx.settings.procNoAsk[id];
   ctx.saveSettings(); ctx.onLayoutChange();
   return listForHost();
 }
@@ -570,7 +606,7 @@ function init(c) {
   ipcMain.handle('plugin:call', async (e, method, ...args) => {
     const id = byWebContents.get(e.sender.id);
     if (!id || !loaded.has(id)) throw new Error('Unknown plugin');
-    const def = API[method];
+    const def = Object.hasOwn(API, method) ? API[method] : null;
     if (!def) throw new Error(`deskmate.${method} does not exist`);
     const [needs, fn] = Array.isArray(def) ? def : [[], def];
     for (const perm of needs) if (!granted(id, perm)) throw new Error(`This Mate doesn't have the "${perm}" permission`);

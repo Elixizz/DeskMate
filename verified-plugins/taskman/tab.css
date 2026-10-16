@@ -1,0 +1,55 @@
+body.page { height: 100%; }
+.view { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.sorts { display: flex; gap: 3px; }
+.list { gap: 4px; }
+.msg { font-size: 12px; padding: 6px 10px; border-radius: 8px; background: var(--card); }
+.msg.err { color: var(--bad); }
+.sect { display: flex; flex-direction: column; gap: 1px; }
+.shead { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; padding: 4px 6px; background: transparent; text-align: left; width: 100%; border-radius: 6px; }
+button.shead:hover { background: var(--card); color: var(--text); }
+.shead .cnt { font-weight: 600; text-transform: none; letter-spacing: 0; }
+.shead .arrow { display: inline-block; transition: transform .15s; font-size: 15px; line-height: 1; width: 10px; }
+.sect:not(.closed) > .shead .arrow { transform: rotate(90deg); }
+.sect.closed > .rows { display: none; }
+.rows { display: flex; flex-direction: column; gap: 1px; }
+.colh { width: 52px; text-align: right; }
+.acth { width: 54px; }
+.proc { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 8px; }
+.proc:hover { background: var(--card); }
+.proc img, .proc .noicon { width: 20px; height: 20px; flex: none; border-radius: 4px; }
+.proc .noicon { background: var(--line); }
+.proc .nm { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.proc .nm b { font-weight: 600; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.proc .nm span { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.proc .num { width: 52px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
+.proc .num.hot { color: var(--bad); font-weight: 700; }
+.proc .num.warm { color: var(--accent); }
+.proc .acts { width: 54px; display: flex; gap: 3px; justify-content: flex-end; }
+.proc .acts button { width: 24px; height: 24px; padding: 0; font-size: 13px; line-height: 1; opacity: .35; }
+.proc:hover .acts button { opacity: 1; }
+.proc .acts .end:hover { background: var(--bad); color: #fff; }
+.proc .lock { font-size: 10px; color: var(--muted); }
+.proc.busy { opacity: .45; pointer-events: none; }
+.foot { display: flex; }
+.startup { display: flex; align-items: center; gap: 9px; padding: 7px 9px; }
+.startup img, .startup .noicon { width: 22px; height: 22px; flex: none; border-radius: 4px; }
+.startup .noicon { background: var(--line); }
+.startup .nm { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.startup .nm b { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.startup .nm span { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.startup.off .nm b { color: var(--muted); }
+.badge { font-size: 9.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; flex: none; }
+.sw { appearance: none; -webkit-appearance: none; width: 34px; height: 19px; border-radius: 10px; background: var(--line); position: relative; cursor: pointer; flex: none; transition: background .15s; padding: 0; border: 0; margin: 0; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: left .15s; }
+.sw:checked { background: var(--accent); }
+.sw:checked::after { left: 17px; }
+.sw:disabled { opacity: .45; cursor: default; }
+.form { display: flex; flex-direction: column; gap: 9px; }
+.toggle-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.toggle-row .grow { display: flex; flex-direction: column; gap: 2px; }
+.field { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.field > span { width: 92px; color: var(--muted); }
+.field input[type=range], .field select { flex: 1; }
+.field b { width: 38px; text-align: right; }
+#hogList { margin-top: 4px; display: flex; flex-direction: column; gap: 3px; }
+.hogdot { display: inline-block; min-width: 15px; padding: 0 4px; border-radius: 8px; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; }

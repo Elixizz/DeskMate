@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/__deskmate/ui.css">
+<link rel="stylesheet" href="tab.css">
+</head>
+<body class="page">
+  <div class="seg">
+    <button class="segbtn active" data-view="procs">Programs</button>
+    <button class="segbtn" data-view="startup">Startup</button>
+    <button class="segbtn" data-view="alerts">Alerts <span id="hogCount" class="hogdot hidden"></span></button>
+  </div>
+
+  <section id="procsView" class="view">
+    <div class="row">
+      <input id="search" class="grow" placeholder="Search programs" autocomplete="off">
+      <div class="sorts"><button class="chip active" data-sort="cpu">CPU</button><button class="chip" data-sort="mem">Memory</button><button class="chip" data-sort="name">Name</button></div>
+    </div>
+    <div id="msg" class="msg hidden"></div>
+    <div class="list" id="procList">
+      <div class="sect" data-level="app"><div class="shead"><span class="grow">Apps <span class="cnt"></span></span><span class="colh">CPU</span><span class="colh">Memory</span><span class="acth"></span></div><div class="rows"></div></div>
+      <div class="sect closed" data-level="background"><button class="shead toggle"><span class="arrow">&#x203A;</span><span class="grow">Background programs <span class="cnt"></span></span></button><div class="rows"></div></div>
+      <div class="sect closed hidden" data-level="other"><button class="shead toggle"><span class="arrow">&#x203A;</span><span class="grow">Windows &amp; other users <span class="cnt"></span></span></button><div class="rows"></div></div>
+    </div>
+    <div class="foot muted small"><span id="totals" class="grow"></span></div>
+  </section>
+
+  <section id="startupView" class="view hidden">
+    <div class="muted small">Programs that start when you sign in to Windows. Switching one off doesn't uninstall it.</div>
+    <div class="list" id="startList"><div class="empty muted small">Loading...</div></div>
+  </section>
+
+  <section id="alertsView" class="view hidden">
+    <div class="card form">
+      <label class="toggle-row"><span class="grow"><b>Warn me when a program hogs my PC</b><span class="muted small">A Windows notification, at most once every 30 minutes per program.</span></span><input type="checkbox" id="alOn" class="sw"></label>
+      <div class="field"><span>CPU above</span><input type="range" id="alCpu" min="20" max="100" step="5"><b id="alCpuV"></b></div>
+      <div class="field"><span>for at least</span><select id="alFor"><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120">2 minutes</option><option value="300">5 minutes</option></select></div>
+      <div class="field"><span>Memory above</span><select id="alMem"><option value="1024">1 GB</option><option value="2048">2 GB</option><option value="4096">4 GB</option><option value="8192">8 GB</option><option value="0">Don't warn</option></select></div>
+    </div>
+    <div class="card"><b>Right now</b><div id="hogList" class="muted small"></div></div>
+    <div class="card form">
+      <span class="muted small" id="askText"></span>
+      <button id="askAgain" class="ghost hidden">Ask me again before ending programs</button>
+    </div>
+  </section>
+  <script src="tab.js"></script>
+</body>
+</html>

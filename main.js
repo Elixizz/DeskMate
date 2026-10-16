@@ -29,6 +29,8 @@ const sysinfo = require('./host/sysinfo');
 const clip = require('./host/cliphist');
 const wallet = require('./host/wallet');
 const fx = require('./host/fx');
+const procs = require('./host/procs');
+const startup = require('./host/startup');
 
 let win, tray, pinned = false;
 
@@ -131,7 +133,7 @@ app.whenReady().then(() => {
     win: () => win, settings, saveSettings, handleHost, withDialog,
     onStatus: pushStatus, onLayoutChange: () => win.webContents.send('host:plugins-changed'),
     theme: { bg: () => theme.resolve(settings.theme).vars.bg, apply: applyTheme }, playSound,
-    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip, wallet, walletUi, fx },
+    caps: { claudeActivity, sessionState, claudeReply, mediaStatus, mediaArt, mediaCmd, pickMusicFolder, musicTracks, legacySettings, gmail, sysinfo, clip, wallet, walletUi, fx, procs, startup },
   });
   win.webContents.once('did-finish-load', () => {
     plugins.loadAll(); win.webContents.send('host:plugins-changed'); plugins.startAutoUpdate();
@@ -149,7 +151,7 @@ app.whenReady().then(() => {
   powerMonitor.on('suspend', lockVault);
 });
 app.on('second-instance', showWindow);
-app.on('will-quit', () => { globalShortcut.unregisterAll(); sysinfo.stop(); });
+app.on('will-quit', () => { globalShortcut.unregisterAll(); sysinfo.stop(); procs.stop(); });
 app.on('window-all-closed', (e) => e.preventDefault());
 
 handleHost('win:hide', () => win.hide());
