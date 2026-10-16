@@ -31,7 +31,10 @@ let menuOpen = false;
 function tabOrder() { return Array.isArray(settings?.tabOrder) ? settings.tabOrder : []; }
 function renderTabs() {
   tabNav.querySelectorAll('.ptab').forEach((b) => b.remove());
-  for (const p of pluginList.filter((x) => x.enabled && x.hasTab)) {
+  // Vault and Music have their own buttons in the header; the tab row is for the other Mates
+  const music = pluginList.find((x) => x.id === 'music');
+  $('header [data-tab="p:music"]').classList.toggle('hidden', !(music?.enabled && music.hasTab));
+  for (const p of pluginList.filter((x) => x.enabled && x.hasTab && x.id !== 'music')) {
     const b = document.createElement('button');
     b.className = 'tab ptab'; b.dataset.tab = 'p:' + p.id; b.dataset.name = p.name;
     // Mates with an icon get a compact icon tab (name on hover), so more of them fit across
@@ -50,6 +53,7 @@ function renderTabs() {
   tabs.forEach((b) => tabNav.insertBefore(b, $('#moreBtn')));
   $$('.tab').forEach((b) => { b.onclick = () => selectTab(b.dataset.tab); b.classList.toggle('active', b.dataset.tab === activeTab); });
   tabs.forEach((b) => (b.draggable = true));
+  tabNav.classList.toggle('empty', !tabs.length);
   fitTabs();
 }
 function fitTabs() {
@@ -123,7 +127,7 @@ tabNav.addEventListener('drop', async (e) => {
 });
 
 function selectTab(tab) {
-  if (!$$('.tab').some((b) => b.dataset.tab === tab)) tab = $('nav#tabs .tab').dataset.tab;
+  if (!$$('.tab:not(.hidden)').some((b) => b.dataset.tab === tab)) tab = 'vault';
   activeTab = tab;
   try { localStorage.setItem('tab', tab); } catch {}
   $$('.tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
@@ -156,11 +160,11 @@ async function refreshPlugins() {
   pluginList = await api.plugins.list();
   renderTabs(); renderBars(); renderAppUpdate();
   if (wantedTab) {
-    const tabs = $$('nav#tabs .tab').map((b) => b.dataset.tab);
+    const tabs = $$('.tab:not(.hidden)').map((b) => b.dataset.tab).filter((t) => t !== 'plugins' && t !== 'settings');
     const pick = wantedTab === 'first' ? tabs[0] : wantedTab;
     if (tabs.includes(pick) && (pick !== 'vault' || wantedTab !== 'first' || pluginList.length)) { wantedTab = null; return selectTab(pick); }
   }
-  if (!$$('.tab').some((b) => b.dataset.tab === activeTab)) return selectTab($('nav#tabs .tab').dataset.tab);
+  if (!$$('.tab:not(.hidden)').some((b) => b.dataset.tab === activeTab)) return selectTab('vault');
   if (activeTab === 'plugins') renderPlugins();
   reportLayout();
 }
@@ -579,6 +583,7 @@ $('#itemForm').onsubmit = async (e) => {
 (async () => {
   settings = await api.getSettings();
   $('#hotkeyHint').textContent = await api.hotkey();
+  $('header .brand').title = `Open or hide DeskMate: ${$('#hotkeyHint').textContent}`;
   renderStatus(await api.plugins.status());
   try { wantedTab = localStorage.getItem('tab') || 'first'; } catch { wantedTab = 'first'; }
   await refreshPlugins();

@@ -213,7 +213,7 @@ header .gearbtn.active { color: var(--accent); background: var(--card); box-shad
 /* header never pushes its buttons off: the hint shrinks first, then the dots clip */
 header .hint { flex: 1 1 0; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 header .brand, header .icon { flex: none; }
-button.shrink { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+button.shrink { flex: none; overflow: hidden; padding: 3px 8px; }
 button.shrink #hdrDots { flex: 0 1 auto; min-width: 0; overflow: hidden; }
 button.shrink > span:not(.dots), button.shrink .arrow { flex: none; }
 
@@ -231,6 +231,14 @@ nav#tabs .tab.icontab { flex: 0 0 auto; padding: 6px 10px; position: relative; d
 nav#tabs .tab.icontab .badge { position: absolute; top: 1px; right: 1px; margin: 0; font-size: 9px; padding: 0 4px; line-height: 14px; }
 .moreitem .ticon { margin-right: 8px; }
 nav#tabs .tab.icontab.overflow { display: none; }
+/* no other Mates with tabs: drop the empty tab row */
+nav#tabs.empty { display: none; }
+header .gearbtn.hidden { display: none; }
+/* the header holds Vault and Music too now: tighter gaps, and the shortcut hint is just a spacer (it's in the name's tooltip) */
+header { gap: 4px; }
+header .brand { margin-right: 4px; }
+header .hint { font-size: 0; }
+header .gearbtn { padding: 2px 6px; }
 .morebtn { flex: none; background: transparent; color: var(--muted); font-weight: 600; padding: 6px 8px; white-space: nowrap; }
 .morebtn:hover { background: var(--card); color: var(--text); }
 .moremenu { position: fixed; right: 10px; top: 84px; z-index: 50; min-width: 180px; max-width: 260px; max-height: 320px; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 5px; box-shadow: 0 10px 28px #0008; display: flex; flex-direction: column; gap: 2px; }
