@@ -220,7 +220,7 @@ Every Mate page gets a global `deskmate` object. Calls that do something return 
 | `deskmate.processes.icons(keys)` | `processes` | `{ [key]: dataUrl }` program icons for up to 120 keys from `list()` |
 | `deskmate.processes.end(key)` / `.restart(key)` | `processes` | Force end (or end and start again) a program. DeskMate asks the user first in its own box; you get `{ canceled: true }` if they say no, otherwise `{ name, ended, denied }`. Throws for protected programs, and when Windows needs admin rights |
 | `deskmate.processes.asks()` / `.askAgain()` | `processes` | Whether DeskMate still asks before ending (the user can tick "Don't ask again" for your Mate), and turn the question back on |
-| `deskmate.startup.list()` | `processes` | `[{ key, name, command, enabled, scope, canChange, icon }]`: the same startup programs Windows Task Manager shows. Ones installed for every user have `canChange: false` |
+| `deskmate.startup.list()` | `processes` | `[{ key, name, command, enabled, scope, canChange, admin, icon }]`: the same startup programs Windows Task Manager shows. Ones installed for every user have `admin: true`: changing them makes Windows show its admin (UAC) box, and `set` throws if the user says No (DeskMate 1.9.1+; on 1.9.0 they had `canChange: false`) |
 | `deskmate.startup.set(key, enabled)` | `processes` | Switch a startup program on or off, the same way Windows Task Manager does (so both stay in sync) |
 
 Everything a normal web page can do also works: `fetch` (to your `net:` hosts), `localStorage`, `IndexedDB`, `<audio>`, `<canvas>`, timers and so on. Pages stay loaded in the background, so timers keep running when the panel is hidden.

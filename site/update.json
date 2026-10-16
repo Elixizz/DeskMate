@@ -1,6 +1,6 @@
 {
-  "version": "1.9.0",
+  "version": "1.9.1",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "4ffd15820ee0a401ba0f567bb8eb59618cf7bfc45b4916e383708152e5afcc0f",
-  "notes": "New Task Manager Mate: see what is running, force end or restart programs, turn startup programs on and off, and get warned when something hogs your PC."
+  "sha256": "e6296e796e257bbd0a925621bdb9245ba0ed580a2e57219ae95b47e3c4c835dc",
+  "notes": "Task Manager can now switch off startup programs installed for all users (Windows asks you to allow it)."
 }

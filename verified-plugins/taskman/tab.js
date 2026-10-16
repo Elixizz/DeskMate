@@ -165,7 +165,7 @@ async function renderStartup() {
   $('#startList').innerHTML = items.length ? items.map((it, i) => `<div class="card startup${it.enabled ? '' : ' off'}" title="${esc(it.command)}">
       ${it.icon ? `<img src="${it.icon}" alt="">` : '<span class="noicon"></span>'}
       <div class="nm"><b>${esc(it.name)}</b><span>${esc(it.command)}</span></div>
-      ${it.canChange ? '' : '<span class="badge" title="Installed for every user. Change it in Windows Task Manager (needs admin rights).">All users</span>'}
+      ${it.admin ? '<span class="badge" title="Installed for every user. Windows will ask you to allow the change.">&#x1F6E1; All users</span>' : it.canChange ? '' : '<span class="badge" title="Installed for every user. Update DeskMate to change it here.">All users</span>'}
       <input type="checkbox" class="sw" data-i="${i}" ${it.enabled ? 'checked' : ''} ${it.canChange ? '' : 'disabled'}>
     </div>`).join('') : '<div class="empty muted small">No startup programs.</div>';
   document.querySelectorAll('#startList .sw').forEach((sw) => sw.addEventListener('change', async () => {

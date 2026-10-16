@@ -11,7 +11,7 @@
         "screen-effects"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/arcade-1.0.3.zip",
-      "sha256": "8203219b357e5d0f1fe82495ad89d330056b6190c726676a40d5fc9e6a151397"
+      "sha256": "fadd9f0446d082154d1e1f1c2308eed2b75c6eb6aca6aa87d007967b1ec623fb"
     },
     {
       "id": "calc",
@@ -24,7 +24,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/calc-1.0.0.zip",
-      "sha256": "51cf38763cdf46746bfe74a7574458ea217c8c72a4b5d4527153eb2f0be95da1"
+      "sha256": "4d87fa8dfa77587bba1d51f68aa5d9a8cf875b5a152aeb53c8d5ac850c94868d"
     },
     {
       "id": "claude",
@@ -37,7 +37,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/claude-1.0.1.zip",
-      "sha256": "9077a2a64ef721f34c0f10c0082bff5219b956433625ff1d7b4751a7a8b80fee"
+      "sha256": "038cd6331ce5681c65e1c49b0f69ae86d719cf5c752c8ef8d4b6c093c24fcda7"
     },
     {
       "id": "clipboard",
@@ -50,7 +50,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/clipboard-1.0.0.zip",
-      "sha256": "0c11db98ddfc4a0450faa714174a4f8eab84f8643ca5882831a4fe800f6f18a2"
+      "sha256": "bd9d68e1009c7cc5c339ec91a7f3665929b0cf284b0f1ef9fa70003a34d21860"
     },
     {
       "id": "gmail",
@@ -65,7 +65,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/gmail-1.1.0.zip",
-      "sha256": "0f5b52f988f73f41abde0dbcdf407c454170028bb3854586d832fb086be03a32"
+      "sha256": "067a6802ccc74fbbf03a62e716c6f294af5271ef47d6034acbbe8b4156278b22"
     },
     {
       "id": "notes",
@@ -75,7 +75,7 @@
       "description": "Quick notes and a to-do list, saved on your PC. Search your notes, pin the important ones, tick off tasks.",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/notes-1.0.0.zip",
-      "sha256": "1f3fb30ac461b24396ab99c2f41a8b688281d59425595f87136aa4d23bf0c41a"
+      "sha256": "2581ab3ffd425ee4df9421c0971e4bc542b4d57028376ec4bd76c4967c00782d"
     },
     {
       "id": "pcmon",
@@ -87,7 +87,7 @@
         "system-info"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/pcmon-1.0.0.zip",
-      "sha256": "b813d0deddf977b6df6fcf70358344bd480fdba2be0e68156a7e06b9b6b1f2d1"
+      "sha256": "1c60b5c746526f3c9f44f6d02cf3f9b3e3b7a8f377bff3cf5a7430315724b1c9"
     },
     {
       "id": "schedule-one",
@@ -97,20 +97,20 @@
       "description": "Schedule I mixer, effects and ingredient reference, plus notes on the special customer groups (location, favorite drugs, best mixes).",
       "permissions": [],
       "download": "https://deskmate.lapistudios.com/plugins/schedule-one-1.0.1.zip",
-      "sha256": "754bda290f1252fdebec42bc0b86152dff1ce317e7c86f4cc9ba09971f17ce87"
+      "sha256": "f03bba87cc25ca4d0fc2c2d7bbfa32eeecab4f1c494c9a02e0ea8115b6a52236"
     },
     {
       "id": "taskman",
       "name": "Task Manager",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "Lapis Studios",
       "description": "See what's running and how much CPU and memory it uses, force end or restart programs, turn startup programs on and off, and get warned when something hogs your PC. Needs DeskMate 1.9 or newer.",
       "permissions": [
         "processes",
         "notifications"
       ],
-      "download": "https://deskmate.lapistudios.com/plugins/taskman-1.0.0.zip",
-      "sha256": "f04ff2b96b4ee956870c84eafc15ce58b57f8db5b745b71681ec0f68fdf175df"
+      "download": "https://deskmate.lapistudios.com/plugins/taskman-1.0.1.zip",
+      "sha256": "192f9883866bbc3d32fe92eb53c211777883a51659adb60a052b8fa5b65734f5"
     },
     {
       "id": "timers",
@@ -123,7 +123,7 @@
         "status"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/timers-1.1.0.zip",
-      "sha256": "bacf93100408d2b774a19ee34c543f0003bf72f0c29f65ce34cf7df71993edca"
+      "sha256": "61e1abcb05113b5cc86dfb506b8e4498982fca70cbf3c179b07c8e08e7e14b5e"
     },
     {
       "id": "wallet",
@@ -136,7 +136,7 @@
         "clipboard-write"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/wallet-1.0.0.zip",
-      "sha256": "2617c2f896161a9bdc102c15c0a12731f84160e6d8371d9a167f523e78e7b938"
+      "sha256": "0c551f0d2eaee25171c6351bcc5dc0353501e2a443bd41ad32ea214768805f92"
     },
     {
       "id": "weather",
@@ -149,7 +149,7 @@
         "net:geocoding-api.open-meteo.com"
       ],
       "download": "https://deskmate.lapistudios.com/plugins/weather-1.0.0.zip",
-      "sha256": "0567c0b6633bc04c16ab80e282d94589f52010e0b82a4a86ff42ffe4911077eb"
+      "sha256": "f9586d5cfd71cb880da192c2202a30c3270ef502c3e4c8f463d81d392bad7bea"
     }
   ]
 }
