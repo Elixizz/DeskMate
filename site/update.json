@@ -1,6 +1,6 @@
 {
-  "version": "1.10.2",
+  "version": "1.10.3",
   "download": "https://deskmate.lapistudios.com/download/DeskMate-Setup.exe",
-  "sha256": "5c61701dfe8221b4c74d454ac1e41fc33d6d1047d32f5c722efb4835070fcd15",
-  "notes": "Fixes the Mates page and Supply Closet refreshing over and over while Task Manager was running."
+  "sha256": "1b7e626434dadb08eeebdb0874c66065c1e2b10df5813dc9ec988efa1513c672",
+  "notes": "Task Manager can now end programs that run as administrator (like Razer Cortex): DeskMate offers End as admin and Windows asks you to allow it."
 }

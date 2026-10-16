@@ -7,6 +7,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const admin = require('./admin');
 
 const HELPER = path.join(__dirname, 'bin', 'dm-procs.exe');
 // Ending any of these would crash or lock up Windows, so they can't be ended from a Mate.
@@ -103,14 +104,28 @@ async function end(key) {
   for (const pid of g.pids) {
     try { process.kill(pid); ended++; } catch (e) { if (e.code === 'ESRCH') ended++; else denied++; }
   }
-  if (!ended && denied) throw new Error(`Windows needs admin rights to end ${g.name}`);
   return { ended, denied, name: g.name, path: g.path, pids: g.pids };
+}
+
+// For programs running as administrator (or as another user): taskkill as admin, after Windows' UAC box.
+async function endAsAdmin(key) {
+  await list();
+  const g = groups.get(key);
+  if (!g) throw new Error('That program has already closed');
+  if (g.protected) throw new Error(`${g.name} is part of Windows or DeskMate and can't be ended here`);
+  const code = await admin.runAsAdmin('taskkill.exe', ['/F', ...g.pids.flatMap((p) => ['/PID', String(p)])]);
+  if (code === admin.CANCELED) return { canceled: true, name: g.name };
+  await new Promise((ok) => setTimeout(ok, 400));
+  const left = g.pids.filter(alive).length;
+  if (left === g.pids.length) throw new Error(`Windows wouldn't end ${g.name}, even as admin`);
+  return { ended: g.pids.length - left, denied: left, name: g.name };
 }
 
 async function restart(key) {
   const g0 = groups.get(key);
   if (!g0?.path || !g0.own) throw new Error('This program can\'t be restarted from here');
   const r = await end(key);
+  if (!r.ended) throw new Error(`${r.name} is running as administrator, so it can't be restarted from here`);
   for (let i = 0; i < 40 && r.pids.some(alive); i++) await new Promise((ok) => setTimeout(ok, 100));
   // Windows brings Explorer back by itself; only start it if it didn't.
   if (/\\explorer\.exe$/i.test(r.path)) {
@@ -143,4 +158,4 @@ async function icons(keys) {
   return out;
 }
 
-module.exports = { list, info, end, restart, icons, iconFor, stop };
+module.exports = { list, info, end, endAsAdmin, restart, icons, iconFor, stop };

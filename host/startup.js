@@ -6,6 +6,7 @@ const { shell } = require('electron');
 const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const admin = require('./admin');
 
 let ROOT = 'Software\\Microsoft\\Windows\\CurrentVersion'; // tests point this somewhere harmless
 const sources = () => {
@@ -64,16 +65,6 @@ async function list(iconFor) {
   return items;
 }
 
-// Run one reg.exe command as admin through Windows' UAC box. Resolves with reg's exit code; 1223 = the user said No.
-let elevate = true, elevating = false; // tests turn elevate off to check the command without a UAC box
-function regAsAdmin(args) {
-  if (args.some((a) => /["\r\n]/.test(a))) return Promise.reject(new Error('That name can\'t be changed from here'));
-  const q = (a) => `'"${a.replace(/'/g, "''")}"'`; // PowerShell string holding a double-quoted argument
-  const script = `try { $p = Start-Process -FilePath "$env:SystemRoot\\System32\\reg.exe" -ArgumentList @(${args.map(q).join(',')}) ${elevate ? '-Verb RunAs ' : ''}-WindowStyle Hidden -Wait -PassThru; exit $p.ExitCode } catch { exit 1223 }`;
-  return new Promise((ok) => execFile('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')],
-    { windowsHide: true, timeout: 120e3 }, (err) => ok(err ? (typeof err.code === 'number' ? err.code : 1) : 0)));
-}
-
 async function set(key, enabled) {
   const i = String(key).indexOf(':');
   const src = sources().find((s) => s.id === key.slice(0, i)), name = key.slice(i + 1);
@@ -85,11 +76,8 @@ async function set(key, enabled) {
     if (await reg(args) == null) throw new Error('Windows wouldn\'t save that change');
     return true;
   }
-  if (elevating) throw new Error('Windows is already asking you about another change');
-  elevating = true;
-  let code;
-  try { code = await regAsAdmin(args); } finally { elevating = false; }
-  if (code === 1223) throw new Error('Not changed: Windows needs you to click Yes to allow it');
+  const code = await admin.runAsAdmin('reg.exe', args);
+  if (code === admin.CANCELED) throw new Error('Not changed: Windows needs you to click Yes to allow it');
   // check it really changed rather than trusting the exit code
   const a = (await values(src.approved)).get(name);
   const on = !a || a.type !== 'REG_BINARY' || !(parseInt(a.data.slice(0, 2), 16) & 1);
@@ -97,4 +85,4 @@ async function set(key, enabled) {
   return true;
 }
 
-module.exports = { list, set, _root: (r) => { ROOT = r; }, _elevate: (on) => { elevate = on; }, _regAsAdmin: regAsAdmin };
+module.exports = { list, set, _root: (r) => { ROOT = r; } };

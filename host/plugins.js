@@ -515,7 +515,20 @@ async function confirmProcOnce(id, action, key) {
     if (r.response !== 0) return { canceled: true };
     if (r.checkboxChecked) { ctx.settings.procNoAsk = { ...(ctx.settings.procNoAsk || {}), [id]: true }; ctx.saveSettings(); }
   }
-  return action === 'end' ? ctx.caps.procs.end(key) : ctx.caps.procs.restart(key);
+  if (action !== 'end') return ctx.caps.procs.restart(key);
+  const r = await ctx.caps.procs.end(key);
+  if (!r.denied) return r;
+  // Part (or all) of it runs as administrator. Windows' UAC box only says "taskkill", so DeskMate names the program
+  // first, every time (even with "Don't ask again"), then Windows asks.
+  const a = await ctx.withDialog(() => dialog.showMessageBox(ctx.win(), {
+    type: 'warning', title: 'DeskMate', noLink: true, defaultId: 1, cancelId: 1, buttons: ['End as admin', 'Cancel'],
+    message: `${r.name} is running as administrator`,
+    detail: `${r.ended ? `Ended ${r.ended} of its processes, but ${r.denied} need` : 'Windows needs'} admin rights to end it. Click "End as admin" and Windows will ask you to allow it.`,
+  }));
+  if (a.response !== 0) return r.ended ? r : { canceled: true };
+  const x = await ctx.caps.procs.endAsAdmin(key);
+  if (x.canceled) throw new Error(`Not ended: Windows needs you to click Yes to end ${r.name}`);
+  return { ...x, ended: x.ended + r.ended };
 }
 
 function removePlugin(id) {
